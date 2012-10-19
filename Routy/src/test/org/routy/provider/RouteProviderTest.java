@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.routy.model.Route;
+
 import android.location.Address;
 import android.location.Geocoder;
 import android.test.AndroidTestCase;
@@ -14,16 +16,73 @@ public class RouteProviderTest extends AndroidTestCase {
 
 	private final String TAG = "RouteProviderTest";
 	private Geocoder geocoder;
+	private List<Address> destinations;
+	private RouteProvider routeProvider;
 	
 	
 	protected void setUp() throws Exception {
 		super.setUp();
 		
 		geocoder = new Geocoder(getContext(), Locale.getDefault());
+		
+		// Get some destinations to work with
+		try {
+			destinations = getDestinationAddresses();
+		} catch (IOException e) {
+			System.err.println("Couldn't get destination addresses\n" + e.getMessage());
+		}
+		
+		if (destinations == null) {
+			fail("No destinations.");
+		}
 	}
 	
 	
-	public void testDistanceMatrix() {
+	/*public void testDistanceMatrix() {
+		int[] expectedFromOrigin = {369, 2490, 17602, 1953, 3667};
+		for (int i = 0; i < destinations.size(); i++) {
+			if (expectedFromOrigin[i] != routeProvider.distances[0][i]) {
+				Log.e(TAG, "Distance mismatch: i=" + i + ", expected=" + expectedFromOrigin[i] + ", actual=" + routeProvider.distances[0][i]);
+			}
+		}
+		
+		System.out.println("Distance matrix: ");
+		for (int i = 0; i < destinations.size() + 1; i++) {
+			printDistances(routeProvider.distances[i]);
+		}
+	}*/
+	
+	
+	private void printDistances(int[] distances) {
+		StringBuilder sb = new StringBuilder("[");
+		
+		for (int i = 0; i < distances.length - 1; i++) {
+			sb.append(distances[i]);
+			sb.append(", ");
+		}
+		
+		sb.append(distances[distances.length - 1]);
+		sb.append("]");
+		
+		System.out.println(sb.toString());
+	}
+	
+	
+	public void testGetShortestRoute() {
+		long start = System.currentTimeMillis();
+		routeProvider = getRouteProvider(destinations);
+		Route shortestRoute = routeProvider.getShortestRoute();
+		System.out.println("Computed shortest route in " + (System.currentTimeMillis() - start) + "ms");
+		
+		System.out.println("Shortest route: ");
+		for (int i = 0; i < shortestRoute.getAddresses().size(); i++) {
+			System.out.println(shortestRoute.getAddresses().get(i).getAddressLine(0) + " - " + shortestRoute.getAddresses().get(i).getLatitude() + ", " + shortestRoute.getAddresses().get(i).getLongitude());
+		}
+		System.out.println("Total distance: " + shortestRoute.getTotalDistance() + " km");
+	}
+	
+	
+	private RouteProvider getRouteProvider(List<Address> destinations) {
 		// Create an origin address to work with
 		Address origin = null;
 		try {
@@ -39,18 +98,6 @@ public class RouteProviderTest extends AndroidTestCase {
 			fail("No origin.");
 		}
 		
-		// Get some destinations to work with
-		List<Address> destinations = null;
-		try {
-			destinations = getDestinationAddresses();
-		} catch (IOException e) {
-			System.err.println("Couldn't get destination addresses\n" + e.getMessage());
-		}
-		
-		if (destinations == null) {
-			fail("No destinations.");
-		}
-		
 		RouteProvider routeProvider = null;
 		try {
 			long start = System.currentTimeMillis();
@@ -64,14 +111,7 @@ public class RouteProviderTest extends AndroidTestCase {
 			fail("No RouteProvider.");
 		}
 		
-		int[] expectedFromOrigin = {369, 2490, 17602, 1953, 3667};
-		for (int i = 0; i < destinations.size(); i++) {
-//			failNotEquals("Distance mismatch", expectedFromOrigin[i], routeProvider.distances[0][i]);
-			if (expectedFromOrigin[i] != routeProvider.distances[0][i]) {
-				Log.e(TAG, "Distance mismatch: i=" + i + ", expected=" + expectedFromOrigin[i] + ", actual=" + routeProvider.distances[0][i]);
-			}
-		}
-		
+		return routeProvider;
 	}
 
 

@@ -8,8 +8,11 @@ import android.test.AndroidTestCase;
 
 public class PermutationTest extends AndroidTestCase {
 
+	private int permutations;
+	
 	public void setUp() throws Exception {
 		super.setUp();
+		permutations = 0;
 	}
 	
 	
@@ -19,13 +22,29 @@ public class PermutationTest extends AndroidTestCase {
 		
 		long start = System.currentTimeMillis();
 		permute(startingList, new ArrayList<Integer>());
-		System.out.println("Computed permutations in " + (System.currentTimeMillis() - start) + "ms");
+		System.out.println("Total time: " + (System.currentTimeMillis() - start) + "ms");
+		
+		if (permutations != factorial(intList.length)) {
+			System.err.println("Incorrect number of permutations.");
+		} else {
+			System.out.println(permutations + " permutations computed.");
+		}
+	}
+	
+	
+	private int factorial(int n) {
+		if (n == 2) {
+			return n;
+		} else {
+			return n * factorial(n-1);
+		}
 	}
 	
 	
 	private void permute(List<Integer> pool, List<Integer> permutation) {
 		if (pool.size() == 0) {
 			printPermutation(permutation);
+			permutations++;
 		} else {
 			for (int i = 0; i < pool.size(); i++) {
 				List<Integer> newPermutation = new ArrayList<Integer>(permutation);

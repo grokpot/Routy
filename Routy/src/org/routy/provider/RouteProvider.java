@@ -25,6 +25,8 @@ public class RouteProvider {
 	
 	int[][] distances;
 	
+	List<List<Integer>> possibleRoutes;
+	
 	
 	public RouteProvider(Address origin, List<Address> destinations, RouteOptimizePreference preference, boolean sensor) throws Exception {
 		this.distanceProvider = new DistanceMatrixProvider();
@@ -38,16 +40,71 @@ public class RouteProvider {
 	
 	
 	public Route getShortestRoute() {
-		Route shortest = null;
+		computeAllPossibleRoutes(destinations.size());
+		int bestDistance = -1;
+		List<Integer> bestRoute = null;
 		
-		for (int r = 0; r < destinations.size(); r++) {
+		for (int r = 0; r < possibleRoutes.size(); r++) {
+			List<Integer> route = possibleRoutes.get(r);
+			int idx = 0;
+			int distance = distances[0][route.get(idx) - 1];
 			
+			while (idx < (route.size() - 1)) {
+				distance += distances[route.get(idx)][route.get(idx+1) - 1];
+				idx++;
+			}
+			
+			if (bestDistance == -1 || distance < bestDistance) {
+				bestDistance = distance;
+				bestRoute = new ArrayList<Integer>(route);
+			}
 		}
 		
-		return null;
+		return indicesToRoute(bestRoute, bestDistance);
 	}
 	
 	
+	private Route indicesToRoute(List<Integer> routeIndices, int distance) {
+		Route route = new Route();
+		route.addAddress(origin);
+		
+		for (int i = 0; i < routeIndices.size(); i++) {
+			route.addAddress(destinations.get(routeIndices.get(i) - 1));
+		}
+		
+		route.addDistance(distance);
+		
+		return route;
+	}
+	
+	
+	private void computeAllPossibleRoutes(int numDests) {
+		possibleRoutes = new ArrayList<List<Integer>>();
+		
+		List<Integer> pool = new ArrayList<Integer>();
+		for (int i = 0; i < numDests; i++) {
+			pool.add(i+1);
+		}
+		
+		permute(pool, new ArrayList<Integer>());
+	}
+	
+	
+	private void permute(List<Integer> pool, List<Integer> permutation) {
+		if (pool.size() == 0) {
+			possibleRoutes.add(permutation);
+		} else {
+			for (int i = 0; i < pool.size(); i++) {
+				List<Integer> newPermutation = new ArrayList<Integer>(permutation);
+				newPermutation.add(pool.get(i));
+				
+				List<Integer> newPool = new ArrayList<Integer>(pool);
+				newPool.remove(i);
+				
+				permute(newPool, newPermutation);
+			}
+		}
+	}
 	
 	
 	private void loadDistancesMatrix() throws Exception {
@@ -74,7 +131,23 @@ public class RouteProvider {
 			
 			distsFromDest = distanceProvider.getDistanceMatrix(destinations.get(i), otherDests, sensor);
 			
-			for (int j = 0; j < distsFromDest.size(); j++) {
+			int idx = 0;
+			int entered = 0;
+			
+			while (entered < distsFromDest.size()) {
+				if (i != idx) {
+					if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
+						distances[i+1][idx] = distsFromDest.get(entered).getDuration();
+					} else {
+						distances[i+1][idx] = distsFromDest.get(entered).getDistance();
+					}
+					entered++;
+				}
+				idx++;
+				
+			}
+			
+			/*for (int j = 0; j < distsFromDest.size(); j++) {
 				if (i != j) {
 					if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
 						distances[i+1][j] = distsFromDest.get(j).getDuration();
@@ -82,7 +155,7 @@ public class RouteProvider {
 						distances[i+1][j] = distsFromDest.get(j).getDistance();
 					}
 				}
-			}
+			}*/
 		}
 	}
 }
