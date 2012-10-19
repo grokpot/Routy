@@ -26,7 +26,7 @@ public class RouteProviderTest extends AndroidTestCase {
 		geocoder = new Geocoder(getContext(), Locale.getDefault());
 		
 		// Get some destinations to work with
-		try {
+		/*try {
 			destinations = getDestinationAddresses();
 		} catch (IOException e) {
 			System.err.println("Couldn't get destination addresses\n" + e.getMessage());
@@ -34,7 +34,7 @@ public class RouteProviderTest extends AndroidTestCase {
 		
 		if (destinations == null) {
 			fail("No destinations.");
-		}
+		}*/
 	}
 	
 	
@@ -53,26 +53,33 @@ public class RouteProviderTest extends AndroidTestCase {
 	}*/
 	
 	
-	private void printDistances(int[] distances) {
-		StringBuilder sb = new StringBuilder("[");
-		
-		for (int i = 0; i < distances.length - 1; i++) {
-			sb.append(distances[i]);
-			sb.append(", ");
-		}
-		
-		sb.append(distances[distances.length - 1]);
-		sb.append("]");
-		
-		System.out.println(sb.toString());
-	}
-	
-	
+	/* (non-Javadoc)
+	 * Timed test -- 
+	 * 1. Geocode destinations
+	 * 2. Geocode origin
+	 * 3. Create a RouteProvider (that initializes a Distance Matrix)
+	 * 4. Compute the shortest route
+	 */
 	public void testGetShortestRoute() {
 		long start = System.currentTimeMillis();
+		try {
+			destinations = getDestinationAddresses();
+		} catch (IOException e) {
+			System.err.println("Couldn't get destination addresses\n" + e.getMessage());
+		}
+		
+		if (destinations == null) {
+			fail("No destinations.");
+		}
+		
 		routeProvider = getRouteProvider(destinations);
+		
+		if (routeProvider == null) {
+			fail("No RouteProvider.");
+		}
+		
 		Route shortestRoute = routeProvider.getShortestRoute();
-		System.out.println("Computed shortest route in " + (System.currentTimeMillis() - start) + "ms");
+		System.out.println("Computed shortest route with " + destinations.size() + " destinations in " + (System.currentTimeMillis() - start) + "ms");
 		
 		System.out.println("Shortest route: ");
 		for (int i = 0; i < shortestRoute.getAddresses().size(); i++) {
@@ -169,6 +176,21 @@ public class RouteProviderTest extends AndroidTestCase {
         }
         
         return destinations;
+	}
+	
+	
+	private void printDistances(int[] distances) {
+		StringBuilder sb = new StringBuilder("[");
+		
+		for (int i = 0; i < distances.length - 1; i++) {
+			sb.append(distances[i]);
+			sb.append(", ");
+		}
+		
+		sb.append(distances[distances.length - 1]);
+		sb.append("]");
+		
+		System.out.println(sb.toString());
 	}
 	
 	
