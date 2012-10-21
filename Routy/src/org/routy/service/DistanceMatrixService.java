@@ -1,4 +1,4 @@
-package org.routy.provider;
+package org.routy.service;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -15,7 +15,7 @@ import org.routy.model.Distance;
 import android.location.Address;
 import android.util.Log;
 
-public class DistanceMatrixProvider {
+public class DistanceMatrixService {
 
 	private final String TAG = "DistanceMatrixProvider";
 	

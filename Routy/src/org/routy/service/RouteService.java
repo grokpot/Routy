@@ -1,10 +1,11 @@
-package org.routy.provider;
+package org.routy.service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.routy.model.Distance;
 import org.routy.model.Route;
+import org.routy.model.RouteOptimizePreference;
 
 import android.location.Address;
 
@@ -15,9 +16,9 @@ import android.location.Address;
  * @author jtran
  *
  */
-public class RouteProvider {
+public class RouteService {
 
-	private DistanceMatrixProvider distanceProvider;
+	private DistanceMatrixService distanceProvider;
 	private Address origin;
 	private List<Address> destinations;
 	private RouteOptimizePreference preference;
@@ -28,8 +29,8 @@ public class RouteProvider {
 	List<List<Integer>> possibleRoutes;
 	
 	
-	public RouteProvider(Address origin, List<Address> destinations, RouteOptimizePreference preference, boolean sensor) throws Exception {
-		this.distanceProvider = new DistanceMatrixProvider();
+	public RouteService(Address origin, List<Address> destinations, RouteOptimizePreference preference, boolean sensor) throws Exception {
+		this.distanceProvider = new DistanceMatrixService();
 		this.origin = origin;
 		this.destinations = destinations;
 		this.preference = preference;

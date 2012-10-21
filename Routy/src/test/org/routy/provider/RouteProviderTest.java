@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Locale;
 
 import org.routy.model.Route;
+import org.routy.model.RouteOptimizePreference;
+import org.routy.service.RouteService;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -17,7 +19,7 @@ public class RouteProviderTest extends AndroidTestCase {
 	private final String TAG = "RouteProviderTest";
 	private Geocoder geocoder;
 	private List<Address> destinations;
-	private RouteProvider routeProvider;
+	private RouteService routeProvider;
 	
 	
 	protected void setUp() throws Exception {
@@ -89,7 +91,7 @@ public class RouteProviderTest extends AndroidTestCase {
 	}
 	
 	
-	private RouteProvider getRouteProvider(List<Address> destinations) {
+	private RouteService getRouteProvider(List<Address> destinations) {
 		// Create an origin address to work with
 		Address origin = null;
 		try {
@@ -105,10 +107,10 @@ public class RouteProviderTest extends AndroidTestCase {
 			fail("No origin.");
 		}
 		
-		RouteProvider routeProvider = null;
+		RouteService routeProvider = null;
 		try {
 			long start = System.currentTimeMillis();
-			routeProvider = new RouteProvider(origin, destinations, RouteOptimizePreference.PREFER_DISTANCE, false);
+			routeProvider = new RouteService(origin, destinations, RouteOptimizePreference.PREFER_DISTANCE, false);
 			Log.i(TAG, "Got a RouteProvider (with distance matrix) in " + (System.currentTimeMillis() - start) + "ms");
 		} catch (Exception e) {
 			System.err.println("Couldn't get a RouteProvider\n" + e.getMessage());
