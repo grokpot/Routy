@@ -1,9 +1,8 @@
 package org.routy;
 
-import android.location.Location;
-import android.location.LocationListener;
-import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.Menu;
 
 public class MainActivity extends Activity {
@@ -12,6 +11,10 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        
+        // Start an intent to bring up the origin screen
+        Intent originIntent = new Intent(this, OriginActivity.class);
+        startActivity(originIntent);
     }
 
     @Override

@@ -4,5 +4,11 @@
     <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_origin">OriginActivity</string>
+    
+    
+    <string name="origin_prompt">Origin</string>
+    <string name="find_user_prompt">Find Me</string>
+    <string name="please_wait">Looking</string>
 
 </resources>
