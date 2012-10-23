@@ -14,7 +14,7 @@ import android.location.Geocoder;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-public class RouteProviderTest extends AndroidTestCase {
+public class RouteServiceTest extends AndroidTestCase {
 
 	private final String TAG = "RouteProviderTest";
 	private Geocoder geocoder;
@@ -80,7 +80,7 @@ public class RouteProviderTest extends AndroidTestCase {
 			fail("No RouteProvider.");
 		}
 		
-		Route shortestRoute = routeProvider.getShortestRoute();
+		Route shortestRoute = routeProvider.getBestRoute();
 		System.out.println("Computed shortest route with " + destinations.size() + " destinations in " + (System.currentTimeMillis() - start) + "ms");
 		
 		System.out.println("Shortest route: ");

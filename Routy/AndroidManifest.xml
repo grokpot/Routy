@@ -20,23 +20,33 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
+        <!-- For MapView and Geocoder -->
+        <uses-library android:name="com.google.android.maps"/>
         
         <!-- For JUNIT Tests -->
         <uses-library android:name="android.test.runner" />
-        
+
         <activity
-            android:name=".MainActivity"
+			android:name=".MainActivity"             
             android:label="@string/title_activity_main" >
-            <intent-filter>
+            <intent-filter android:label="@string/app_name" >
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".OriginActivity"
-            android:label="@string/title_activity_origin">
+            android:label="@string/title_activity_origin" >
+        </activity>
+        <activity
+            android:name=".DestinationActivity"
+            android:label="@string/title_activity_destination" >
+        </activity>
+        <activity
+            android:name=".ResultsActivity"
+            android:label="@string/title_activity_results" >
         </activity>
     </application>
 

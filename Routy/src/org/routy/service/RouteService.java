@@ -40,7 +40,7 @@ public class RouteService {
 	}
 	
 	
-	public Route getShortestRoute() {
+	public Route getBestRoute() {
 		computeAllPossibleRoutes(destinations.size());
 		int bestDistance = -1;
 		List<Integer> bestRoute = null;
@@ -147,16 +147,6 @@ public class RouteService {
 				idx++;
 				
 			}
-			
-			/*for (int j = 0; j < distsFromDest.size(); j++) {
-				if (i != j) {
-					if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
-						distances[i+1][j] = distsFromDest.get(j).getDuration();
-					} else {
-						distances[i+1][j] = distsFromDest.get(j).getDistance();
-					}
-				}
-			}*/
 		}
 	}
 }

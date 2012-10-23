@@ -1,9 +1,14 @@
 package org.routy;
 
+import java.util.Date;
+import java.util.Locale;
+
+import org.routy.service.AddressService;
 import org.routy.service.LocationService;
 
 import android.app.Activity;
-import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -11,36 +16,62 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
+import android.widget.EditText;
 
 public class OriginActivity extends Activity {
 
 	private final String TAG = "OriginActivity";
-	
+
 	private LocationService locationService;
-	private TextView locationResultOutput;
+	private AddressService addressService;
+	
+	private LocationManager locationManager;
+	private EditText originAddressField;
 	private Button findUserButton;
+	private boolean locating;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_origin);
         
-        locationResultOutput = (TextView) findViewById(R.id.location_result);
-        
+        originAddressField = (EditText) findViewById(R.id.origin_address_field);
         findUserButton = (Button) findViewById(R.id.find_user_button);
+        resetLocateButton();
         
-        LocationManager locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationService = new LocationService(locManager, 200) {
+        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+        
+        addressService = new AddressService(new Geocoder(this, Locale.getDefault()));
+        locationService = new LocationService(locationManager, 20) {
 			
 			@Override
 			public void onLocationResult(Location location) {
-				// TODO Auto-generated method stub
-				locationResultOutput.setText("Location: " + location.getLatitude() + ", " + location.getLongitude());
-				findUserButton.setText(R.string.find_user_prompt);
+				// TODO Reverse geocode the location into an address and populate the TextEdit
+				
+				Log.v(TAG, "Location: " + 
+						   "\nLat: " + location.getLatitude() + 
+						   "\nLong: " + location.getLongitude() + 
+						   "\nProvider: " + location.getProvider() + 
+						   "\nAccuracy: " + location.getAccuracy() +
+						   "\nTime: " + new Date());
+				
+				Address address = addressService.getAddressForLocation(location);
+				if (address != null) {
+					StringBuilder addressStr = new StringBuilder();
+					for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
+						addressStr.append(address.getAddressLine(i));
+						addressStr.append(", ");
+					}
+					addressStr.append(address.getAddressLine(address.getMaxAddressLineIndex()));
+					Log.v(TAG, "Address: " + addressStr.toString());
+					originAddressField.setText(addressStr.toString());
+				} else {
+					Log.e(TAG, "Couldn't reverse geocode the address.");
+				}
 			}
 		};
     }
+    
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -49,19 +80,36 @@ public class OriginActivity extends Activity {
     }
     
     
+    private void resetLocateButton() {
+		findUserButton.setText(R.string.find_user_prompt);
+		locating = false;
+	}
+    
+    
     public void findUserLocation(View view) {
-    	Log.v(TAG, "get user location here...");
-    	// TODO Get and display user location
-    	
-    	findUserButton.setText(R.string.please_wait);
-    	findUserButton.setEnabled(false);
-    	
-    	try {
-    		locationService.getCurrentLocation();
-    	} catch (Exception e) {
-    		Log.e(TAG, e.getMessage());
-    		findUserButton.setText(R.string.find_user_prompt);
-    		findUserButton.setEnabled(true);
+    	if (!locating) {
+    		Log.v(TAG, "get user location here...");
+        	
+        	findUserButton.setText(R.string.stop_locating);
+        	
+        	try {
+        		locating = true;
+        		locationService.getCurrentLocation();
+        	} catch (Exception e) {
+        		Log.e(TAG, e.getMessage());
+        		resetLocateButton();
+        	}
+    	} else {
+    		Log.v(TAG, "stop locating");
+    		locationService.stop();
+    		resetLocateButton();
     	}
+    }
+    
+    
+    @Override
+    public void onPause() {
+    	super.onPause();
+    	locationService.stop();
     }
 }
