@@ -18,6 +18,8 @@ import android.location.Address;
  */
 public class RouteService {
 
+	private final String TAG = "RouteService";
+	
 	private DistanceMatrixService distanceProvider;
 	private Address origin;
 	private List<Address> destinations;

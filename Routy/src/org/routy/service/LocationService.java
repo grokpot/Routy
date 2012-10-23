@@ -10,9 +10,11 @@ import android.util.Log;
 
 public abstract class LocationService {
 
-	private final String TAG = "LocationProvider";
+	private final String TAG = "LocationService";
 	private final double accuracy;
 	private final LocationManager manager;
+	
+	private long start;	// XXX temporary timer for getting location fix
 	
 	public LocationService(LocationManager locManager, double accuracy) {
 		this.manager = locManager;
@@ -21,8 +23,8 @@ public abstract class LocationService {
 	
 	
 	/**
-	 * Callback method that is called whenever a location update has been 
-	 * received.
+	 * Called whenever a location update has been received.
+	 * 
 	 * @param location
 	 */
 	public abstract void onLocationResult(Location location);
@@ -36,6 +38,9 @@ public abstract class LocationService {
 	 */
 	public void getCurrentLocation() throws Exception {
 		Log.v(TAG, "getting current location");
+		
+		// XXX temporary
+		start = System.currentTimeMillis();
 		
 		// Keep requesting location updates until the error is below the threshold
 		boolean networkEnabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
@@ -93,10 +98,20 @@ public abstract class LocationService {
 		@Override
 		public void onLocationChanged(Location location) {
 			Log.v(TAG, "location changed");
-			if (location.hasAccuracy() && location.getAccuracy() <= accuracy) {
+			if (location.hasAccuracy()) {
+				Log.v(TAG, "location has accuracy: " + location.getAccuracy());
+			} else {
+				Log.v(TAG, "location has no accuracy.");
+			}
+			
+			if (/*location.hasAccuracy() && */location.getAccuracy() <= accuracy) {
 				Log.v(TAG, "Got a good fix");
+				// XXX temporary
+				Log.v(TAG, "Time to fix = " + (System.currentTimeMillis() - start) + "ms");
 				stop();
 				onLocationResult(location);
+			} else {
+				Log.v(TAG, "Location has a bad accuracy: " + location.getAccuracy());
 			}
 		}
 	};

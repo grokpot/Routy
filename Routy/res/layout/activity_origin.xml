@@ -15,14 +15,29 @@
     <EditText 
         android:id="@+id/origin_address_field" 
         android:layout_width="fill_parent" 
-        android:layout_height="100dp" 
-        android:hint="@string/address_field_hint" />
+        android:layout_height="50dp" 
+        android:layout_marginTop="10dp" 
+        android:layout_alignParentTop="true" 
+        android:hint="@string/address_field_hint" 
+        android:scrollHorizontally="true" 
+        android:singleLine="true" 
+        android:ellipsize="end" />
         
+    <Button
+        android:id="@+id/enter_destinations_button"
+        android:layout_width="96dp"
+        android:layout_height="wrap_content" 
+        android:layout_below="@id/origin_address_field" 
+        android:layout_alignParentRight="true"
+        android:text="@string/goto_destinations" 
+        android:onClick="goToDestinationsScreen" />
+    
     <Button
         android:id="@+id/find_user_button"
         android:layout_width="96dp"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
+        android:layout_height="wrap_content" 
+        android:layout_below="@id/origin_address_field"
+        android:layout_toLeftOf="@id/enter_destinations_button"
         android:onClick="findUserLocation"
         android:text="@string/find_user_prompt" />
     

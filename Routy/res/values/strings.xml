@@ -6,12 +6,15 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_origin">OriginActivity</string>
     
+    <!-- Origin Screen Stuff -->
     <string name="address_field_hint">Enter Starting Address</string>
     <string name="origin_prompt">Origin</string>
     <string name="find_user_prompt">Find Me</string>
     <string name="clear_screen">Clear</string>
     <string name="please_wait">Looking</string>
     <string name="stop_locating">Stop</string>
+    <string name="goto_destinations">Done</string>
+    
     <string name="title_activity_destination">DestinationActivity</string>
     <string name="title_activity_results">ResultsActivity</string>
 

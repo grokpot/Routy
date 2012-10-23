@@ -3,6 +3,8 @@ package org.routy;
 import java.util.Date;
 import java.util.Locale;
 
+import org.routy.exception.AmbiguousAddressException;
+import org.routy.exception.NoNetworkConnectionException;
 import org.routy.service.AddressService;
 import org.routy.service.LocationService;
 
@@ -17,6 +19,7 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 public class OriginActivity extends Activity {
 
@@ -42,7 +45,7 @@ public class OriginActivity extends Activity {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         
         addressService = new AddressService(new Geocoder(this, Locale.getDefault()));
-        locationService = new LocationService(locationManager, 20) {
+        locationService = new LocationService(locationManager, 10) {
 			
 			@Override
 			public void onLocationResult(Location location) {
@@ -65,6 +68,7 @@ public class OriginActivity extends Activity {
 					addressStr.append(address.getAddressLine(address.getMaxAddressLineIndex()));
 					Log.v(TAG, "Address: " + addressStr.toString());
 					originAddressField.setText(addressStr.toString());
+					resetLocateButton();
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
 				}
@@ -88,8 +92,6 @@ public class OriginActivity extends Activity {
     
     public void findUserLocation(View view) {
     	if (!locating) {
-    		Log.v(TAG, "get user location here...");
-        	
         	findUserButton.setText(R.string.stop_locating);
         	
         	try {
@@ -100,9 +102,26 @@ public class OriginActivity extends Activity {
         		resetLocateButton();
         	}
     	} else {
-    		Log.v(TAG, "stop locating");
     		locationService.stop();
     		resetLocateButton();
+    	}
+    }
+    
+    
+    public void goToDestinationsScreen(View view) {
+    	// TODO validate the origin address, store it, and move on to the destinations screen
+    	Log.v(TAG, "Origin: " + originAddressField.getText());
+    	
+    	// Validate the given address string
+    	try {
+    		addressService.getAddressForLocationName(originAddressField.getText().toString());
+    		Toast.makeText(this, "Origin address is good!", Toast.LENGTH_LONG).show();	// XXX temp
+    	} catch (AmbiguousAddressException e) {
+    		// TODO display a message to the user asking them to be more specific??
+    		Toast.makeText(this, e.getMessage() + " is ambiguous", Toast.LENGTH_LONG).show();	// XXX temp
+    	} catch (NoNetworkConnectionException e) {
+    		// TODO can we fire an intent for them to turn on their data connection in settings (like you can with GPS)?
+    		Toast.makeText(this, "No data connection...can't verify address.", Toast.LENGTH_LONG).show();	// XXX temp
     	}
     }
     
