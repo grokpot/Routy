@@ -1,5 +1,8 @@
 package org.routy.service;
 
+import java.util.Date;
+import java.util.List;
+
 import android.location.GpsStatus;
 import android.location.GpsStatus.Listener;
 import android.location.Location;
@@ -13,8 +16,6 @@ public abstract class LocationService {
 	private final String TAG = "LocationService";
 	private final double accuracy;
 	private final LocationManager manager;
-	
-	private long start;	// XXX temporary timer for getting location fix
 	
 	public LocationService(LocationManager locManager, double accuracy) {
 		this.manager = locManager;
@@ -39,12 +40,15 @@ public abstract class LocationService {
 	public void getCurrentLocation() throws Exception {
 		Log.v(TAG, "getting current location");
 		
-		// XXX temporary
-		start = System.currentTimeMillis();
-		
 		// Keep requesting location updates until the error is below the threshold
 		boolean networkEnabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 		boolean gpsEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		
+		Location lastKnownLoc = getLastKnownLocation();
+		if (lastKnownLoc != null) {
+			Log.v(TAG, "Last known location was good...using it.");
+			onLocationResult(lastKnownLoc);
+		}
 		
 		if (listener == null) {
 			Log.v(TAG, "Listener is null");
@@ -54,8 +58,6 @@ public abstract class LocationService {
 			if (gpsEnabled) {
 				Log.v(TAG, "gps enabled");
 	        	manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
-	        	
-//	        	manager.addGpsStatusListener(gpsStatusListener);
 	        } else {
 	        	Log.v(TAG, "gps disabled");
 	        }
@@ -75,6 +77,30 @@ public abstract class LocationService {
 	}
 	
 	
+	private Location getLastKnownLocation() {
+		long minTimeMs = 300000;
+		long bestTimeMs = 0;
+		
+		Location lastKnownLocation = null;
+		
+		List<String> providers = manager.getProviders(true);
+		for (String provider : providers) {
+			lastKnownLocation = manager.getLastKnownLocation(provider);
+			
+			// Last loc update is within our expiration time and is newer than any we've found before
+			if (((new Date()).getTime() - lastKnownLocation.getTime()) <= minTimeMs && lastKnownLocation.getTime() > bestTimeMs) {
+				
+				// Last loc has an accuracy within our threshold
+				if (lastKnownLocation.hasAccuracy() && lastKnownLocation.getAccuracy() <= accuracy) {
+					bestTimeMs = lastKnownLocation.getTime();
+				}
+			}
+		}
+		
+		return lastKnownLocation;
+	}
+
+
 	private LocationListener listener = new LocationListener() {
 		
 		@Override
@@ -97,7 +123,7 @@ public abstract class LocationService {
 		
 		@Override
 		public void onLocationChanged(Location location) {
-			Log.v(TAG, "location changed");
+			Log.v(TAG, "location changed via " + location.getProvider());
 			if (location.hasAccuracy()) {
 				Log.v(TAG, "location has accuracy: " + location.getAccuracy());
 			} else {
@@ -106,8 +132,6 @@ public abstract class LocationService {
 			
 			if (/*location.hasAccuracy() && */location.getAccuracy() <= accuracy) {
 				Log.v(TAG, "Got a good fix");
-				// XXX temporary
-				Log.v(TAG, "Time to fix = " + (System.currentTimeMillis() - start) + "ms");
 				stop();
 				onLocationResult(location);
 			} else {
