@@ -61,16 +61,19 @@ public class OriginActivity extends Activity {
 				Address address = addressService.getAddressForLocation(location);
 				if (address != null) {
 					StringBuilder addressStr = new StringBuilder();
+					
 					for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
 						addressStr.append(address.getAddressLine(i));
 						addressStr.append(", ");
 					}
 					addressStr.append(address.getAddressLine(address.getMaxAddressLineIndex()));
+					
 					Log.v(TAG, "Address: " + addressStr.toString());
 					originAddressField.setText(addressStr.toString());
 					resetLocateButton();
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
+					// TODO Display an error message?  "Sorry, Routy couldn't find you.  Would you mind typing in your current address?"
 				}
 			}
 		};
@@ -114,8 +117,12 @@ public class OriginActivity extends Activity {
     	
     	// Validate the given address string
     	try {
-    		addressService.getAddressForLocationName(originAddressField.getText().toString());
-    		Toast.makeText(this, "Origin address is good!", Toast.LENGTH_LONG).show();	// XXX temp
+    		Address originAddress = addressService.getAddressForLocationName(originAddressField.getText().toString());
+    		if (originAddress != null) {
+    			Toast.makeText(this, "Origin address is good!", Toast.LENGTH_LONG).show();	// XXX temp
+    		} else {
+    			Toast.makeText(this, "Bad origin address.", Toast.LENGTH_LONG).show();	// XXX temp
+    		}
     	} catch (AmbiguousAddressException e) {
     		// TODO display a message to the user asking them to be more specific??
     		Toast.makeText(this, e.getMessage() + " is ambiguous", Toast.LENGTH_LONG).show();	// XXX temp

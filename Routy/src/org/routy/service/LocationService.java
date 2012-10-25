@@ -40,40 +40,35 @@ public abstract class LocationService {
 	public void getCurrentLocation() throws Exception {
 		Log.v(TAG, "getting current location");
 		
-		// Keep requesting location updates until the error is below the threshold
-		boolean networkEnabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
-		boolean gpsEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-		
 		Location lastKnownLoc = getLastKnownLocation();
 		if (lastKnownLoc != null) {
 			Log.v(TAG, "Last known location was good...using it.");
 			onLocationResult(lastKnownLoc);
-		}
-		
-		if (listener == null) {
-			Log.v(TAG, "Listener is null");
-		}
-		
-		if (networkEnabled || gpsEnabled) {
-			if (gpsEnabled) {
-				Log.v(TAG, "gps enabled");
-	        	manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
-	        } else {
-	        	Log.v(TAG, "gps disabled");
-	        }
-	        
-	        if (networkEnabled) {
-	        	Log.v(TAG, "network enabled");
-	        	manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
-	        } else {
-	        	Log.v(TAG, "network disabled");
-	        }
 		} else {
-			Log.e(TAG, "No network providers.");
-			throw new Exception("No location providers enabled.");
+			// Keep requesting location updates until the error is below the threshold
+			boolean networkEnabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+			boolean gpsEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+			
+			if (networkEnabled || gpsEnabled) {
+				if (gpsEnabled) {
+					Log.v(TAG, "gps enabled");
+		        	manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+		        } else {
+		        	Log.v(TAG, "gps disabled");
+		        }
+		        
+		        if (networkEnabled) {
+		        	Log.v(TAG, "network enabled");
+		        	manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
+		        } else {
+		        	Log.v(TAG, "network disabled");
+		        }
+			} else {
+				Log.e(TAG, "No network providers.");
+				throw new Exception("No location providers enabled.");
+			}
 		}
 		
-        
 	}
 	
 	
@@ -105,19 +100,16 @@ public abstract class LocationService {
 		
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-			// TODO Auto-generated method stub
 			Log.v(TAG, provider + " provider status changed to " + status);
 		}
 		
 		@Override
 		public void onProviderEnabled(String provider) {
-			// TODO Auto-generated method stub
 			Log.v(TAG, provider + " just enabled");
 		}
 		
 		@Override
 		public void onProviderDisabled(String provider) {
-			// TODO Auto-generated method stub
 			Log.v(TAG, provider + " just disabled");
 		}
 		
@@ -130,7 +122,7 @@ public abstract class LocationService {
 				Log.v(TAG, "location has no accuracy.");
 			}
 			
-			if (/*location.hasAccuracy() && */location.getAccuracy() <= accuracy) {
+			if (location.getAccuracy() <= accuracy) {
 				Log.v(TAG, "Got a good fix");
 				stop();
 				onLocationResult(location);
