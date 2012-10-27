@@ -150,6 +150,7 @@ public class DistanceMatrixService {
 		
 		Log.d(TAG, "DIST MAT URL: " + url.toString());
 		
+		// XXX Using this method: http://docs.oracle.com/javase/tutorial/networking/urls/readingWriting.html
 		URL distMatUrl = new URL(url.toString());
 		URLConnection conn = distMatUrl.openConnection();
 		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));

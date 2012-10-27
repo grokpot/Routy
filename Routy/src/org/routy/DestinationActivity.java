@@ -8,8 +8,10 @@ import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoNetworkConnectionException;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
+import org.routy.model.RouteRequest;
 import org.routy.service.AddressService;
 import org.routy.service.RouteService;
+import org.routy.task.CalculateRouteTask;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -83,18 +85,28 @@ public class DestinationActivity extends Activity {
         	// TODO: fill in last two parameters of RouteService instantiation with user choice
         	// Instantiates a Route object with validated addresses and calls ResultsActivity
         	try {
-				RouteService routeService = new RouteService(originAddress, validatedAddresses, RouteOptimizePreference.PREFER_DURATION, false);
-				Route route = routeService.getBestRoute();
-    			Toast.makeText(mContext, "Route generated!", Toast.LENGTH_LONG).show();	// XXX temp
+				/*RouteService routeService = new RouteService(originAddress, validatedAddresses, RouteOptimizePreference.PREFER_DURATION, false);
+				Route route = routeService.getBestRoute();		// TODO this needs to be done in an AsyncTask (otherwise NetworkOnMainThreadException)*/
+        		
+        		CalculateRouteTask task = new CalculateRouteTask() {
+					
+					@Override
+					public void onRouteCalculated(Route route) {
+						Toast.makeText(mContext, "Route generated!", Toast.LENGTH_LONG).show();	// XXX temp
+						
+						// Call ResultsActivity activity
+		    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
+		    			Bundle b = new Bundle();
+		    			// TODO: Route.getBundle()
+		    			b.putSerializable("addresses", (Serializable) route.getAddresses());
+		    			b.putInt("distance", route.getTotalDistance());
+		    			resultsIntent.putExtra("route", b);
+		    			startActivity(resultsIntent);
+					}
+				};
 				
-				// Call ResultsActivity activity
-    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-    			Bundle b = new Bundle();
-    			// TODO: Route.getBundle()
-    			b.putSerializable("addresses", (Serializable) route.getAddresses());
-    			b.putInt("distance", route.getTotalDistance());
-    			resultsIntent.putExtra("route", b);
-    			startActivity(resultsIntent);
+				task.execute(new RouteRequest(originAddress, validatedAddresses, false));
+				
 			} catch (Exception e) {
 				// TODO error handling
 				e.printStackTrace();
