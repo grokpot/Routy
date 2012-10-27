@@ -3,12 +3,95 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
-    <TextView
+    <EditText
+        android:id="@+id/edittext_address0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="30dp"
+        android:ems="10"
+        android:inputType="textPostalAddress"
+        android:text="@string/test_destination_1" />
+
+    <Button
+        android:id="@+id/button1"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/edittext_address0"
+        android:layout_alignBottom="@+id/edittext_address0"
+        android:layout_alignParentRight="true"
+        android:text="@string/remove_destination" />
+
+    <EditText
+        android:id="@+id/edittext_address1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/button1"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:inputType="textPostalAddress"
+        android:text="@string/test_destination_2" />
+
+    <Button
+        android:id="@+id/Button01"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/edittext_address1"
+        android:layout_alignBottom="@id/edittext_address1"
+        android:layout_alignParentRight="true"
+        android:text="@string/remove_destination" />
+
+    <EditText
+        android:id="@+id/edittext_address2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/Button01"
+        android:layout_marginTop="20dp"
+        android:ems="10"
+        android:inputType="textPostalAddress"
+        android:text="@string/test_destination_3" />
+
+    <Button
+        android:id="@+id/Button02"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/edittext_address2"
+        android:layout_alignBottom="@+id/edittext_address2"
+        android:layout_alignParentRight="true"
+        android:text="@string/remove_destination" />
+
+    <Button
+        android:id="@+id/button_route_it"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:text="@string/hello_world"
-        tools:context=".DestinationActivity" />
+        android:layout_marginBottom="84dp"
+        android:text="@string/route_it" />
+
+    <Button
+        android:id="@+id/button_origin_modify"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_route_it"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="19dp"
+        android:text="@string/origin_modify" />
+
+    <Button
+        android:id="@+id/button_destination_add"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/button_origin_modify"
+        android:layout_centerHorizontal="true"
+        android:text="@string/destination_add" />
 
 </RelativeLayout>

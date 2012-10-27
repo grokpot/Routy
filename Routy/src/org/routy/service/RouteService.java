@@ -20,7 +20,7 @@ public class RouteService {
 
 	private final String TAG = "RouteService";
 	
-	private DistanceMatrixService distanceProvider;
+	private DistanceMatrixService distanceService;
 	private Address origin;
 	private List<Address> destinations;
 	private RouteOptimizePreference preference;
@@ -32,7 +32,7 @@ public class RouteService {
 	
 	
 	public RouteService(Address origin, List<Address> destinations, RouteOptimizePreference preference, boolean sensor) throws Exception {
-		this.distanceProvider = new DistanceMatrixService();
+		this.distanceService = new DistanceMatrixService();
 		this.origin = origin;
 		this.destinations = destinations;
 		this.preference = preference;
@@ -41,7 +41,11 @@ public class RouteService {
 		loadDistancesMatrix();
 	}
 	
-	
+	/**
+	 * Finds the best route for a List of Address
+	 * 
+	 * @return {@link Route} object
+	 */
 	public Route getBestRoute() {
 		computeAllPossibleRoutes(destinations.size());
 		int bestDistance = -1;
@@ -66,7 +70,13 @@ public class RouteService {
 		return indicesToRoute(bestRoute, bestDistance);
 	}
 	
-	
+	/**
+	 * A helper function for <code>getBestRoute()</code>
+	 * 
+	 * @param routeIndices - computed in <code>getBestRoute()</code>
+	 * @param distance - computed in <code>getBestRoute()</code>
+	 * @return {@link Route} object
+	 */
 	private Route indicesToRoute(List<Integer> routeIndices, int distance) {
 		Route route = new Route();
 		route.addAddress(origin);
@@ -117,7 +127,7 @@ public class RouteService {
 		distances = new int[rows][cols];
 		
 		// Origin to each destination
-		List<Distance> distsFromOrigin = distanceProvider.getDistanceMatrix(origin, destinations, sensor);
+		List<Distance> distsFromOrigin = distanceService.getDistanceMatrix(origin, destinations, sensor);
 		for (int i = 0; i < distsFromOrigin.size(); i++) {
 			if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
 				distances[0][i] = distsFromOrigin.get(i).getDuration();
@@ -132,7 +142,7 @@ public class RouteService {
 			List<Address> otherDests = new ArrayList<Address>(destinations);
 			otherDests.remove(i);
 			
-			distsFromDest = distanceProvider.getDistanceMatrix(destinations.get(i), otherDests, sensor);
+			distsFromDest = distanceService.getDistanceMatrix(destinations.get(i), otherDests, sensor);
 			
 			int idx = 0;
 			int entered = 0;

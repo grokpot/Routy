@@ -98,22 +98,22 @@ public abstract class LocationService {
 
 	private LocationListener listener = new LocationListener() {
 		
-		@Override
+//		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			Log.v(TAG, provider + " provider status changed to " + status);
 		}
 		
-		@Override
+//		@Override
 		public void onProviderEnabled(String provider) {
 			Log.v(TAG, provider + " just enabled");
 		}
 		
-		@Override
+//		@Override
 		public void onProviderDisabled(String provider) {
 			Log.v(TAG, provider + " just disabled");
 		}
 		
-		@Override
+//		@Override
 		public void onLocationChanged(Location location) {
 			Log.v(TAG, "location changed via " + location.getProvider());
 			if (location.hasAccuracy()) {
@@ -135,7 +135,7 @@ public abstract class LocationService {
 	
 	private GpsStatus.Listener gpsStatusListener = new Listener() {
 		
-		@Override
+//		@Override
 		public void onGpsStatusChanged(int event) {
 			Log.v(TAG, "GPS Status Changed: " + event);
 		}

@@ -7,7 +7,7 @@ import android.location.Address;
 
 public class Route {
 	
-	private List<Address> addresses;
+	private ArrayList<Address> addresses;
 	private int distance;
 	
 	public Route() {
@@ -15,7 +15,7 @@ public class Route {
 		this.distance = 0;
 	}
 	
-	public List<Address> getAddresses() {
+	public ArrayList<Address> getAddresses() {
 		return addresses;
 	}
 	

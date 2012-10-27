@@ -9,6 +9,7 @@ import org.routy.service.AddressService;
 import org.routy.service.LocationService;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -120,6 +121,9 @@ public class OriginActivity extends Activity {
     		Address originAddress = addressService.getAddressForLocationName(originAddressField.getText().toString());
     		if (originAddress != null) {
     			Toast.makeText(this, "Origin address is good!", Toast.LENGTH_LONG).show();	// XXX temp
+    			Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
+    			destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
+    			startActivity(destinationIntent);
     		} else {
     			Toast.makeText(this, "Bad origin address.", Toast.LENGTH_LONG).show();	// XXX temp
     		}
