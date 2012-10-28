@@ -96,11 +96,8 @@ public class DestinationActivity extends Activity {
 						
 						// Call ResultsActivity activity
 		    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-		    			Bundle b = new Bundle();
-		    			// TODO: Route.getBundle()
-		    			b.putSerializable("addresses", (Serializable) route.getAddresses());
-		    			b.putInt("distance", route.getTotalDistance());
-		    			resultsIntent.putExtra("route", b);
+		    			resultsIntent.putExtra("addresses", (Serializable) route.getAddresses());
+		    			resultsIntent.putExtra("distance", route.getTotalDistance());
 		    			startActivity(resultsIntent);
 					}
 				};

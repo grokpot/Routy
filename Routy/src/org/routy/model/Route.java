@@ -15,6 +15,11 @@ public class Route {
 		this.distance = 0;
 	}
 	
+	public Route(ArrayList<Address> addresses, int distance) {
+		this.addresses = addresses;
+		this.distance = distance;
+	}
+	
 	public ArrayList<Address> getAddresses() {
 		return addresses;
 	}
