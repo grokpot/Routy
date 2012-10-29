@@ -6,6 +6,10 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_origin">OriginActivity</string>
     
+    <!-- Global -->
+    <string name="error_message_title">Ruh-Roh!</string>
+    <string name="default_error_message">Something went wrong, but don\'t worry, it wasn\'t your fault.</string>
+    
     <!-- Origin Screen Stuff -->
     <string name="address_field_hint">Enter Starting Address</string>
     <string name="origin_prompt">Origin</string>

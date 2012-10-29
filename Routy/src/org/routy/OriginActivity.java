@@ -6,16 +6,19 @@ import java.util.Locale;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.NoNetworkConnectionException;
+import org.routy.fragment.ErrorDialog;
 import org.routy.service.AddressService;
 import org.routy.service.LocationService;
 
-import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -23,7 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class OriginActivity extends Activity {
+public class OriginActivity extends FragmentActivity {
 
 	private final String TAG = "OriginActivity";
 
@@ -35,10 +38,14 @@ public class OriginActivity extends Activity {
 	private Button findUserButton;
 	private boolean locating;
 	
+	private Context context;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_origin);
+        
+        context = this;
         
         originAddressField = (EditText) findViewById(R.id.origin_address_field);
         findUserButton = (Button) findViewById(R.id.find_user_button);
@@ -47,7 +54,12 @@ public class OriginActivity extends Activity {
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         
         addressService = new AddressService(new Geocoder(this, Locale.getDefault()));
-        locationService = new LocationService(locationManager, 10) {
+        locationService = initLocationService();
+    }
+    
+    
+    LocationService initLocationService() {
+    	return new LocationService(locationManager, 10) {
 			
 			@Override
 			public void onLocationResult(Location location) {
@@ -74,7 +86,8 @@ public class OriginActivity extends Activity {
 					resetLocateButton();
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
-					// TODO Display an error message?  "Sorry, Routy couldn't find you.  Would you mind typing in your current address?"
+					// TODO Make this an alert dialog
+					Toast.makeText(context, "Routy couldn't find an address for your location.  Would you mind typing it in?", Toast.LENGTH_LONG).show();
 				}
 			}
 		};
@@ -116,6 +129,10 @@ public class OriginActivity extends Activity {
     	// validate the origin address, store it, and move on to the destinations screen
     	Log.v(TAG, "Origin: " + originAddressField.getText());
     	
+    	if (originAddressField.getText() == null || originAddressField.getText().length() == 0) {
+    		showErrorDialog("Please enter an origin address or click Find Me and Routy will locate you.");
+    	}
+    	
     	// Validate the given address string
     	try {
     		Address originAddress = addressService.getAddressForLocationName(originAddressField.getText().toString());
@@ -134,6 +151,13 @@ public class OriginActivity extends Activity {
     		// TODO can we fire an intent for them to turn on their data connection in settings (like you can with GPS)?
     		Toast.makeText(this, "No data connection...can't verify address.", Toast.LENGTH_LONG).show();	// XXX temp
     	}
+    }
+    
+    
+    void showErrorDialog(String message) {
+    	FragmentManager fm = getSupportFragmentManager();
+    	ErrorDialog errorDialog = new ErrorDialog(message);
+    	errorDialog.show(fm, "fragment_error_message");
     }
     
     
