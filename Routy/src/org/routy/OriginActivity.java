@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import org.routy.exception.AmbiguousAddressException;
+import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.NoNetworkConnectionException;
 import org.routy.service.AddressService;
 import org.routy.service.LocationService;
@@ -50,8 +51,7 @@ public class OriginActivity extends Activity {
 			
 			@Override
 			public void onLocationResult(Location location) {
-				// TODO Reverse geocode the location into an address and populate the TextEdit
-				
+				// Reverse geocode the location into an address and populate the TextEdit
 				Log.v(TAG, "Location: " + 
 						   "\nLat: " + location.getLatitude() + 
 						   "\nLong: " + location.getLongitude() + 
@@ -101,12 +101,9 @@ public class OriginActivity extends Activity {
         	try {
         		locating = true;
         		locationService.getCurrentLocation();
-        	} catch (NoNetworkConnectionException e) {
-        		/*if (e.getMessage() == null) {
-        			Log.e(TAG, "No network or GPS connection.");
-        		}
-//        		Log.e(TAG, e.getMessage());
-*/        		resetLocateButton();
+        	} catch (NoLocationProviderException e) {
+        		Log.e(TAG, e.getMessage());
+        		resetLocateButton();
         	}
     	} else {
     		locationService.stop();
@@ -116,7 +113,7 @@ public class OriginActivity extends Activity {
     
     
     public void goToDestinationsScreen(View view) {
-    	// TODO validate the origin address, store it, and move on to the destinations screen
+    	// validate the origin address, store it, and move on to the destinations screen
     	Log.v(TAG, "Origin: " + originAddressField.getText());
     	
     	// Validate the given address string

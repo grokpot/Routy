@@ -3,6 +3,7 @@ package org.routy.service;
 import java.util.Date;
 import java.util.List;
 
+import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.NoNetworkConnectionException;
 
 import android.location.GpsStatus;
@@ -35,11 +36,13 @@ public abstract class LocationService {
 	
 	/**
 	 * Gets the BEST fix on the user's current location based on 
-	 * coarse and fine locations provided by Android.
+	 * coarse and fine locations provided by Android.  Uses the 
+	 * last known location in case other apps/services on the phone 
+	 * have recently gotten a location fix within the accuracy threshold.
 	 * 
 	 * @throws	NoNetworkConnectionException if there are no location providers (network or GPS) enabled
 	 */
-	public void getCurrentLocation() throws NoNetworkConnectionException {
+	public void getCurrentLocation() throws NoLocationProviderException {
 		Log.v(TAG, "getting current location");
 		
 		Location lastKnownLoc = getLastKnownLocation();
@@ -67,7 +70,7 @@ public abstract class LocationService {
 		        }
 			} else {
 				Log.e(TAG, "No network providers.");
-				throw new NoNetworkConnectionException("No location providers enabled.");
+				throw new NoLocationProviderException("No location providers enabled.");
 			}
 		}
 		
