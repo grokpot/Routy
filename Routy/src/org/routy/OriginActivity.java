@@ -101,9 +101,12 @@ public class OriginActivity extends Activity {
         	try {
         		locating = true;
         		locationService.getCurrentLocation();
-        	} catch (Exception e) {
-        		Log.e(TAG, e.getMessage());
-        		resetLocateButton();
+        	} catch (NoNetworkConnectionException e) {
+        		/*if (e.getMessage() == null) {
+        			Log.e(TAG, "No network or GPS connection.");
+        		}
+//        		Log.e(TAG, e.getMessage());
+*/        		resetLocateButton();
         	}
     	} else {
     		locationService.stop();

@@ -3,6 +3,8 @@ package org.routy.service;
 import java.util.Date;
 import java.util.List;
 
+import org.routy.exception.NoNetworkConnectionException;
+
 import android.location.GpsStatus;
 import android.location.GpsStatus.Listener;
 import android.location.Location;
@@ -35,9 +37,9 @@ public abstract class LocationService {
 	 * Gets the BEST fix on the user's current location based on 
 	 * coarse and fine locations provided by Android.
 	 * 
-	 * @throws	Exception if there are no location providers (network or GPS) enabled
+	 * @throws	NoNetworkConnectionException if there are no location providers (network or GPS) enabled
 	 */
-	public void getCurrentLocation() throws Exception {
+	public void getCurrentLocation() throws NoNetworkConnectionException {
 		Log.v(TAG, "getting current location");
 		
 		Location lastKnownLoc = getLastKnownLocation();
@@ -65,7 +67,7 @@ public abstract class LocationService {
 		        }
 			} else {
 				Log.e(TAG, "No network providers.");
-				throw new Exception("No location providers enabled.");
+				throw new NoNetworkConnectionException("No location providers enabled.");
 			}
 		}
 		
@@ -82,12 +84,14 @@ public abstract class LocationService {
 		for (String provider : providers) {
 			lastKnownLocation = manager.getLastKnownLocation(provider);
 			
-			// Last loc update is within our expiration time and is newer than any we've found before
-			if (((new Date()).getTime() - lastKnownLocation.getTime()) <= minTimeMs && lastKnownLocation.getTime() > bestTimeMs) {
-				
-				// Last loc has an accuracy within our threshold
-				if (lastKnownLocation.hasAccuracy() && lastKnownLocation.getAccuracy() <= accuracy) {
-					bestTimeMs = lastKnownLocation.getTime();
+			if (lastKnownLocation != null) {
+				// Last loc update is within our expiration time and is newer than any we've found before
+				if (((new Date()).getTime() - lastKnownLocation.getTime()) <= minTimeMs && lastKnownLocation.getTime() > bestTimeMs) {
+					
+					// Last loc has an accuracy within our threshold
+					if (lastKnownLocation.hasAccuracy() && lastKnownLocation.getAccuracy() <= accuracy) {
+						bestTimeMs = lastKnownLocation.getTime();
+					}
 				}
 			}
 		}
