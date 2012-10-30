@@ -65,7 +65,6 @@ public class ErrorDialog extends DialogFragment {
 		builder.setView(view);
 		builder.setCancelable(true);
 		builder.setPositiveButton("OK", new OnClickListener() {
-			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
 			}
