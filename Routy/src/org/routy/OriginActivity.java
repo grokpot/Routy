@@ -7,6 +7,7 @@ import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.NoNetworkConnectionException;
 import org.routy.fragment.ErrorDialog;
+import org.routy.model.AppProperties;
 import org.routy.service.AddressService;
 import org.routy.service.LocationService;
 
@@ -59,7 +60,7 @@ public class OriginActivity extends FragmentActivity {
     
     
     LocationService initLocationService() {
-    	return new LocationService(locationManager, 10) {
+    	return new LocationService(locationManager, AppProperties.LOCATION_ACCURACY_THRESHOLD) {
 			
 			@Override
 			public void onLocationResult(Location location) {
