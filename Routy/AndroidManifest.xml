@@ -29,7 +29,8 @@
 
         <activity
 			android:name=".MainActivity"             
-            android:label="@string/app_name" >
+            android:label="@string/app_name" 
+            android:screenOrientation="portrait" >
             <intent-filter android:label="@string/app_name" >
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,15 +39,18 @@
         </activity>
         <activity
             android:name=".OriginActivity"
-            android:label="@string/title_activity_origin" >
+            android:label="@string/title_activity_origin" 
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".DestinationActivity"
-            android:label="@string/title_activity_destination" >
+            android:label="@string/title_activity_destination" 
+            android:screenOrientation="portrait" >
         </activity>
         <activity
             android:name=".ResultsActivity"
-            android:label="@string/title_activity_results" >
+            android:label="@string/title_activity_results" 
+            android:screenOrientation="portrait" >
         </activity>
     </application>
 
