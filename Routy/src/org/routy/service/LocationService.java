@@ -20,6 +20,7 @@ public abstract class LocationService {
 	private final double accuracy;
 	private final LocationManager manager;
 	
+	
 	public LocationService(LocationManager locManager, double accuracy) {
 		this.manager = locManager;
 		this.accuracy = accuracy;

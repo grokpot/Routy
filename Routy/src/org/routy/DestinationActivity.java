@@ -7,25 +7,23 @@ import java.util.Locale;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoNetworkConnectionException;
 import org.routy.model.Route;
-import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
 import org.routy.service.AddressService;
-import org.routy.service.RouteService;
 import org.routy.task.CalculateRouteTask;
 
+import android.content.Context;
+import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class DestinationActivity extends Activity {
+public class DestinationActivity extends FragmentActivity {
 	
 	Context mContext;
 	Address originAddress;

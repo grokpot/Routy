@@ -17,6 +17,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
@@ -31,6 +32,8 @@ public class OriginActivity extends FragmentActivity {
 
 	private final String TAG = "OriginActivity";
 
+	private FragmentActivity context;
+	
 	private LocationService locationService;
 	private AddressService addressService;
 	
@@ -44,6 +47,8 @@ public class OriginActivity extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_origin);
+        
+        context = this;
         
         originAddressField = (EditText) findViewById(R.id.origin_address_field);
         findUserButton = (Button) findViewById(R.id.find_user_button);
@@ -73,9 +78,8 @@ public class OriginActivity extends FragmentActivity {
 				
 				try {
 					address = addressService.getAddressForLocation(location);
-					
 				} catch (NoNetworkConnectionException e) { 
-					showErrorDialog("Routy needs some sort of internet connection.  Please try again when you've got one.");
+					AppError.showErrorDialog(context, "Routy needs some sort of internet connection.  Please try again when you've got one.");
 				} catch (AmbiguousAddressException e) {
 					if (e.getAddresses().size() > 0) {
 						address = e.getFirstAddress();
@@ -96,7 +100,7 @@ public class OriginActivity extends FragmentActivity {
 					resetLocateButton();
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
-					showErrorDialog("Routy couldn't find an address for your location.  Would you mind typing it in?");
+					AppError.showErrorDialog(context, "Routy's embarrassed he couldn't find an address for your location.  Would you mind typing it in?");
 				}
 			}
 		};
@@ -139,35 +143,40 @@ public class OriginActivity extends FragmentActivity {
     	Log.v(TAG, "Origin: " + originAddressField.getText());
     	
     	if (originAddressField.getText() == null || originAddressField.getText().length() == 0) {
-    		showErrorDialog("Please enter an origin address or click Find Me and Routy will locate you.");
+    		AppError.showErrorDialog(this, "Please enter an origin address or click Find Me and Routy will locate you.");
     	}
     	
     	// Validate the given address string
+    	Address originAddress = null;
     	try {
-    		Address originAddress = addressService.getAddressForLocationName(originAddressField.getText().toString());
-    		if (originAddress != null) {
-    			Toast.makeText(this, "Origin address is good!", Toast.LENGTH_LONG).show();	// XXX temp
-    			Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
-    			destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
-    			startActivity(destinationIntent);
-    		} else {
-    			Toast.makeText(this, "Bad origin address.", Toast.LENGTH_LONG).show();	// XXX temp
-    		}
+    		originAddress = addressService.getAddressForLocationName(originAddressField.getText().toString());
     	} catch (AmbiguousAddressException e) {
-    		// TODO display a message to the user asking them to be more specific??
-    		Toast.makeText(this, e.getMessage() + " is ambiguous", Toast.LENGTH_LONG).show();	// XXX temp
+    		Log.d(TAG, "Got more than one result for the given origin address.  I'm using the first one.");
+    		originAddress = e.getFirstAddress();
     	} catch (NoNetworkConnectionException e) {
     		// TODO can we fire an intent for them to turn on their data connection in settings (like you can with GPS)?
     		Toast.makeText(this, "No data connection...can't verify address.", Toast.LENGTH_LONG).show();	// XXX temp
+    		
+    		/*WifiManager wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+    		wifiMgr.setWifiEnabled(true);*/
     	}
+    	
+    	if (originAddress != null) {
+			Toast.makeText(this, "Origin address is good!", Toast.LENGTH_LONG).show();	// XXX temp
+			Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
+			destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
+			startActivity(destinationIntent);
+		} else {
+			Toast.makeText(this, "Bad origin address.", Toast.LENGTH_LONG).show();	// XXX temp
+		}
     }
     
     
-    void showErrorDialog(String message) {
+    /*void showErrorDialog(String message) {
     	FragmentManager fm = getSupportFragmentManager();
     	ErrorDialog errorDialog = new ErrorDialog(message);
     	errorDialog.show(fm, "fragment_error_message");
-    }
+    }*/
     
     
     @Override
