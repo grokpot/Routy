@@ -41,60 +41,6 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 	}
 	
 	
-	/*private List<Route> getRoutes(Address origin, List<Address> destinations, Route route) throws Exception {
-		if (destinations.size() == 0) {
-			return new ArrayList<Route>();
-		}
-		
-		List<Distance> distances = distanceMatrixService.getDistanceMatrix(origin, destinations, false);
-		
-		return new ArrayList<Route>();
-	}*/
-
-
-	/*@Override
-	protected Address doInBackground(RouteRequest... requests) {
-		Log.i(TAG, "Calculating route...");
-		RouteRequest request = requests[0];
-		DistanceMatrixProvider provider = new DistanceMatrixProvider();
-		List<Address> destinations = request.getDestinations();
-		List<Address> route = new ArrayList<Address>();
-		
-		Log.d(TAG, "[route] size = " + route.size() + " - [destinations] size = " + destinations.size());
-		
-		try {
-			// Calculate route by finding next consecutive nearest destination
-			Address start = request.getOrigin();
-			Address end = null;
-			
-			route.add(start);
-			
-			do {
-				Log.d(TAG, "[route] size = " + route.size() + " - [destinations] size = " + destinations.size());
-				end = provider.getClosestDestination(start, destinations, request.isSensor());
-				destinations.remove(end);		// XXX remove from List might be costly...
-				route.add(end);
-				start = end;
-			} while (destinations.size() > 1);
-			
-			assert (destinations.size() == 1);
-			route.add(destinations.get(0));
-			
-			Log.i(TAG, "Calculated route: ");
-			for (int i = 0; i < route.size(); i++) {
-				Log.i(TAG, route.get(i).getAddressLine(0));
-			}
-			
-			return request.getOrigin();
-//			return provider.getClosestDestination(request.getOrigin(), request.getDestinations(), request.isSensor());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return null;
-	}*/
-	
-	
 	@Override
 	protected void onPostExecute(Route result) {
 		if (result != null) {

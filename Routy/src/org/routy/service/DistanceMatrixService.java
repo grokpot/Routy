@@ -11,6 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.routy.model.AppProperties;
 import org.routy.model.Distance;
 
 import android.location.Address;
@@ -22,8 +23,6 @@ public class DistanceMatrixService {
 	
 	public static final int PREFER_DISTANCE = 0;
 	public static final int PREFER_DURATION = 1;
-	
-	private final String G_DISTANCE_MATRIX_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?";
 	
 	
 	/**
@@ -127,7 +126,7 @@ public class DistanceMatrixService {
 	 */
 	private String getJSONResponse(Address origin, List<Address> destinations, boolean sensor) throws Exception {
 		// Add origin
-		StringBuilder url = new StringBuilder(G_DISTANCE_MATRIX_URL);
+		StringBuilder url = new StringBuilder(AppProperties.G_DISTANCE_MATRIX_URL);
 		url.append("origins=");
 		url.append(origin.getLatitude());
 		url.append(",");

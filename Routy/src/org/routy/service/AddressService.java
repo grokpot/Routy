@@ -46,7 +46,7 @@ public class AddressService {
 	
 	
 	/**
-	 * Tries to get an {@link Address} from a location name.
+	 * Tries to get an {@link Address} from a location string.
 	 * 
 	 * @param locationName
 	 * @return					the {@link Address} obtained using the given location name and <code>null</code> 
@@ -54,7 +54,7 @@ public class AddressService {
 	 * 
 	 * @throws IllegalArgumentException		if the given <code>locationName</code> returns more than 1 result (is ambiguous)
 	 */
-	public Address getAddressForLocationName(String locationName) throws AmbiguousAddressException, NoNetworkConnectionException {
+	public Address getAddressForLocationString(String locationName) throws AmbiguousAddressException, NoNetworkConnectionException {
 		if (locationName != null) {
 			try {
 				if (!Geocoder.isPresent()) {
@@ -101,7 +101,7 @@ public class AddressService {
 	public Address getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, NoNetworkConnectionException {
 		try {
 			if (!Geocoder.isPresent()) {
-				
+				return getAddressViaWeb(latitude, longitude);
 			} else {
 				return getAddressViaGeocoder(latitude, longitude);
 			}
@@ -116,6 +116,15 @@ public class AddressService {
 	}
 	
 	
+	/**
+	 * Gets an {@link Address} object from a given location string.  This can be used to verify user input address strings.
+	 * 
+	 * TODO Implement the Google Places API here in case the location string is a place name, not an address
+	 * @param locationName
+	 * @return
+	 * @throws IOException
+	 * @throws AmbiguousAddressException
+	 */
 	Address getAddressViaGeocoder(String locationName) throws IOException, AmbiguousAddressException {
 		List<Address> results = geocoder.getFromLocationName(locationName, 2);
 		
@@ -131,6 +140,15 @@ public class AddressService {
 	}
 	
 	
+	/**
+	 * Reverse geocodes the given GPS coordinates into an {@link Address} using the Geocoder backend on the device
+	 * .
+	 * @param latitude
+	 * @param longitude
+	 * @return
+	 * @throws IOException
+	 * @throws AmbiguousAddressException
+	 */
 	Address getAddressViaGeocoder(double latitude, double longitude) throws IOException, AmbiguousAddressException {
 		List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
 		
@@ -148,12 +166,13 @@ public class AddressService {
 	
 	/**
 	 * Makes a call to the Google Geocoding API to get an address for the given location name.
+	 * 
 	 * @param locationName
 	 * @return
 	 */
 	Address getAddressViaWeb(String locationName) /*throws AmbiguousAddressException*/ {		// TODO make this throw an exception if it gets more than 1 address
 		if (locationName != null && locationName.length() > 0) {
-			StringBuilder geoUrl = new StringBuilder(AppProperties.GOOGLE_GEOCODING_API_URL);
+			StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
 			geoUrl.append("address=");
 			geoUrl.append(locationName.replaceAll(" ", "+"));
 			geoUrl.append("&sensor=");
@@ -169,12 +188,13 @@ public class AddressService {
 	
 	/**
 	 * Makes a call to the Google Geocoding API to get an address for the given latitude/longitude coordinates.
+	 * 
 	 * @param latitude
 	 * @param longitude
 	 * @return
 	 */
-	Address getAddressForCoordinatesWeb(double latitude, double longitude) /*throws AmbiguousAddressException*/ {	// TODO make this throw an exception if it gets more than 1 address
-		StringBuilder geoUrl = new StringBuilder(AppProperties.GOOGLE_GEOCODING_API_URL);
+	Address getAddressViaWeb(double latitude, double longitude) /*throws AmbiguousAddressException*/ {	// TODO make this throw an exception if it gets more than 1 address
+		StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
 		geoUrl.append("latlng=");
 		geoUrl.append(latitude);
 		geoUrl.append(",");
@@ -187,6 +207,8 @@ public class AddressService {
 	
 	
 	/**
+	 * Gets an {@link Address} object by making a web API call to the given URL and parsing the response.<br/>
+	 * (Used internally)
 	 * 
 	 * @param url
 	 * @return
@@ -225,7 +247,8 @@ public class AddressService {
 	
 	
 	/**
-	 * Parses a JSON response from the <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API</a>.
+	 * Parses a JSON response from the <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API</a>.<br/>
+	 * (Used internally)
 	 *  
 	 * @param jsonResp
 	 * @return

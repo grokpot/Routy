@@ -76,7 +76,7 @@ public class AddressServiceTest extends AndroidTestCase {
 	public void testGetAddressForCoordinatesWeb() {
 		Log.v(TAG, "Get address for coordinates via WEB API");
 		
-		Address result = addressService.getAddressForCoordinatesWeb(30.390895097516477, -97.69777324050665);
+		Address result = addressService.getAddressViaWeb(30.390895097516477, -97.69777324050665);
 		
 		if (result == null) {
 			Log.e(TAG, "resulting address was null");

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.NoNetworkConnectionException;
+import org.routy.model.AppProperties;
 
 import android.location.GpsStatus;
 import android.location.GpsStatus.Listener;
@@ -20,6 +21,8 @@ public abstract class LocationService {
 	private final double accuracy;
 	private final LocationManager manager;
 	
+	private long startTimeMs;
+	
 	
 	public LocationService(LocationManager locManager, double accuracy) {
 		this.manager = locManager;
@@ -33,6 +36,9 @@ public abstract class LocationService {
 	 * @param location
 	 */
 	public abstract void onLocationResult(Location location);
+	
+	
+	public abstract void onLocationSearchTimeout();
 	
 	
 	/**
@@ -51,6 +57,8 @@ public abstract class LocationService {
 			Log.v(TAG, "Last known location was good...using it.");
 			onLocationResult(lastKnownLoc);
 		} else {
+			startTimeMs = System.currentTimeMillis();
+			
 			// Keep requesting location updates until the error is below the threshold
 			boolean networkEnabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 			boolean gpsEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
@@ -75,22 +83,22 @@ public abstract class LocationService {
 	
 	
 	private Location getLastKnownLocation() {
-		long minTimeMs = 300000;
 		long bestTimeMs = 0;
 		
 		Location lastKnownLocation = null;
 		
 		List<String> providers = manager.getProviders(true);
 		for (String provider : providers) {
-			lastKnownLocation = manager.getLastKnownLocation(provider);
+			Location candidate = manager.getLastKnownLocation(provider);
 			
-			if (lastKnownLocation != null) {
+			if (candidate != null) {
 				// Last loc update is within our expiration time and is newer than any we've found before
-				if (((new Date()).getTime() - lastKnownLocation.getTime()) <= minTimeMs && lastKnownLocation.getTime() > bestTimeMs) {
+				if (((new Date()).getTime() - candidate.getTime()) <= AppProperties.LOCATION_EXPIRE_TIME_MS && candidate.getTime() > bestTimeMs) {
 					
 					// Last loc has an accuracy within our threshold
-					if (lastKnownLocation.hasAccuracy() && lastKnownLocation.getAccuracy() <= accuracy) {
-						bestTimeMs = lastKnownLocation.getTime();
+					if (candidate.hasAccuracy() && candidate.getAccuracy() <= accuracy) {
+						lastKnownLocation = candidate;
+						bestTimeMs = candidate.getTime();
 					}
 				}
 			}
@@ -102,36 +110,42 @@ public abstract class LocationService {
 
 	private LocationListener listener = new LocationListener() {
 		
-//		@Override
+		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
 			Log.v(TAG, provider + " provider status changed to " + status);
 		}
 		
-//		@Override
+		@Override
 		public void onProviderEnabled(String provider) {
 			Log.v(TAG, provider + " just enabled");
 		}
 		
-//		@Override
+		@Override
 		public void onProviderDisabled(String provider) {
 			Log.v(TAG, provider + " just disabled");
 		}
 		
-//		@Override
+		@Override
 		public void onLocationChanged(Location location) {
-			Log.v(TAG, "location changed via " + location.getProvider());
-			if (location.hasAccuracy()) {
-				Log.v(TAG, "location has accuracy: " + location.getAccuracy());
-			} else {
-				Log.v(TAG, "location has no accuracy.");
-			}
-			
-			if (location.getAccuracy() <= accuracy) {
-				Log.v(TAG, "Got a good fix");
+			if ((System.currentTimeMillis() - startTimeMs) > AppProperties.LOCATION_FETCH_TIMEOUT_MS) {
+				Log.v(TAG, "Location fetching timing out.");
 				stop();
-				onLocationResult(location);
+				onLocationSearchTimeout();
 			} else {
-				Log.v(TAG, "Location has a bad accuracy: " + location.getAccuracy());
+				Log.v(TAG, "location changed via " + location.getProvider());
+				if (location.hasAccuracy()) {
+					Log.v(TAG, "location has accuracy: " + location.getAccuracy());
+				} else {
+					Log.v(TAG, "location has no accuracy.");
+				}
+				
+				if (location.getAccuracy() <= accuracy) {
+					Log.v(TAG, "Got a good fix");
+					stop();
+					onLocationResult(location);
+				} else {
+					Log.v(TAG, "Location has a bad accuracy: " + location.getAccuracy());
+				}
 			}
 		}
 	};

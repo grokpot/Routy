@@ -67,7 +67,7 @@ public class DestinationActivity extends FragmentActivity {
     		try {
             	for (int addressIndex = 0; addressIndex < addresses.size(); addressIndex++){
 					validatedAddresses.add(
-							addressService.getAddressForLocationName(
+							addressService.getAddressForLocationString(
 									addresses.get(addressIndex)));
             	}
     			Toast.makeText(mContext, "Addresses validated!", Toast.LENGTH_LONG).show();	// XXX temp

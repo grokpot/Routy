@@ -62,17 +62,19 @@ public class OriginActivity extends FragmentActivity {
     
     
     LocationService initLocationService() {
-    	return new LocationService(locationManager, AppProperties.LOCATION_ACCURACY_THRESHOLD) {
+    	return new LocationService(locationManager, AppProperties.LOCATION_ACCURACY_THRESHOLD_M) {
 			
 			@Override
 			public void onLocationResult(Location location) {
 				// Reverse geocode the location into an address and populate the TextEdit
+				Date locationUpdated = new Date();
+				locationUpdated.setTime(location.getTime());
 				Log.v(TAG, "Location: " + 
 						   "\nLat: " + location.getLatitude() + 
 						   "\nLong: " + location.getLongitude() + 
 						   "\nProvider: " + location.getProvider() + 
 						   "\nAccuracy: " + location.getAccuracy() +
-						   "\nTime: " + new Date());
+						   "\nTime: " + locationUpdated);
 				
 				Address address = null;
 				
@@ -97,11 +99,21 @@ public class OriginActivity extends FragmentActivity {
 					
 					Log.v(TAG, "Address: " + addressStr.toString());
 					originAddressField.setText(addressStr.toString());
-					resetLocateButton();
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
 					AppError.showErrorDialog(context, "Routy's embarrassed he couldn't find an address for your location.  Would you mind typing it in?");
+					
 				}
+				
+				resetLocateButton();
+			}
+			
+			
+			@Override
+			public void onLocationSearchTimeout() {
+				Log.e(TAG, "Getting user location timed out.");
+				AppError.showErrorDialog(context, "Routy's embarrassed he couldn't your location.  Would you mind typing it in?");
+				resetLocateButton();
 			}
 		};
     }
@@ -126,7 +138,7 @@ public class OriginActivity extends FragmentActivity {
         	
         	try {
         		locating = true;
-        		locationService.getCurrentLocation();
+        		locationService.getCurrentLocation();		// TODO implement the timeout around this
         	} catch (NoLocationProviderException e) {
         		Log.e(TAG, e.getMessage());
         		resetLocateButton();
@@ -149,7 +161,7 @@ public class OriginActivity extends FragmentActivity {
     	// Validate the given address string
     	Address originAddress = null;
     	try {
-    		originAddress = addressService.getAddressForLocationName(originAddressField.getText().toString());
+    		originAddress = addressService.getAddressForLocationString(originAddressField.getText().toString());
     	} catch (AmbiguousAddressException e) {
     		Log.d(TAG, "Got more than one result for the given origin address.  I'm using the first one.");
     		originAddress = e.getFirstAddress();
