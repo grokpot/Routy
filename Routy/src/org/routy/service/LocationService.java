@@ -58,15 +58,11 @@ public abstract class LocationService {
 				if (gpsEnabled) {
 					Log.v(TAG, "gps enabled");
 		        	manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
-		        } else {
-		        	Log.v(TAG, "gps disabled");
 		        }
 		        
 		        if (networkEnabled) {
 		        	Log.v(TAG, "network enabled");
 		        	manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
-		        } else {
-		        	Log.v(TAG, "network disabled");
 		        }
 			} else {
 				Log.e(TAG, "No network providers.");

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.routy.model.Distance;
@@ -84,6 +85,13 @@ public class DistanceMatrixService {
 		String jsonResp = getJSONResponse(origin, destinations, sensor);
 		Log.v(TAG, "jsonResp: " + jsonResp);
 		
+		List<Distance> distances = parseJSONResponse(jsonResp);
+		
+		return distances;
+	}
+
+
+	private List<Distance> parseJSONResponse(String jsonResp) throws JSONException {
 		// Parse the JSON string into distance objects
 		List<Distance> distances = new ArrayList<Distance>();
 		JSONObject response = (JSONObject) new JSONTokener(jsonResp.toString()).nextValue();
@@ -105,7 +113,6 @@ public class DistanceMatrixService {
 			
 			distances.add(d);
 		}
-		
 		return distances;
 	}
 
@@ -151,20 +158,6 @@ public class DistanceMatrixService {
 		Log.d(TAG, "DIST MAT URL: " + url.toString());
 		
 		// XXX Using this method: http://docs.oracle.com/javase/tutorial/networking/urls/readingWriting.html
-		URL distMatUrl = new URL(url.toString());
-		URLConnection conn = distMatUrl.openConnection();
-		BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-		StringBuffer jsonResp = new StringBuffer();
-		
-		try {
-			String line = null;
-			while ((line = in.readLine()) != null) {
-				jsonResp.append(line);
-			}
-		} finally {
-			in.close();
-		}
-		
-		return jsonResp.toString();
+		return InternetService.getJSONResponse(url.toString());
 	}
 }

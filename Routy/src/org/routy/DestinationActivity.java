@@ -64,7 +64,7 @@ public class DestinationActivity extends Activity {
         	
         	// Iterates through entered locations and validates them into addresses.
         	Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
-        	AddressService addressService =  new AddressService(geocoder);	
+        	AddressService addressService =  new AddressService(geocoder, false);		// TODO make getting sensor true/false dynamic	
         	// TODO: "please wait" screen so activity doesn't block.
     		try {
             	for (int addressIndex = 0; addressIndex < addresses.size(); addressIndex++){

@@ -38,15 +38,12 @@ public class OriginActivity extends FragmentActivity {
 	private EditText originAddressField;
 	private Button findUserButton;
 	private boolean locating;
-	
-	private Context context;
+
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_origin);
-        
-        context = this;
         
         originAddressField = (EditText) findViewById(R.id.origin_address_field);
         findUserButton = (Button) findViewById(R.id.find_user_button);
@@ -54,7 +51,7 @@ public class OriginActivity extends FragmentActivity {
         
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         
-        addressService = new AddressService(new Geocoder(this, Locale.getDefault()));
+        addressService = new AddressService(new Geocoder(this, Locale.getDefault()), false);		// TODO make getting sensor true/false dynamic
         locationService = initLocationService();
     }
     
@@ -72,7 +69,19 @@ public class OriginActivity extends FragmentActivity {
 						   "\nAccuracy: " + location.getAccuracy() +
 						   "\nTime: " + new Date());
 				
-				Address address = addressService.getAddressForLocation(location);
+				Address address = null;
+				
+				try {
+					address = addressService.getAddressForLocation(location);
+					
+				} catch (NoNetworkConnectionException e) { 
+					showErrorDialog("Routy needs some sort of internet connection.  Please try again when you've got one.");
+				} catch (AmbiguousAddressException e) {
+					if (e.getAddresses().size() > 0) {
+						address = e.getFirstAddress();
+					}
+				}
+				
 				if (address != null) {
 					StringBuilder addressStr = new StringBuilder();
 					
@@ -87,8 +96,7 @@ public class OriginActivity extends FragmentActivity {
 					resetLocateButton();
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
-					// TODO Make this an alert dialog
-					Toast.makeText(context, "Routy couldn't find an address for your location.  Would you mind typing it in?", Toast.LENGTH_LONG).show();
+					showErrorDialog("Routy couldn't find an address for your location.  Would you mind typing it in?");
 				}
 			}
 		};

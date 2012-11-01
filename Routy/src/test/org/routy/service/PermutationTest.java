@@ -1,4 +1,4 @@
-package org.routy.provider;
+package org.routy.service;
 
 import java.util.ArrayList;
 import java.util.Arrays;

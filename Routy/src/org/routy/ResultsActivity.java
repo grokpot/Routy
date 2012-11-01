@@ -107,6 +107,7 @@ public class ResultsActivity extends Activity {
 					+ destinationAddressLong;
 			Log.d(TAG, "maps segment call URI: " + mapsCall);
 			
+			// Open Google Maps App on the device
 			Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(mapsCall));
 			startActivity(intent);
 		}
