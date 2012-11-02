@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 public abstract class TwoButtonDialog extends RoutyDialog {
 	
 	public TwoButtonDialog(String title, String message) {
-		this(title, message, new String[] {"OK", "Cancel", null});
+		this(title, message, null);
 	}
 	
 	public TwoButtonDialog(String title, String message, String[] buttonLabels) {

@@ -5,7 +5,7 @@ import android.content.DialogInterface;
 public abstract class OneButtonDialog extends RoutyDialog {
 	
 	public OneButtonDialog(String title, String message) {
-		this(title, message, new String[] {"OK", null, null});
+		this(title, message, null);
 	}
 	
 	public OneButtonDialog(String title, String message, String[] buttonLabels) {

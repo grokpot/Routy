@@ -48,7 +48,13 @@ public abstract class RoutyDialog extends DialogFragment {
 			mErrorMessage = getResources().getString(R.string.default_error_message);
 		}
 		
-		assignButtonLabels(buttonLabels);
+		if (buttonLabels == null) {
+			setDefaultButtonLabels();
+		} else if (buttonLabels.length == 3) {
+			assignButtonLabels(buttonLabels);
+		} else {
+			throw new IllegalArgumentException("buttonLabels passed into RoutyDialog (or a subclass) needs to be a String[] of length 3.");
+		}
 		
 		this.showPositive = showPositive;
 		this.showNeutral = showNeutral;
@@ -71,9 +77,7 @@ public abstract class RoutyDialog extends DialogFragment {
 		}
 		
 		if (buttonLabels[1] != null) {
-			if (showNeutral) {
-				middleButtonLabel = buttonLabels[1];
-			}
+			middleButtonLabel = buttonLabels[1];
 		}
 		
 		if (buttonLabels[2] != null) {
@@ -102,7 +106,7 @@ public abstract class RoutyDialog extends DialogFragment {
 		builder.setCancelable(true);
 		
 		if (showPositive) {
-			builder.setPositiveButton("OK", new OnClickListener() {
+			builder.setPositiveButton(rightButtonLabel, new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					onPositiveClicked(dialog, which);
@@ -111,7 +115,7 @@ public abstract class RoutyDialog extends DialogFragment {
 		}
 		
 		if (showNeutral) {
-			builder.setNeutralButton("Cancel", new OnClickListener() {
+			builder.setNeutralButton(middleButtonLabel, new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					onNeutralClicked(dialog, which);
@@ -120,7 +124,7 @@ public abstract class RoutyDialog extends DialogFragment {
 		}
 		
 		if (showNegative) {
-			builder.setNegativeButton("No", new OnClickListener() {
+			builder.setNegativeButton(leftButtonLabel, new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					onNegativeClicked(dialog, which);

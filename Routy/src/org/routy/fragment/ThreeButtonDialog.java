@@ -11,7 +11,7 @@ public abstract class ThreeButtonDialog extends RoutyDialog {
 	 * @param message
 	 */
 	public ThreeButtonDialog(String title, String message) {
-		this(title, message, new String[] {"OK", "Cancel", "No"});
+		this(title, message, null);
 	}
 	
 	/**
