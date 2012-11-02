@@ -106,7 +106,7 @@ public class OriginActivity extends FragmentActivity {
 					originAddressField.setText(addressStr.toString());
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
-					showErrorDialog("Routy's embarrassed he couldn't find an address for your location.  Would you mind typing it in?");
+					showErrorDialog("Routy's embarrassed - he couldn't find an address for your location.  Would you mind typing it in?");
 				}
 				resetLocateButton();
 			}
