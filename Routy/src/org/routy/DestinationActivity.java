@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import org.routy.exception.AmbiguousAddressException;
-import org.routy.exception.NoNetworkConnectionException;
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.model.Route;
 import org.routy.model.RouteRequest;
 import org.routy.service.AddressService;
@@ -74,7 +74,7 @@ public class DestinationActivity extends FragmentActivity {
 			} catch (AmbiguousAddressException e) {
 				// TODO error handling - must step out of this OnClick
 				e.printStackTrace();
-			} catch (NoNetworkConnectionException e) {
+			} catch (NoInternetConnectionException e) {
 				// TODO error handling - must step out of this OnClick
 				e.printStackTrace();
 			}

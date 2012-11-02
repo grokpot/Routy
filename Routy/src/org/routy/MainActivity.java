@@ -1,6 +1,9 @@
 package org.routy;
 
+import org.routy.fragment.OneButtonDialog;
+
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +16,7 @@ public class MainActivity extends FragmentActivity {
 	
 	private final String TAG = "MainActivity";
 
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,7 +29,13 @@ public class MainActivity extends FragmentActivity {
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         if (networkInfo == null) {
         	Log.v(TAG, "No network.");
-        	AppError.showErrorDialog(this, "Routy needs an internet connection to work.  Please try again when you can connect to the internet.");
+			OneButtonDialog error = new OneButtonDialog(getResources().getString(R.string.error_message_title), getResources().getString(R.string.no_internet_error)) {
+				@Override
+				public void onPositiveClicked(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			};
+			error.show(this.getSupportFragmentManager(), TAG);
         } else {
         	Log.v(TAG, "Found a network.");
         	

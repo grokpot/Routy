@@ -11,7 +11,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.GeocoderAPIException;
-import org.routy.exception.NoNetworkConnectionException;
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.model.AppProperties;
 
 import android.location.Address;
@@ -54,7 +54,7 @@ public class AddressService {
 	 * 
 	 * @throws IllegalArgumentException		if the given <code>locationName</code> returns more than 1 result (is ambiguous)
 	 */
-	public Address getAddressForLocationString(String locationName) throws AmbiguousAddressException, NoNetworkConnectionException {
+	public Address getAddressForLocationString(String locationName) throws AmbiguousAddressException, NoInternetConnectionException {
 		if (locationName != null) {
 			try {
 				if (!Geocoder.isPresent()) {
@@ -66,7 +66,7 @@ public class AddressService {
 				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage());
-				throw new NoNetworkConnectionException();
+				throw new NoInternetConnectionException();
 			}
 		}
 		
@@ -81,9 +81,9 @@ public class AddressService {
 	 * @return				the Address for the given Location<br/>
 	 * 						<code>null</code> if there is no Address for the given location
 	 * @throws AmbiguousAddressException 
-	 * @throws NoNetworkConnectionException 
+	 * @throws NoInternetConnectionException 
 	 */
-	public Address getAddressForLocation(Location location) throws AmbiguousAddressException, NoNetworkConnectionException {
+	public Address getAddressForLocation(Location location) throws AmbiguousAddressException, NoInternetConnectionException {
 		return getAddressForCoordinates(location.getLatitude(), location.getLongitude());
 	}
 	
@@ -96,9 +96,9 @@ public class AddressService {
 	 * @return				the Address for the given GPS coordinates<br/>
 	 * 						<code>null</code> if the GPS coordinates are invalid or 
 	 * 						there is no Address for the given point 
-	 * @throws NoNetworkConnectionException 
+	 * @throws NoInternetConnectionException 
 	 */
-	public Address getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, NoNetworkConnectionException {
+	public Address getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, NoInternetConnectionException {
 		try {
 			if (!Geocoder.isPresent()) {
 				return getAddressViaWeb(latitude, longitude);
@@ -109,7 +109,7 @@ public class AddressService {
 			Log.e(TAG, e.getMessage());
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage());
-			throw new NoNetworkConnectionException();
+			throw new NoInternetConnectionException();
 		}
 
 		return null;

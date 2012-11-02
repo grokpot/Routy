@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.routy.exception.NoLocationProviderException;
-import org.routy.exception.NoNetworkConnectionException;
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.model.AppProperties;
 
 import android.location.GpsStatus;
@@ -15,6 +15,17 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 
+/**
+ * A service class that gives access to location obtaining tasks.  Instances of this 
+ * class will usually be used to get the user's current location.  The class handles 
+ * all the under-the-covers mechanics of getting a location from Android.  Implement 
+ * the onLocationResult(...) method in order to be notified when a location has been 
+ * obtained.
+ * 
+ * 
+ * @author jtran
+ *
+ */
 public abstract class LocationService {
 
 	private final String TAG = "LocationService";
@@ -47,7 +58,7 @@ public abstract class LocationService {
 	 * last known location in case other apps/services on the phone 
 	 * have recently gotten a location fix within the accuracy threshold.
 	 * 
-	 * @throws	NoNetworkConnectionException if there are no location providers (network or GPS) enabled
+	 * @throws	NoInternetConnectionException if there are no location providers (network or GPS) enabled
 	 */
 	public void getCurrentLocation() throws NoLocationProviderException {
 		Log.v(TAG, "getting current location");
@@ -63,6 +74,7 @@ public abstract class LocationService {
 			boolean networkEnabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 			boolean gpsEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 			
+			// TODO figure out error scenarios for this
 			if (networkEnabled || gpsEnabled) {
 				if (gpsEnabled) {
 					Log.v(TAG, "gps enabled");
@@ -82,6 +94,11 @@ public abstract class LocationService {
 	}
 	
 	
+	/**
+	 * Attempts to get the last known location (within the required expiration time and minimum accuracy) from the Android system.
+	 * 
+	 * @return		the last known location or null if there is none or if none of them meet the requirements
+	 */
 	private Location getLastKnownLocation() {
 		long bestTimeMs = 0;
 		
@@ -108,6 +125,9 @@ public abstract class LocationService {
 	}
 
 
+	/**
+	 * The listener that {@link LocationService} uses to be notified of location updates.
+	 */
 	private LocationListener listener = new LocationListener() {
 		
 		@Override
@@ -151,15 +171,6 @@ public abstract class LocationService {
 	};
 	
 	
-	private GpsStatus.Listener gpsStatusListener = new Listener() {
-		
-//		@Override
-		public void onGpsStatusChanged(int event) {
-			Log.v(TAG, "GPS Status Changed: " + event);
-		}
-	};
-
-	
 	/**
 	 * Releases all of this location service's holds on any system location resources.<br/>
 	 * (ie. un-registers {@link LocationListener} objects from the {@link LocationManager})
@@ -167,5 +178,10 @@ public abstract class LocationService {
 	public void stop() {
 		Log.v(TAG, "Stopping Location Service");
 		manager.removeUpdates(listener);
+	}
+	
+	
+	public boolean isGpsEnabled() {
+		return manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 	}
 }

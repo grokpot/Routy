@@ -5,22 +5,22 @@ import java.util.Locale;
 
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoLocationProviderException;
-import org.routy.exception.NoNetworkConnectionException;
-import org.routy.fragment.ErrorDialog;
+import org.routy.exception.NoInternetConnectionException;
+import org.routy.fragment.OneButtonDialog;
+import org.routy.fragment.TwoButtonDialog;
 import org.routy.model.AppProperties;
 import org.routy.service.AddressService;
 import org.routy.service.LocationService;
 
-import android.content.Context;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -30,7 +30,8 @@ import android.widget.Toast;
 
 public class OriginActivity extends FragmentActivity {
 
-	private final String TAG = "OriginActivity";
+	private static final String TAG = "OriginActivity";
+	private static final int ENABLE_GPS_REQUEST = 1;
 
 	private FragmentActivity context;
 	
@@ -61,6 +62,10 @@ public class OriginActivity extends FragmentActivity {
     }
     
     
+    /**
+     * Initializes an instance of {@link LocationService} that can be used to obtain the user's current location.
+     * @return
+     */
     LocationService initLocationService() {
     	return new LocationService(locationManager, AppProperties.LOCATION_ACCURACY_THRESHOLD_M) {
 			
@@ -80,8 +85,8 @@ public class OriginActivity extends FragmentActivity {
 				
 				try {
 					address = addressService.getAddressForLocation(location);
-				} catch (NoNetworkConnectionException e) { 
-					AppError.showErrorDialog(context, "Routy needs some sort of internet connection.  Please try again when you've got one.");
+				} catch (NoInternetConnectionException e) { 
+					showErrorDialog(getResources().getString(R.string.no_internet_error));
 				} catch (AmbiguousAddressException e) {
 					if (e.getAddresses().size() > 0) {
 						address = e.getFirstAddress();
@@ -101,10 +106,8 @@ public class OriginActivity extends FragmentActivity {
 					originAddressField.setText(addressStr.toString());
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
-					AppError.showErrorDialog(context, "Routy's embarrassed he couldn't find an address for your location.  Would you mind typing it in?");
-					
+					showErrorDialog("Routy's embarrassed he couldn't find an address for your location.  Would you mind typing it in?");
 				}
-				
 				resetLocateButton();
 			}
 			
@@ -112,10 +115,31 @@ public class OriginActivity extends FragmentActivity {
 			@Override
 			public void onLocationSearchTimeout() {
 				Log.e(TAG, "Getting user location timed out.");
-				AppError.showErrorDialog(context, "Routy's embarrassed he couldn't your location.  Would you mind typing it in?");
-				resetLocateButton();
+				if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+					showErrorDialog(getResources().getString(R.string.locating_fail_error));
+					resetLocateButton();
+				} else {
+					Log.e(TAG, "GPS was not enabled...going to ask the user if they want to enable it.");
+					showEnableGpsDialog(getResources().getString(R.string.enable_gps_prompt));
+				}
+				
 			}
 		};
+    }
+    
+    
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	switch (requestCode) {
+    	case ENABLE_GPS_REQUEST:
+    		try {
+				locationService.getCurrentLocation();
+			} catch (NoLocationProviderException e) {
+				showErrorDialog(getResources().getString(R.string.no_location_provider_error));
+				resetLocateButton();
+			}
+    		break;
+    	}
     }
     
 
@@ -132,16 +156,21 @@ public class OriginActivity extends FragmentActivity {
 	}
     
     
+    /**
+     * Called when the locate button is tapped.
+     * 
+     * @param view
+     */
     public void findUserLocation(View view) {
     	if (!locating) {
         	findUserButton.setText(R.string.stop_locating);
         	
         	try {
         		locating = true;
-        		locationService.getCurrentLocation();		// TODO implement the timeout around this
+        		locationService.getCurrentLocation();
         	} catch (NoLocationProviderException e) {
         		Log.e(TAG, e.getMessage());
-        		resetLocateButton();
+        		showErrorDialog(getResources().getString(R.string.enable_gps_prompt));
         	}
     	} else {
     		locationService.stop();
@@ -155,40 +184,75 @@ public class OriginActivity extends FragmentActivity {
     	Log.v(TAG, "Origin: " + originAddressField.getText());
     	
     	if (originAddressField.getText() == null || originAddressField.getText().length() == 0) {
-    		AppError.showErrorDialog(this, "Please enter an origin address or click Find Me and Routy will locate you.");
+			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
+    	} else {
+    		// Validate the given address string
+        	Address originAddress = null;
+        	try {
+        		originAddress = addressService.getAddressForLocationString(originAddressField.getText().toString());
+        	} catch (AmbiguousAddressException e) {
+        		Log.d(TAG, "Got more than one result for the given origin address.  We'll use the first one.");
+        		originAddress = e.getFirstAddress();
+        	} catch (NoInternetConnectionException e) {
+        		showErrorDialog(getResources().getString(R.string.no_internet_error));
+        	}
+        	
+        	if (originAddress != null) {
+    			Toast.makeText(this, "Origin address is good!", Toast.LENGTH_LONG).show();	// XXX temp
+    			Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
+    			destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
+    			startActivity(destinationIntent);
+    		} else {
+    			Toast.makeText(this, "Bad origin address.", Toast.LENGTH_LONG).show();	// XXX temp
+    			showErrorDialog(getResources().getString(R.string.bad_origin_address_error));
+    		}
     	}
-    	
-    	// Validate the given address string
-    	Address originAddress = null;
-    	try {
-    		originAddress = addressService.getAddressForLocationString(originAddressField.getText().toString());
-    	} catch (AmbiguousAddressException e) {
-    		Log.d(TAG, "Got more than one result for the given origin address.  I'm using the first one.");
-    		originAddress = e.getFirstAddress();
-    	} catch (NoNetworkConnectionException e) {
-    		// TODO can we fire an intent for them to turn on their data connection in settings (like you can with GPS)?
-    		Toast.makeText(this, "No data connection...can't verify address.", Toast.LENGTH_LONG).show();	// XXX temp
-    		
-    		/*WifiManager wifiMgr = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-    		wifiMgr.setWifiEnabled(true);*/
-    	}
-    	
-    	if (originAddress != null) {
-			Toast.makeText(this, "Origin address is good!", Toast.LENGTH_LONG).show();	// XXX temp
-			Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
-			destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
-			startActivity(destinationIntent);
-		} else {
-			Toast.makeText(this, "Bad origin address.", Toast.LENGTH_LONG).show();	// XXX temp
-		}
     }
     
     
-    /*void showErrorDialog(String message) {
-    	FragmentManager fm = getSupportFragmentManager();
-    	ErrorDialog errorDialog = new ErrorDialog(message);
-    	errorDialog.show(fm, "fragment_error_message");
-    }*/
+    /**
+     * Displays an {@link AlertDialog} with one button that dismisses the dialog.  Use this to display error messages 
+     * to the user.
+     * 
+     * @param message
+     */
+    private void showErrorDialog(String message) {
+    	OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {
+			@Override
+			public void onPositiveClicked(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		};
+		dialog.show(context.getSupportFragmentManager(), TAG);
+    }
+    
+    
+    /**
+     * Displays an alert asking the user if they would like to go to the device's Location Settings to enable GPS.
+     * 
+     * @param message
+     */
+    private void showEnableGpsDialog(String message) {
+    	TwoButtonDialog dialog = new TwoButtonDialog(getResources().getString(R.string.error_message_title), message) {
+			
+			@Override
+			public void onPositiveClicked(DialogInterface dialog, int which) {
+				dialog.dismiss();
+				
+				// Show the "Location Services" settings page
+				Intent gpsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+				Log.v(TAG, "ENABLE_GPS_REQUEST = " + ENABLE_GPS_REQUEST);
+				context.startActivityForResult(gpsIntent, ENABLE_GPS_REQUEST);
+				
+			}
+
+			@Override
+			public void onNegativeClicked(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		};
+		dialog.show(context.getSupportFragmentManager(), TAG);
+    }
     
     
     @Override

@@ -3,7 +3,7 @@ package org.routy.service;
 import java.util.Locale;
 
 import org.routy.exception.AmbiguousAddressException;
-import org.routy.exception.NoNetworkConnectionException;
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.service.AddressService;
 
 import android.location.Address;
@@ -41,7 +41,7 @@ public class AddressServiceTest extends AndroidTestCase {
 			}
 			
 			result = e.getAddresses().get(0);
-		} catch (NoNetworkConnectionException e) {
+		} catch (NoInternetConnectionException e) {
 			Log.e(TAG, e.getMessage());
 		}
 		

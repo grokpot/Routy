@@ -13,7 +13,7 @@ public class AppProperties {
 	public static final double LOCATION_ACCURACY_THRESHOLD_M = 50;
 	
 	/** The amount of time before the last known location provided by Android is deemed "stale" */
-	public static final double LOCATION_EXPIRE_TIME_MS = 300000;
+	public static final double LOCATION_EXPIRE_TIME_MS = 0;//300000;
 	
 	/** The amount of time Routy should spend searching for the user's location in milliseconds */
 	public static final long LOCATION_FETCH_TIMEOUT_MS = 10000;
