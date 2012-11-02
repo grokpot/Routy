@@ -219,7 +219,7 @@ public class OriginActivity extends FragmentActivity {
     private void showErrorDialog(String message) {
     	OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {
 			@Override
-			public void onPositiveClicked(DialogInterface dialog, int which) {
+			public void onButtonClicked(DialogInterface dialog, int which) {
 				dialog.dismiss();
 			}
 		};
@@ -236,7 +236,7 @@ public class OriginActivity extends FragmentActivity {
     	TwoButtonDialog dialog = new TwoButtonDialog(getResources().getString(R.string.error_message_title), message) {
 			
 			@Override
-			public void onPositiveClicked(DialogInterface dialog, int which) {
+			public void onRightButtonClicked(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				
 				// Show the "Location Services" settings page
@@ -247,7 +247,7 @@ public class OriginActivity extends FragmentActivity {
 			}
 
 			@Override
-			public void onNegativeClicked(DialogInterface dialog, int which) {
+			public void onLeftButtonClicked(DialogInterface dialog, int which) {
 				dialog.dismiss();
 			}
 		};

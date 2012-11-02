@@ -19,6 +19,10 @@ public abstract class RoutyDialog extends DialogFragment {
 	private String mErrorMessage;
 	private TextView mTextView;
 	
+	private String rightButtonLabel;
+	private String middleButtonLabel;
+	private String leftButtonLabel;
+	
 	private boolean showPositive;
 	private boolean showNeutral;
 	private boolean showNegative;
@@ -27,13 +31,15 @@ public abstract class RoutyDialog extends DialogFragment {
 		super();
 		mErrorMessage = getResources().getString(R.string.default_error_message);
 		
+		setDefaultButtonLabels();
+		
 		this.showPositive = true;
 		this.showNeutral = false;
 		this.showNegative = false;
 	}
 	
 	
-	public RoutyDialog(String title, String message, boolean showPositive, boolean showNeutral, boolean showNegative) {
+	public RoutyDialog(String title, String message, String[] buttonLabels, boolean showPositive, boolean showNeutral, boolean showNegative) {
 		super();
 		
 		if (message != null) {
@@ -42,9 +48,37 @@ public abstract class RoutyDialog extends DialogFragment {
 			mErrorMessage = getResources().getString(R.string.default_error_message);
 		}
 		
+		assignButtonLabels(buttonLabels);
+		
 		this.showPositive = showPositive;
 		this.showNeutral = showNeutral;
 		this.showNegative = showNegative;
+	}
+	
+	
+	private void setDefaultButtonLabels() {
+		this.rightButtonLabel = "OK";
+		this.middleButtonLabel = "Cancel";
+		this.leftButtonLabel = "No";
+	}
+	
+	
+	private void assignButtonLabels(String[] buttonLabels) {
+		setDefaultButtonLabels();
+		
+		if (buttonLabels[0] != null) {
+			rightButtonLabel = buttonLabels[0];
+		}
+		
+		if (buttonLabels[1] != null) {
+			if (showNeutral) {
+				middleButtonLabel = buttonLabels[1];
+			}
+		}
+		
+		if (buttonLabels[2] != null) {
+			leftButtonLabel = buttonLabels[2];
+		}
 	}
 	
 	
