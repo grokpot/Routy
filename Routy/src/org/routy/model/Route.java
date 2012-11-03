@@ -25,7 +25,11 @@ public class Route {
 	}
 	
 	public void addAddress(Address address) {
-		addresses.add(address);
+		this.addresses.add(address);
+	}
+	
+	public ArrayList<Address> getAddresses(Address address) {
+		return this.addresses;
 	}
 	
 	public int getTotalDistance() {

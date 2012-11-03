@@ -37,7 +37,7 @@ public class ResultsActivity extends FragmentActivity {
         Bundle extras 	= getIntent().getExtras();
         if (extras != null) {
             int distance = (Integer) extras.get("distance");
-            ArrayList<Address> addresses=  (ArrayList<Address>) extras.get("addresses");
+            ArrayList<Address> addresses =  (ArrayList<Address>) extras.get("addresses");
             route = new Route(addresses, distance);
         }
         
