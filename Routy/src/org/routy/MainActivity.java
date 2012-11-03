@@ -31,7 +31,7 @@ public class MainActivity extends FragmentActivity {
         	Log.v(TAG, "No network.");
 			OneButtonDialog error = new OneButtonDialog(getResources().getString(R.string.error_message_title), getResources().getString(R.string.no_internet_error)) {
 				@Override
-				public void onPositiveClicked(DialogInterface dialog, int which) {
+				public void onButtonClicked(DialogInterface dialog, int which) {
 					dialog.dismiss();
 				}
 			};

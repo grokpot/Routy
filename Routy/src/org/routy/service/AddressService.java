@@ -170,7 +170,7 @@ public class AddressService {
 	 * @param locationName
 	 * @return
 	 */
-	Address getAddressViaWeb(String locationName) /*throws AmbiguousAddressException*/ {		// TODO make this throw an exception if it gets more than 1 address
+	Address getAddressViaWeb(String locationName) throws NoInternetConnectionException {		// TODO make this throw an exception if it gets more than 1 address
 		if (locationName != null && locationName.length() > 0) {
 			StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
 			geoUrl.append("address=");
@@ -193,7 +193,7 @@ public class AddressService {
 	 * @param longitude
 	 * @return
 	 */
-	Address getAddressViaWeb(double latitude, double longitude) /*throws AmbiguousAddressException*/ {	// TODO make this throw an exception if it gets more than 1 address
+	Address getAddressViaWeb(double latitude, double longitude) throws NoInternetConnectionException {	// TODO make this throw an exception if it gets more than 1 address
 		StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
 		geoUrl.append("latlng=");
 		geoUrl.append(latitude);
@@ -214,7 +214,7 @@ public class AddressService {
 	 * @return
 	 * @throws IllegalArgumentException		if url is null or empty
 	 */
-	Address getAddressForURL(String url) throws IllegalArgumentException {
+	Address getAddressForURL(String url) throws IllegalArgumentException, NoInternetConnectionException {
 		// TODO Get this as an XML response so we can more thoroughly fill in the Address object (eg. different address lines, locality, etc)
 		if (url != null && url.length() > 0) {
 			try {

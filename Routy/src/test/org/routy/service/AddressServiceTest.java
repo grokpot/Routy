@@ -60,7 +60,13 @@ public class AddressServiceTest extends AndroidTestCase {
 		
 		String locationName = "1400 South Congress Avenue, Austin, TX 78704";
 		
-		Address result = addressService.getAddressViaWeb(locationName);
+		Address result = null;
+		
+		try {
+			result = addressService.getAddressViaWeb(locationName);
+		} catch (NoInternetConnectionException e) {
+			Log.e(TAG, "Couldn't test getting an address from a location name via the web because there was no internet connection.");
+		}
 		
 		if (result == null) {
 			Log.e(TAG, "resulting address was null");
@@ -76,7 +82,13 @@ public class AddressServiceTest extends AndroidTestCase {
 	public void testGetAddressForCoordinatesWeb() {
 		Log.v(TAG, "Get address for coordinates via WEB API");
 		
-		Address result = addressService.getAddressViaWeb(30.390895097516477, -97.69777324050665);
+		Address result = null;
+		
+		try {
+			result = addressService.getAddressViaWeb(30.390895097516477, -97.69777324050665);
+		} catch (NoInternetConnectionException e) {
+			Log.e(TAG, "Couldn't test getting an address from coordinates via the web because there was no internet connection.");
+		}
 		
 		if (result == null) {
 			Log.e(TAG, "resulting address was null");
