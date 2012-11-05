@@ -20,6 +20,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
         setContentView(R.layout.activity_main);
         
         // TODO This still happens too fast to display a splash image...keep the delay in there?

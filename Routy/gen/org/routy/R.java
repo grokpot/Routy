@@ -17,15 +17,17 @@ public final class R {
     public static final class id {
         public static final int TableLayout_destinations=0x7f070000;
         public static final int button_destination_add=0x7f070001;
+        public static final int button_destination_remove=0x7f07000c;
         public static final int button_origin_modify=0x7f070003;
         public static final int button_route_it=0x7f070004;
         public static final int button_test_defaults=0x7f070002;
-        public static final int edit_name=0x7f07000b;
+        public static final int edit_name=0x7f07000d;
+        public static final int edittext_destination_add=0x7f07000b;
         public static final int enter_destinations_button=0x7f070007;
         public static final int find_user_button=0x7f070008;
         public static final int layout_results=0x7f070009;
-        public static final int menu_settings=0x7f07000d;
-        public static final int message_dialog_error=0x7f07000c;
+        public static final int menu_settings=0x7f07000f;
+        public static final int message_dialog_error=0x7f07000e;
         public static final int origin_address_field=0x7f070006;
         public static final int origin_layout=0x7f070005;
         public static final int textview_total_distance=0x7f07000a;
@@ -35,7 +37,8 @@ public final class R {
         public static final int activity_main=0x7f030001;
         public static final int activity_origin=0x7f030002;
         public static final int activity_results=0x7f030003;
-        public static final int fragment_error_notification=0x7f030004;
+        public static final int fragment_destination_add=0x7f030004;
+        public static final int fragment_error_notification=0x7f030005;
     }
     public static final class menu {
         public static final int activity_destination=0x7f060000;

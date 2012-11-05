@@ -2,6 +2,7 @@ package org.routy;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import org.routy.exception.AmbiguousAddressException;
@@ -30,7 +31,8 @@ import android.widget.Toast;
 
 public class DestinationActivity extends FragmentActivity {
 	
-	private static final int NUM_DEFAULT_DESTINATIONS = 3;
+	private static final int NUM_DEFAULT_DESTINATIONS = 3;		// # of destination fields to show initially
+	
 	Context mContext;
 	Address originAddress;
 	ArrayList<EditText> destinationEditTexts 	= new ArrayList<EditText>();
@@ -182,9 +184,7 @@ public class DestinationActivity extends FragmentActivity {
     		try {
     			// gets the destination text from the EditText boxes and tries to validate the strings
             	for (int i = 0; i < destinationEditTexts.size(); i++){
-					validatedAddresses.add(
-							addressService.getAddressForLocationString(
-									destinationEditTexts.get(i).getText().toString()));
+					validatedAddresses.add(addressService.getAddressForLocationString(destinationEditTexts.get(i).getText().toString()));
             	}
     			Toast.makeText(mContext, "Addresses validated!", Toast.LENGTH_LONG).show();	// XXX temp
 			} catch (AmbiguousAddressException e) {
@@ -224,7 +224,8 @@ public class DestinationActivity extends FragmentActivity {
 			}
           
         }
-      };
+    };
+    
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -126,6 +126,8 @@ public class AddressService {
 	 * @throws AmbiguousAddressException
 	 */
 	Address getAddressViaGeocoder(String locationName) throws IOException, AmbiguousAddressException {
+		Log.v(TAG, "Using Geocoder backend");
+		
 		List<Address> results = geocoder.getFromLocationName(locationName, 2);
 		
 		if (results != null && results.size() > 0) {
@@ -150,6 +152,8 @@ public class AddressService {
 	 * @throws AmbiguousAddressException
 	 */
 	Address getAddressViaGeocoder(double latitude, double longitude) throws IOException, AmbiguousAddressException {
+		Log.v(TAG, "Using Geocoder backend");
+		
 		List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
 		
 		if (results != null && results.size() > 0) {
@@ -171,6 +175,7 @@ public class AddressService {
 	 * @return
 	 */
 	Address getAddressViaWeb(String locationName) throws NoInternetConnectionException {		// TODO make this throw an exception if it gets more than 1 address
+		Log.v(TAG, "Using Geocoding Web API");
 		if (locationName != null && locationName.length() > 0) {
 			StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
 			geoUrl.append("address=");
@@ -194,6 +199,7 @@ public class AddressService {
 	 * @return
 	 */
 	Address getAddressViaWeb(double latitude, double longitude) throws NoInternetConnectionException {	// TODO make this throw an exception if it gets more than 1 address
+		Log.v(TAG, "Using Geocoding Web API");
 		StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
 		geoUrl.append("latlng=");
 		geoUrl.append(latitude);
