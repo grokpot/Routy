@@ -170,7 +170,7 @@ public class OriginActivity extends FragmentActivity {
         		locationService.getCurrentLocation();
         	} catch (NoLocationProviderException e) {
         		Log.e(TAG, e.getMessage());
-        		showErrorDialog(getResources().getString(R.string.enable_gps_prompt));
+        		showEnableGpsDialog(getResources().getString(R.string.enable_gps_prompt));
         	}
     	} else {
     		locationService.stop();

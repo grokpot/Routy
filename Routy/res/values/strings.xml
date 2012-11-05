@@ -29,12 +29,13 @@
     <string name="title_activity_destination">DestinationActivity</string>
     <string name="title_activity_results">ResultsActivity</string>
     <string name="prompt_destination">Enter a destination</string>
-    <string name="remove_destination">Remove</string>
+    <string name="destination_remove">Remove</string>
     <string name="route_it">Route it!</string>
     <string name="origin_modify">Go back and choose a new origin</string>
     <string name="destination_add">Add another destination</string>
     <string name="test_destination_1">5119 Burnet Road, Austin, TX</string>
     <string name="test_destination_2">1 University Station, Austin, TX</string>
     <string name="test_destination_3">1000 East 41st Street, Austin, TX</string>
+    <string name="destination_enter">Enter a destination</string>
 
 </resources>

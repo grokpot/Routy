@@ -15,24 +15,20 @@ public final class R {
         public static final int ic_launcher=0x7f020001;
     }
     public static final class id {
-        public static final int Button01=0x7f070003;
-        public static final int Button02=0x7f070005;
-        public static final int button1=0x7f070001;
-        public static final int button_destination_add=0x7f070008;
-        public static final int button_origin_modify=0x7f070007;
-        public static final int button_route_it=0x7f070006;
-        public static final int edit_name=0x7f07000f;
-        public static final int edittext_address0=0x7f070000;
-        public static final int edittext_address1=0x7f070002;
-        public static final int edittext_address2=0x7f070004;
-        public static final int enter_destinations_button=0x7f07000b;
-        public static final int find_user_button=0x7f07000c;
-        public static final int layout_results=0x7f07000d;
-        public static final int menu_settings=0x7f070011;
-        public static final int message_dialog_error=0x7f070010;
-        public static final int origin_address_field=0x7f07000a;
-        public static final int origin_layout=0x7f070009;
-        public static final int textview_total_distance=0x7f07000e;
+        public static final int TableLayout_destinations=0x7f070000;
+        public static final int button_destination_add=0x7f070001;
+        public static final int button_origin_modify=0x7f070003;
+        public static final int button_route_it=0x7f070004;
+        public static final int button_test_defaults=0x7f070002;
+        public static final int edit_name=0x7f07000b;
+        public static final int enter_destinations_button=0x7f070007;
+        public static final int find_user_button=0x7f070008;
+        public static final int layout_results=0x7f070009;
+        public static final int menu_settings=0x7f07000d;
+        public static final int message_dialog_error=0x7f07000c;
+        public static final int origin_address_field=0x7f070006;
+        public static final int origin_layout=0x7f070005;
+        public static final int textview_total_distance=0x7f07000a;
     }
     public static final class layout {
         public static final int activity_destination=0x7f030000;
@@ -56,6 +52,8 @@ public final class R {
         public static final int clear_screen=0x7f040010;
         public static final int default_error_message=0x7f040006;
         public static final int destination_add=0x7f04001a;
+        public static final int destination_enter=0x7f04001e;
+        public static final int destination_remove=0x7f040017;
         public static final int enable_gps_prompt=0x7f04000c;
         /**  Global 
          */
@@ -72,7 +70,6 @@ public final class R {
         public static final int origin_prompt=0x7f04000e;
         public static final int please_wait=0x7f040011;
         public static final int prompt_destination=0x7f040016;
-        public static final int remove_destination=0x7f040017;
         public static final int route_it=0x7f040018;
         public static final int stop_locating=0x7f040012;
         public static final int test_destination_1=0x7f04001b;
