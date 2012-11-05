@@ -9,13 +9,18 @@
     <!-- Global -->
     <string name="error_message_title">Ruh-Roh!</string>
     <string name="default_error_message">Something went wrong, but don\'t worry, it wasn\'t your fault.</string>
-    <string name="no_internet_error">Routy needs an internet connection to do work.</string>
+    <string name="no_internet_error">Routy needs an internet connection to do work&#8230;</string>
     <string name="no_origin_address_error">Routy needs an origin address.  Please enter one or click Find Me and Routy will locate you.</string>
-    <string name="bad_origin_address_error">Routy couldn\'t understand the address for your location.  Would you please enter it in?</string>
+    <string name="bad_origin_address_error">Routy couldn\'t understand the address for your origin.  Could you try again?</string>
     <string name="no_location_provider_error">Routy needs WI-FI or GPS to locate you.  Please try again when you have one of these turned on.</string>
-    <string name="locating_fail_error">Routy\'s embarrassed he couldn\'t your location.  Would you mind typing it in?</string>
+    <string name="locating_fail_error">Well that\'s no good&#8230; Routy couldn\'t find your location. Try typing it in manually!</string>
     <string name="enable_gps_prompt">Routy noticed your GPS is not enabled, would you like to enable it so he can try locating you again?</string>
     
+    <!-- Toasts -->
+    <string name="validated">Addresses validated!</string>
+    <string name="routed">Route generated!</string>
+    <string name="origin_validated">Origin address is good!</string>
+    <string name="origin_failed_validate">Bad origin address.</string>
     
     <!-- Origin Screen Stuff -->
     <string name="address_field_hint">Enter Starting Address</string>
@@ -37,5 +42,14 @@
     <string name="test_destination_2">1 University Station, Austin, TX</string>
     <string name="test_destination_3">1000 East 41st Street, Austin, TX</string>
     <string name="destination_enter">Enter a destination</string>
+    
+    <!-- Route Screen Stuff -->
+    <string name="view_segment">Click to view segment</string>
+    <string name="total_distance">Your total distance is: </string>
+    
+    <!-- Button Labels -->
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="no">No</string>
 
 </resources>

@@ -63,9 +63,9 @@ public abstract class RoutyDialog extends DialogFragment {
 	
 	
 	private void setDefaultButtonLabels() {
-		this.rightButtonLabel = "OK";
-		this.middleButtonLabel = "Cancel";
-		this.leftButtonLabel = "No";
+		this.rightButtonLabel = getString(R.string.ok);
+		this.middleButtonLabel = getString(R.string.cancel);
+		this.leftButtonLabel = getString(R.string.no);
 	}
 	
 	

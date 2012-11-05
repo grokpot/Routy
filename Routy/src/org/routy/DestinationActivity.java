@@ -186,7 +186,7 @@ public class DestinationActivity extends FragmentActivity {
 							addressService.getAddressForLocationString(
 									destinationEditTexts.get(i).getText().toString()));
             	}
-    			Toast.makeText(mContext, "Addresses validated!", Toast.LENGTH_LONG).show();	// XXX temp
+    			Toast.makeText(mContext, getString(R.string.validated), Toast.LENGTH_LONG).show();	// XXX temp
 			} catch (AmbiguousAddressException e) {
 				// TODO error handling - must step out of this OnClick
 				e.printStackTrace();
@@ -206,7 +206,7 @@ public class DestinationActivity extends FragmentActivity {
 					
 					@Override
 					public void onRouteCalculated(Route route) {
-						Toast.makeText(mContext, "Route generated!", Toast.LENGTH_LONG).show();	// XXX temp
+						Toast.makeText(mContext, getString(R.string.routed), Toast.LENGTH_LONG).show();	// XXX temp
 						
 						// Call ResultsActivity activity
 		    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
