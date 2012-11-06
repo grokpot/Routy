@@ -1,0 +1,29 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+	android:layout_width="fill_parent" 
+	android:layout_height="fill_parent" 
+	android:orientation="vertical" >
+    
+    <ListView 
+        android:id="@+id/listview_destinations" 
+        android:layout_width="fill_parent" 
+        android:layout_height="0dp" 
+        android:layout_weight="2" 
+        android:descendantFocusability="beforeDescendants" />
+    
+    <Button 
+        android:id="@+id/button_destinationsLA_add" 
+        android:layout_width="96dp" 
+        android:layout_height="0dp"
+        android:layout_weight="1" 
+        android:text="@string/destination_add" 
+        android:onClick="addDestinationToList" />
+    
+    <Button 
+        android:id="@+id/button_destinationsLA_accept" 
+        android:layout_width="96dp" 
+        android:layout_height="0dp"
+        android:layout_weight="1" 
+        android:text="@string/route_it"  
+        android:onClick="getRouteResults" />
+        
+</LinearLayout>
