@@ -41,14 +41,4 @@
         android:onClick="findUserLocation"
         android:text="@string/find_user_prompt" />
     
-    <!-- Temporary -->
-    <Button
-        android:id="@+id/button_adaptered_destinations" 
-        android:layout_width="96dp" 
-        android:layout_height="wrap_content" 
-        android:layout_alignParentBottom="true" 
-        android:gravity="center_horizontal" 
-        android:text="Test Adaptered Destinations"
-        android:onClick="testAdapteredDestinations" />    
-    
 </RelativeLayout>

@@ -179,15 +179,6 @@ public class OriginActivity extends FragmentActivity {
     }
     
     
-    // XXX Testing
-    public void testAdapteredDestinations(View view) {
-    	Log.v(TAG, "Go to Destination screen with ListAdapter");
-    	
-    	Intent intent = new Intent(getBaseContext(), DestinationListAdapterActivity.class);
-    	startActivity(intent);
-    }
-    
-    
     public void goToDestinationsScreen(View view) {
     	// validate the origin address, store it, and move on to the destinations screen
     	Log.v(TAG, "Origin: " + originAddressField.getText());
