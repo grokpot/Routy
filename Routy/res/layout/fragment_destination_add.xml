@@ -1,0 +1,20 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" 
+    android:layout_width="wrap_content" 
+    android:layout_height="wrap_content"
+    android:layout_gravity="center" 
+    android:orientation="vertical" >
+    
+    <EditText 
+        android:id="@+id/edittext_destination_add" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content" 
+        android:layout_alignParentLeft="true" 
+        android:hint="Enter a destination" />
+    
+    <Button 
+        android:id="@+id/button_destination_remove" 
+        android:layout_width="200dp" 
+        android:layout_height="96dp" 
+        android:layout_alignParentRight="true" />
+    
+</RelativeLayout>
