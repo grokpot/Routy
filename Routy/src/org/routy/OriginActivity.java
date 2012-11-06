@@ -106,7 +106,7 @@ public class OriginActivity extends FragmentActivity {
 					originAddressField.setText(addressStr.toString());
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
-					showErrorDialog("Routy's embarrassed he couldn't find an address for your location.  Would you mind typing it in?");
+					showErrorDialog(getString(R.string.locating_fail_error));
 				}
 				resetLocateButton();
 			}
@@ -198,12 +198,12 @@ public class OriginActivity extends FragmentActivity {
         	}
         	
         	if (originAddress != null) {
-    			Toast.makeText(this, "Origin address is good!", Toast.LENGTH_LONG).show();	// XXX temp
+    			Toast.makeText(this, getString(R.string.origin_validated), Toast.LENGTH_LONG).show();	// XXX temp
     			Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
     			destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
     			startActivity(destinationIntent);
     		} else {
-    			Toast.makeText(this, "Bad origin address.", Toast.LENGTH_LONG).show();	// XXX temp
+    			Toast.makeText(this, getString(R.string.origin_failed_validate), Toast.LENGTH_LONG).show();	// XXX temp
     			showErrorDialog(getResources().getString(R.string.bad_origin_address_error));
     		}
     	}

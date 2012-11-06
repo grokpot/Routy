@@ -1,8 +1,5 @@
 /bin
 
-# Generated Files #
-/gen/org/routy/R.java
-
 *.class
 
 # Package Files #

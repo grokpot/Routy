@@ -52,7 +52,7 @@ public class ResultsActivity extends FragmentActivity {
 		LinearLayout resultsLayout = (LinearLayout) findViewById(R.id.layout_results);
 		
 		TextView text_total_distance = (TextView) findViewById(R.id.textview_total_distance);
-		text_total_distance.setText("Your total distance is: " + route.getTotalDistance());
+		text_total_distance.setText(getString(R.string.total_distance) + route.getTotalDistance());
 		
 		for (int addressIndex = 0; addressIndex < addressesSize; addressIndex++){
 			
@@ -73,8 +73,7 @@ public class ResultsActivity extends FragmentActivity {
 				segmentButtons[addressIndex] = new Button(this);
 				
 				// Dynamically set the text for the Button
-				// TODO: change this to a string resource
-				segmentButtons[addressIndex].setText("click to view segment");
+				segmentButtons[addressIndex].setText(getString(R.string.view_segment));
 				segmentButtons[addressIndex].setId(addressIndex);
 				
 				// Instantiate the onClickListener

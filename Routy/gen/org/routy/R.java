@@ -49,39 +49,54 @@ public final class R {
     public static final class string {
         /**  Origin Screen Stuff 
          */
-        public static final int address_field_hint=0x7f04000d;
+        public static final int address_field_hint=0x7f040011;
         public static final int app_name=0x7f040000;
         public static final int bad_origin_address_error=0x7f040009;
-        public static final int clear_screen=0x7f040010;
+        public static final int cancel=0x7f040026;
+        public static final int clear_screen=0x7f040014;
         public static final int default_error_message=0x7f040006;
-        public static final int destination_add=0x7f04001a;
-        public static final int destination_enter=0x7f04001e;
-        public static final int destination_remove=0x7f040017;
+        public static final int destination_add=0x7f04001e;
+        public static final int destination_enter=0x7f040022;
+        public static final int destination_remove=0x7f04001b;
         public static final int enable_gps_prompt=0x7f04000c;
         /**  Global 
          */
         public static final int error_message_title=0x7f040005;
-        public static final int find_user_prompt=0x7f04000f;
-        public static final int goto_destinations=0x7f040013;
+        public static final int find_user_prompt=0x7f040013;
+        public static final int goto_destinations=0x7f040017;
         public static final int hello_world=0x7f040001;
         public static final int locating_fail_error=0x7f04000b;
         public static final int menu_settings=0x7f040002;
+        public static final int no=0x7f040027;
         public static final int no_internet_error=0x7f040007;
         public static final int no_location_provider_error=0x7f04000a;
         public static final int no_origin_address_error=0x7f040008;
-        public static final int origin_modify=0x7f040019;
-        public static final int origin_prompt=0x7f04000e;
-        public static final int please_wait=0x7f040011;
-        public static final int prompt_destination=0x7f040016;
-        public static final int route_it=0x7f040018;
-        public static final int stop_locating=0x7f040012;
-        public static final int test_destination_1=0x7f04001b;
-        public static final int test_destination_2=0x7f04001c;
-        public static final int test_destination_3=0x7f04001d;
-        public static final int title_activity_destination=0x7f040014;
+        /**  Button Labels 
+         */
+        public static final int ok=0x7f040025;
+        public static final int origin_failed_validate=0x7f040010;
+        public static final int origin_modify=0x7f04001d;
+        public static final int origin_prompt=0x7f040012;
+        public static final int origin_validated=0x7f04000f;
+        public static final int please_wait=0x7f040015;
+        public static final int prompt_destination=0x7f04001a;
+        public static final int route_it=0x7f04001c;
+        public static final int routed=0x7f04000e;
+        public static final int stop_locating=0x7f040016;
+        public static final int test_destination_1=0x7f04001f;
+        public static final int test_destination_2=0x7f040020;
+        public static final int test_destination_3=0x7f040021;
+        public static final int title_activity_destination=0x7f040018;
         public static final int title_activity_main=0x7f040003;
         public static final int title_activity_origin=0x7f040004;
-        public static final int title_activity_results=0x7f040015;
+        public static final int title_activity_results=0x7f040019;
+        public static final int total_distance=0x7f040024;
+        /**  Toasts 
+         */
+        public static final int validated=0x7f04000d;
+        /**  Route Screen Stuff 
+         */
+        public static final int view_segment=0x7f040023;
     }
     public static final class style {
         public static final int AppTheme=0x7f050000;
