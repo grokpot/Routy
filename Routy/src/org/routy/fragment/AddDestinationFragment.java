@@ -2,6 +2,7 @@ package org.routy.fragment;
 
 import org.routy.R;
 import org.routy.RemoveDestinationClickListener;
+import org.routy.model.Destination;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,7 +13,7 @@ import android.widget.Button;
 
 public abstract class AddDestinationFragment extends Fragment {
 
-	
+	private Destination destination;
 	private RemoveDestinationClickListener removeListener;
 
 	public AddDestinationFragment() {
@@ -25,6 +26,11 @@ public abstract class AddDestinationFragment extends Fragment {
 		super();
 		
 		this.removeListener = removeListener;
+	}
+	
+	
+	public Destination getDestination() {
+		return this.destination;
 	}
 	
 	

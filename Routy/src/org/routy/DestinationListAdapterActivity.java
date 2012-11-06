@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.routy.adapter.DestinationAdapter;
+import org.routy.fragment.AddDestinationFragment;
+import org.routy.model.Destination;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -17,7 +19,7 @@ public class DestinationListAdapterActivity extends FragmentActivity {
 	
 	private ListView listView;
 	private DestinationAdapter adapter;
-	private List<String> addresses;
+	private List<Destination> addresses;
 	
 	
 	@Override
@@ -26,18 +28,20 @@ public class DestinationListAdapterActivity extends FragmentActivity {
 		
 		setContentView(R.layout.activity_destination_adaptered);
 		
-		addresses = new ArrayList<String>();
-		addresses.add("Destination 1");
+		addresses = new ArrayList<Destination>();
+		addresses.add(new Destination("Destination 1"));
 		
 		adapter = new DestinationAdapter(this, R.layout.fragment_destination_add, addresses);
 		
 		listView = (ListView) findViewById(R.id.listview_destinations);
 		listView.setAdapter(adapter);
+		
+//		listView.invalidate
 	}
 	
 	
 	public void addDestinationToList(View v) {
-		addresses.add(getResources().getString(R.string.prompt_destination));
+		addresses.add(new Destination());
 		adapter.notifyDataSetChanged();
 	}
 	

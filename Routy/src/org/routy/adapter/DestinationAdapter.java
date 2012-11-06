@@ -3,6 +3,7 @@ package org.routy.adapter;
 import java.util.List;
 
 import org.routy.R;
+import org.routy.model.Destination;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,16 +17,16 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 
-public class DestinationAdapter extends ArrayAdapter<String> {
+public class DestinationAdapter extends ArrayAdapter<Destination> {
 
 	private final String TAG = "DestinationAdapter";
 	
 	private Context context;
 	private int textViewResourceId;
-	private List<String> addresses;
+	private List<Destination> addresses;
 	
 	
-	public DestinationAdapter(Context context, int textViewResourceId, List<String> addresses) {
+	public DestinationAdapter(Context context, int textViewResourceId, List<Destination> addresses) {
 		super(context, textViewResourceId, addresses);
 		
 		this.context = context;
@@ -39,8 +40,8 @@ public class DestinationAdapter extends ArrayAdapter<String> {
 		View row = convertView;
 		DestinationContainer container = null;
 		
-		// If Android is handing us a row to reuse.
 		if (row == null) {
+			// Android is handing us a row object to re-use.
 			LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 			row = inflater.inflate(textViewResourceId, parent, false);
 			
@@ -53,13 +54,21 @@ public class DestinationAdapter extends ArrayAdapter<String> {
 			container = (DestinationContainer) row.getTag();
 		}
 		
-		container.editText.setText(addresses.get(position));
+		
+		// TODO make this display the correct address
+		if (addresses.get(position).isValid()) {
+			container.editText.setText(addresses.get(position).getAddress().getAddressLine(0));
+		} else {
+			container.editText.setText(addresses.get(position).getLocationString());
+		}
 		container.editText.setOnFocusChangeListener(new OnFocusChangeListener() {
-			
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus) {
+					Log.v(TAG, "position " + position + " just lost focus");
 //					addresses.set(position, ((EditText) v).getText().toString());
+				} else if (hasFocus) {
+					Log.v(TAG, "position " + position + " just got focus");
 				}
 			}
 		});
