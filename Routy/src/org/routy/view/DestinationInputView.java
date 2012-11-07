@@ -16,6 +16,7 @@ public abstract class DestinationInputView extends LinearLayout {
 
 	
 	private UUID id;
+//	private Destination destination;
 	private String address;
 	private EditText editText;
 	

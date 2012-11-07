@@ -65,7 +65,7 @@ public class DestinationActivity extends FragmentActivity {
 		
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
 		
-		addDestinationAddView();
+		addDestinationInputView();
 		
 		// XXX temp "Test defaults"
         Button buttonTestDefaults = (Button) findViewById(R.id.button_test_defaults);
@@ -75,11 +75,14 @@ public class DestinationActivity extends FragmentActivity {
 	
 	
 	// XXX temp
+	/**
+	 * Loads the 3 test destinations we've been using.
+	 */
 	View.OnClickListener listenerTestDefaults = new View.OnClickListener() {
         public void onClick(View v) {
         	if (destLayout.getChildCount() < 3) {
         		for (int i = destLayout.getChildCount(); i < 3; i++) {
-        			addDestinationAddView();
+        			addDestinationInputView();
         		}
         	}
         	
@@ -95,7 +98,10 @@ public class DestinationActivity extends FragmentActivity {
     };
 	
 	
-	void addDestinationAddView() {
+    /**
+     * Puts another EditText and "remove" button on the screen for another destination.
+     */
+	void addDestinationInputView() {
 		DestinationInputView v = new DestinationInputView(mContext) {
 
 			@Override
@@ -109,6 +115,10 @@ public class DestinationActivity extends FragmentActivity {
 	}
 	
 	
+	/**
+	 * Removes the EditText and "remove" button row ({@link DestinationInputView}} with the given {@link UUID} from the screen.
+	 * @param id
+	 */
 	void removeDestinationAddView(UUID id) {
 		// Go through the views list and remove the one that has the given UUID
 		
@@ -123,11 +133,16 @@ public class DestinationActivity extends FragmentActivity {
 	}
 	
 	
+	/**
+	 * Adds a {@link DestinationInputView} row to the list if we're not maxed out.  Max number 
+	 * of rows is set in {@link AppProperties}.
+	 * @param v
+	 */
 	public void addAnotherDestination(View v) {
 		Log.v(TAG, "Add another destination.");
 		
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
-			addDestinationAddView();
+			addDestinationInputView();
 		}
 	}
 	
