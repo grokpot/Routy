@@ -1,5 +1,6 @@
 package org.routy;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,12 +11,13 @@ import junit.framework.Assert;
 
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoInternetConnectionException;
+import org.routy.exception.RoutyException;
 import org.routy.model.AppProperties;
 import org.routy.model.Route;
 import org.routy.model.RouteRequest;
 import org.routy.service.AddressService;
 import org.routy.task.CalculateRouteTask;
-import org.routy.view.DestinationAddView;
+import org.routy.view.DestinationInputView;
 
 import android.content.Context;
 import android.content.Intent;
@@ -81,20 +83,20 @@ public class DestinationActivity extends FragmentActivity {
         		}
         	}
         	
-        	DestinationAddView view = (DestinationAddView) destLayout.getChildAt(0);
+        	DestinationInputView view = (DestinationInputView) destLayout.getChildAt(0);
         	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_1));
         	
-        	view = (DestinationAddView) destLayout.getChildAt(1);
+        	view = (DestinationInputView) destLayout.getChildAt(1);
         	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_2));
         	
-        	view = (DestinationAddView) destLayout.getChildAt(2);
+        	view = (DestinationInputView) destLayout.getChildAt(2);
         	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_3));
         }
     };
 	
 	
 	void addDestinationAddView() {
-		DestinationAddView v = new DestinationAddView(mContext) {
+		DestinationInputView v = new DestinationInputView(mContext) {
 
 			@Override
 			public void onRemoveClicked(UUID id) {
@@ -113,7 +115,7 @@ public class DestinationActivity extends FragmentActivity {
 		// TODO check out views.remove(Object o) and see how it compares objects to find the right one
 		
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			if (((DestinationAddView) destLayout.getChildAt(i)).getUUID().equals(id)) {
+			if (((DestinationInputView) destLayout.getChildAt(i)).getUUID().equals(id)) {
 				destLayout.removeViewAt(i);
 				break;
 			}
@@ -135,7 +137,7 @@ public class DestinationActivity extends FragmentActivity {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
 		
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			Log.v(TAG, "Destination " + i + ": " + ((EditText) ((DestinationAddView) destLayout.getChildAt(i)).findViewById(R.id.edittext_destination_add)).getText().toString());
+			Log.v(TAG, "Destination " + i + ": " + ((EditText) ((DestinationInputView) destLayout.getChildAt(i)).findViewById(R.id.edittext_destination_add)).getText().toString());
 		}
 		
 		// Validate the addresses and highlight any errors.
@@ -184,7 +186,7 @@ public class DestinationActivity extends FragmentActivity {
 	
 	private void flagInvalidDestination(int position) {
 		if (position >= 0 && position < destLayout.getChildCount()) {
-			DestinationAddView view = (DestinationAddView) destLayout.getChildAt(position);
+			DestinationInputView view = (DestinationInputView) destLayout.getChildAt(position);
 			view.setInvalid();
 		}
 	}
@@ -198,22 +200,25 @@ public class DestinationActivity extends FragmentActivity {
     	AddressService addressService =  new AddressService(geocoder, false);		// TODO make getting sensor true/false dynamic	
 
     	// TODO: "please wait" screen so activity doesn't block.
-		DestinationAddView view = null;
+		DestinationInputView view = null;
 		Address address = null;
 		
 		// gets the destination text from the EditText boxes and tries to validate the strings
     	for (int i = 0; i < destLayout.getChildCount(); i++){
 			try {
-        		view = (DestinationAddView) destLayout.getChildAt(i);
+        		view = (DestinationInputView) destLayout.getChildAt(i);
         		address = addressService.getAddressForLocationString(((EditText) view.findViewById(R.id.edittext_destination_add)).getText().toString());
         		addresses.add(address);
 			} catch (AmbiguousAddressException e) {
 				// TODO error handling - must step out of this OnClick
 				Log.v(TAG, "Ambiguous address.");
 				addresses.add(null);
-			} catch (NoInternetConnectionException e) {
-				// TODO error handling - must step out of this OnClick
-				Log.v(TAG, "No internet connection when trying to validate addresses.");
+			} catch (RoutyException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
     	}
 		

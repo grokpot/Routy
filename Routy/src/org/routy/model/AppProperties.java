@@ -26,5 +26,7 @@ public class AppProperties {
 
 	public static final int NUM_MAX_DESTINATIONS = 5;
 	
+	public static final long SPLASH_SCREEN_DELAY_MS = 1250;
+	
 	
 }

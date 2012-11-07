@@ -13,8 +13,8 @@
     <string name="no_origin_address_error">Routy needs an origin address.  Please enter one or click Find Me and Routy will locate you.</string>
     <string name="bad_origin_address_error">Routy couldn\'t understand the address for your origin.  Could you try again?</string>
     <string name="no_location_provider_error">Routy needs WI-FI or GPS to locate you.  Please try again when you have one of these turned on.</string>
-    <!-- <string name="locating_fail_error">Well that\'s no good&#8230; Routy couldn\'t find your location. Try typing it in manually!</string> -->
-    <string name="locating_fail_error">Routy couldn\'t find your location. Try typing it in manually!</string>
+    <string name="locating_fail_error">Well that\'s no good&#8230; Routy couldn\'t find your location. Try typing it in manually!</string>
+    <!-- <string name="locating_fail_error">Routy couldn\'t find your location. Try typing it in manually!</string> -->
     <string name="enable_gps_prompt">Routy noticed your GPS is not enabled, would you like to enable it so he can try locating you again?</string>
     
     <!-- Toasts -->

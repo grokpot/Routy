@@ -1,8 +1,10 @@
 package org.routy.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.routy.exception.RoutyException;
 import org.routy.model.Distance;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
@@ -31,7 +33,7 @@ public class RouteService {
 	List<List<Integer>> possibleRoutes;
 	
 	
-	public RouteService(Address origin, List<Address> destinations, RouteOptimizePreference preference, boolean sensor) throws Exception {
+	public RouteService(Address origin, List<Address> destinations, RouteOptimizePreference preference, boolean sensor) throws RoutyException, IOException {
 		this.distanceService = new DistanceMatrixService();
 		this.origin = origin;
 		this.destinations = destinations;
@@ -120,7 +122,13 @@ public class RouteService {
 	}
 	
 	
-	private void loadDistancesMatrix() throws Exception {
+	/**
+	 * 
+	 * @throws RoutyException	if there was a problem with the Distance Matrix API URL or parsing the JSON response
+	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
+	 * 							read from the URL
+	 */
+	private void loadDistancesMatrix() throws RoutyException, IOException {
 		int rows = destinations.size() + 1;
 		int cols = destinations.size();
 		

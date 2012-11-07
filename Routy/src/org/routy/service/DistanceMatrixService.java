@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.routy.exception.NoInternetConnectionException;
+import org.routy.exception.RoutyException;
 import org.routy.model.AppProperties;
 import org.routy.model.Distance;
 
@@ -31,9 +32,11 @@ public class DistanceMatrixService {
 	 * @param sensor
 	 * @return
 	 * @throws NoInternetConnectionException 
+	 * @throws IOException 
+	 * @throws RoutyException 
 	 * @throws Exception
 	 */
-	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor) throws NoInternetConnectionException {
+	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor) throws RoutyException, IOException {
 		return getClosestDestination(origin, destinations, sensor, PREFER_DISTANCE);
 	}
 	
@@ -45,26 +48,14 @@ public class DistanceMatrixService {
 	 * @param sensor
 	 * @param preference
 	 * @return					address from destination list that is closest in travel time or distance to the origin address
-	 * @throws JSONException 
-	 * @throws NoInternetConnectionException 
+	 * @throws RoutyException
 	 * @throws IOException 
-	 * @throws MalformedURLException 
-	 * @throws Exception
 	 */
-	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor, int preference) throws NoInternetConnectionException {
+	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor, int preference) throws RoutyException, IOException {
 		int idx = 0;
 		int best = -1;
 		
-		List<Distance> distances = null;
-		try {
-			distances = getDistanceMatrix(origin, destinations, sensor);
-		} catch (MalformedURLException e) {
-			Log.e(TAG, e.getMessage());
-		} catch (IOException e) {
-			
-		} catch (JSONException e) {
-			
-		}
+		List<Distance> distances = getDistanceMatrix(origin, destinations, sensor);
 		
 		if (distances != null) {
 			for (int i = 0; i < distances.size(); i++) {
@@ -90,33 +81,26 @@ public class DistanceMatrixService {
 	/**
 	 * Gets the results from calling Google's Distance Matrix API with the given origin and destinations list.<br />
 	 * (This is where the JSON response is parsed)
+	 * 
 	 * @param origin
 	 * @param destinations
 	 * @param sensor
 	 * @return
-	 * @throws NoInternetConnectionException 
-	 * @throws IOException 
-	 * @throws MalformedURLException 
-	 * @throws JSONException 
-	 * @throws Exception
+	 * @throws RoutyException	if there was a problem with the API URL or parsing the JSON response
+	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
+	 * 							read from the URL
 	 */
-	public List<Distance> getDistanceMatrix(final Address origin, final List<Address> destinations, boolean sensor) throws MalformedURLException, IOException, NoInternetConnectionException, JSONException {
+	public List<Distance> getDistanceMatrix(final Address origin, final List<Address> destinations, boolean sensor) throws RoutyException, IOException {
 		// Get the JSON string response from the webservice
-		String jsonResp = null;
+		String jsonResp = getJSONResponse(origin, destinations, sensor);
+		Log.v(TAG, "jsonResp: " + jsonResp);
+		
 		try {
-			jsonResp = getJSONResponse(origin, destinations, sensor);
-			Log.v(TAG, "jsonResp: " + jsonResp);
-		} catch (IOException e) {
+			return parseJSONResponse(jsonResp);
+		} catch (JSONException e) {
 			Log.e(TAG, e.getMessage());
-			throw new NoInternetConnectionException(e.getMessage());
+			throw new RoutyException();
 		}
-		
-		List<Distance> distances = new ArrayList<Distance>();
-		if (jsonResp != null) {
-			distances = parseJSONResponse(jsonResp);
-		}
-		
-		return distances;
 	}
 
 
@@ -152,10 +136,11 @@ public class DistanceMatrixService {
 	 * @param destinations
 	 * @param sensor
 	 * @return
-	 * @throws IOException 
-	 * @throws MalformedURLException 
+	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
+	 * 							read from the URL
+	 * @throws RoutyException	if the generated URL was invalid 
 	 */
-	private String getJSONResponse(Address origin, List<Address> destinations, boolean sensor) throws MalformedURLException, IOException {
+	private String getJSONResponse(Address origin, List<Address> destinations, boolean sensor) throws RoutyException, IOException {
 		// Add origin
 		StringBuilder url = new StringBuilder(AppProperties.G_DISTANCE_MATRIX_URL);
 		url.append("origins=");

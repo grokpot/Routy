@@ -12,6 +12,7 @@ import org.json.JSONTokener;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.GeocoderAPIException;
 import org.routy.exception.NoInternetConnectionException;
+import org.routy.exception.RoutyException;
 import org.routy.model.AppProperties;
 
 import android.location.Address;
@@ -52,21 +53,16 @@ public class AddressService {
 	 * @return					the {@link Address} obtained using the given location name and <code>null</code> 
 	 * 							if <code>locationName</code> is <code>null</code> or there are no results
 	 * 
-	 * @throws IllegalArgumentException		if the given <code>locationName</code> returns more than 1 result (is ambiguous)
+	 * @throws AmbiguousAddressException
+	 * @throws RoutyException 
+	 * @throws IOException 
 	 */
-	public Address getAddressForLocationString(String locationName) throws AmbiguousAddressException, NoInternetConnectionException {
+	public Address getAddressForLocationString(String locationName) throws AmbiguousAddressException, RoutyException, IOException {
 		if (locationName != null) {
-			try {
-				if (!Geocoder.isPresent()) {
-					return getAddressViaWeb(locationName);
-				} else {
-					return getAddressViaGeocoder(locationName);
-				}
-			} catch (IllegalArgumentException e) {
-				Log.e(TAG, e.getMessage());
-			} catch (IOException e) {
-				Log.e(TAG, e.getMessage());
-				throw new NoInternetConnectionException();
+			if (!Geocoder.isPresent()) {
+				return getAddressViaWeb(locationName);
+			} else {
+				return getAddressViaGeocoder(locationName);
 			}
 		}
 		
@@ -82,8 +78,10 @@ public class AddressService {
 	 * 						<code>null</code> if there is no Address for the given location
 	 * @throws AmbiguousAddressException 
 	 * @throws NoInternetConnectionException 
+	 * @throws IOException 
+	 * @throws RoutyException 
 	 */
-	public Address getAddressForLocation(Location location) throws AmbiguousAddressException, NoInternetConnectionException {
+	public Address getAddressForLocation(Location location) throws RoutyException, IOException, AmbiguousAddressException {
 		return getAddressForCoordinates(location.getLatitude(), location.getLongitude());
 	}
 	
@@ -96,23 +94,16 @@ public class AddressService {
 	 * @return				the Address for the given GPS coordinates<br/>
 	 * 						<code>null</code> if the GPS coordinates are invalid or 
 	 * 						there is no Address for the given point 
-	 * @throws NoInternetConnectionException 
+	 * @throws AmbiguousAddressException 
+	 * @throws RoutyException 
+	 * @throws IOException 
 	 */
-	public Address getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, NoInternetConnectionException {
-		try {
-			if (!Geocoder.isPresent()) {
-				return getAddressViaWeb(latitude, longitude);
-			} else {
-				return getAddressViaGeocoder(latitude, longitude);
-			}
-		} catch (IllegalArgumentException e) {
-			Log.e(TAG, e.getMessage());
-		} catch (IOException e) {
-			Log.e(TAG, e.getMessage());
-			throw new NoInternetConnectionException();
+	public Address getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, RoutyException, IOException {
+		if (!Geocoder.isPresent()) {
+			return getAddressViaWeb(latitude, longitude);
+		} else {
+			return getAddressViaGeocoder(latitude, longitude);
 		}
-
-		return null;
 	}
 	
 	
@@ -126,12 +117,19 @@ public class AddressService {
 	 * @throws AmbiguousAddressException
 	 */
 	Address getAddressViaGeocoder(String locationName) throws IOException, AmbiguousAddressException {
+		Log.v(TAG, "Getting Address for locationName=" + locationName + " via Geocoder");
 		List<Address> results = geocoder.getFromLocationName(locationName, 2);
 		
 		if (results != null && results.size() > 0) {
 			if (results.size() == 1) {
 				return results.get(0);
 			} else {
+				for (int j = 0; j < results.size(); j++) {
+					Log.v(TAG, "Resulting Address " + j);
+					for (int i = 0; i < results.get(j).getMaxAddressLineIndex(); i++) {
+						Log.v(TAG, results.get(j).getAddressLine(i));
+					}
+				}
 				throw new AmbiguousAddressException(results);
 			}
 		}
@@ -169,8 +167,11 @@ public class AddressService {
 	 * 
 	 * @param locationName
 	 * @return
+	 * @throws RoutyException 
+	 * @throws IOException 
 	 */
-	Address getAddressViaWeb(String locationName) throws NoInternetConnectionException {		// TODO make this throw an exception if it gets more than 1 address
+	Address getAddressViaWeb(String locationName) throws IOException, RoutyException {		// TODO make this throw an exception if it gets more than 1 address
+		Log.v(TAG, "Getting Address for locationName=" + locationName + " via Web API");
 		if (locationName != null && locationName.length() > 0) {
 			StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
 			geoUrl.append("address=");
@@ -192,8 +193,10 @@ public class AddressService {
 	 * @param latitude
 	 * @param longitude
 	 * @return
+	 * @throws RoutyException 
+	 * @throws IOException 
 	 */
-	Address getAddressViaWeb(double latitude, double longitude) throws NoInternetConnectionException {	// TODO make this throw an exception if it gets more than 1 address
+	Address getAddressViaWeb(double latitude, double longitude) throws IOException, RoutyException {	// TODO make this throw an exception if it gets more than 1 address
 		StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
 		geoUrl.append("latlng=");
 		geoUrl.append(latitude);
@@ -213,8 +216,9 @@ public class AddressService {
 	 * @param url
 	 * @return
 	 * @throws IllegalArgumentException		if url is null or empty
+	 * @throws RoutyException 
 	 */
-	Address getAddressForURL(String url) throws IllegalArgumentException, NoInternetConnectionException {
+	Address getAddressForURL(String url) throws IOException, RoutyException {
 		// TODO Get this as an XML response so we can more thoroughly fill in the Address object (eg. different address lines, locality, etc)
 		if (url != null && url.length() > 0) {
 			try {
@@ -231,12 +235,11 @@ public class AddressService {
 				
 			} catch (GeocoderAPIException e) {
 				Log.e(TAG, e.getMessage());
-			} catch (MalformedURLException e) {
-				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage());
 			} catch (JSONException e) {
 				Log.e(TAG, e.getMessage());
+				throw new RoutyException();
 			}
 			
 			return null;
@@ -255,7 +258,7 @@ public class AddressService {
 	 * @throws JSONException
 	 * @throws GeocoderAPIException
 	 */
-	Address parseJSONResponse(String jsonResp) throws JSONException, GeocoderAPIException/*, AmbiguousAddressException*/ {
+	Address parseJSONResponse(String jsonResp) throws JSONException, GeocoderAPIException {
 		JSONObject response = (JSONObject) new JSONTokener(jsonResp.toString()).nextValue();
 		String status = response.getString("status");
 		

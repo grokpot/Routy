@@ -1,11 +1,12 @@
 package org.routy;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
 
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoLocationProviderException;
-import org.routy.exception.NoInternetConnectionException;
+import org.routy.exception.RoutyException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.fragment.TwoButtonDialog;
 import org.routy.model.AppProperties;
@@ -26,7 +27,6 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
 public class OriginActivity extends FragmentActivity {
 
@@ -85,12 +85,17 @@ public class OriginActivity extends FragmentActivity {
 				
 				try {
 					address = addressService.getAddressForLocation(location);
-				} catch (NoInternetConnectionException e) { 
-					showErrorDialog(getResources().getString(R.string.no_internet_error));
 				} catch (AmbiguousAddressException e) {
 					if (e.getAddresses().size() > 0) {
 						address = e.getFirstAddress();
 					}
+				} catch (RoutyException e) {
+					// Display an error to the user...it was already logged
+					Log.e(TAG, "Error reverse geocoding user's location.");
+					showErrorDialog(getResources().getString(R.string.default_error_message));
+				} catch (IOException e) {
+					// TODO Check if they have internet service.  If they don't, tell them.  If they do, show default error message.
+					showErrorDialog("TEMPORARY MSG: Either you don't have and internet connection, or something internally went wrong.");
 				}
 				
 				if (address != null) {
@@ -179,9 +184,15 @@ public class OriginActivity extends FragmentActivity {
     }
     
     
+    /**
+     * Validates the origin address.  If it's good, it gets packaged into an Intent and sent to 
+     * the DestinationActivity screen.
+     * 
+     * @param view
+     */
     public void goToDestinationsScreen(View view) {
     	// validate the origin address, store it, and move on to the destinations screen
-    	Log.v(TAG, "Origin: " + originAddressField.getText());
+    	Log.v(TAG, "Origin entered: " + originAddressField.getText());
     	
     	if (originAddressField.getText() == null || originAddressField.getText().length() == 0) {
 			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
@@ -193,17 +204,24 @@ public class OriginActivity extends FragmentActivity {
         	} catch (AmbiguousAddressException e) {
         		Log.d(TAG, "Got more than one result for the given origin address.  We'll use the first one.");
         		originAddress = e.getFirstAddress();
-        	} catch (NoInternetConnectionException e) {
-        		showErrorDialog(getResources().getString(R.string.no_internet_error));
-        	}
+        	} catch (RoutyException e) {
+        		// Display an error to the user...it was already logged
+        		Log.e(TAG, "Error getting an Address object for origin address.");
+				showErrorDialog(getResources().getString(R.string.default_error_message));
+			} catch (IOException e) {
+				// TODO Check if they have internet service.  If they don't, tell them.  If they do, show default error message.
+				
+				showErrorDialog("TEMPORARY MSG: Either you don't have and internet connection, or something internally went wrong.");
+			}
         	
         	if (originAddress != null) {
-    			Toast.makeText(this, getString(R.string.origin_validated), Toast.LENGTH_LONG).show();	// XXX temp
-    			Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
+//    			Toast.makeText(this, getString(R.string.origin_validated), Toast.LENGTH_LONG).show();	// XXX temp
+        		// Origin address is good...move on to Destinations
+        		Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
     			destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
     			startActivity(destinationIntent);
     		} else {
-    			Toast.makeText(this, getString(R.string.origin_failed_validate), Toast.LENGTH_LONG).show();	// XXX temp
+//    			Toast.makeText(this, getString(R.string.origin_failed_validate), Toast.LENGTH_LONG).show();	// XXX temp
     			showErrorDialog(getResources().getString(R.string.bad_origin_address_error));
     		}
     	}

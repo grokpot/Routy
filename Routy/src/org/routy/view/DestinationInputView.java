@@ -12,7 +12,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-public abstract class DestinationAddView extends LinearLayout {
+public abstract class DestinationInputView extends LinearLayout {
 
 	
 	private UUID id;
@@ -27,11 +27,11 @@ public abstract class DestinationAddView extends LinearLayout {
 	public abstract void onRemoveClicked(UUID id);
 	
 	
-	public DestinationAddView(Context context) {
+	public DestinationInputView(Context context) {
 		this(context, "");
 	}
 	
-	public DestinationAddView(Context context, AttributeSet attrs) {
+	public DestinationInputView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
 		this.id = UUID.randomUUID();
@@ -40,7 +40,7 @@ public abstract class DestinationAddView extends LinearLayout {
 		initViews(context);
 	}
 	
-	public DestinationAddView(Context context, String address) {
+	public DestinationInputView(Context context, String address) {
 		super(context);
 		
 		this.id = UUID.randomUUID();
@@ -76,8 +76,8 @@ public abstract class DestinationAddView extends LinearLayout {
 	
 	public void setInvalid() {
 		// TODO do what's necessary visually to show that this destination is invalid
-//		editText.setTextColor(getResources().getColor(R.color.Red));
-		editText.setBackgroundColor(getResources().getColor(R.color.Pink));
+		editText.setTextColor(getResources().getColor(R.color.Red));
+//		editText.setBackgroundColor(getResources().getColor(R.color.Pink));
 	}
 	
 	

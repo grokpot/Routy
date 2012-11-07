@@ -1,10 +1,10 @@
 package org.routy.service;
 
+import java.io.IOException;
 import java.util.Locale;
 
 import org.routy.exception.AmbiguousAddressException;
-import org.routy.exception.NoInternetConnectionException;
-import org.routy.service.AddressService;
+import org.routy.exception.RoutyException;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -41,8 +41,12 @@ public class AddressServiceTest extends AndroidTestCase {
 			}
 			
 			result = e.getAddresses().get(0);
-		} catch (NoInternetConnectionException e) {
-			Log.e(TAG, e.getMessage());
+		} catch (RoutyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		if (result == null) {
@@ -64,8 +68,12 @@ public class AddressServiceTest extends AndroidTestCase {
 		
 		try {
 			result = addressService.getAddressViaWeb(locationName);
-		} catch (NoInternetConnectionException e) {
-			Log.e(TAG, "Couldn't test getting an address from a location name via the web because there was no internet connection.");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RoutyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		if (result == null) {
@@ -86,8 +94,12 @@ public class AddressServiceTest extends AndroidTestCase {
 		
 		try {
 			result = addressService.getAddressViaWeb(30.390895097516477, -97.69777324050665);
-		} catch (NoInternetConnectionException e) {
-			Log.e(TAG, "Couldn't test getting an address from coordinates via the web because there was no internet connection.");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (RoutyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 		
 		if (result == null) {
