@@ -10,6 +10,7 @@ import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
 
 import android.location.Address;
+import android.util.Log;
 
 /**
  * Hang on to the route provider until the user trashes one or more 
@@ -50,6 +51,7 @@ public class RouteService {
 	 */
 	public Route getBestRoute() {
 		computeAllPossibleRoutes(destinations.size());
+		Log.v(TAG, possibleRoutes.size() + " possible routes");
 		int bestDistance = -1;
 		List<Integer> bestRoute = null;
 		
@@ -135,6 +137,7 @@ public class RouteService {
 		distances = new int[rows][cols];
 		
 		// Origin to each destination
+		Log.v(TAG, "Getting distance from origin to destinations");
 		List<Distance> distsFromOrigin = distanceService.getDistanceMatrix(origin, destinations, sensor);
 		for (int i = 0; i < distsFromOrigin.size(); i++) {
 			if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
@@ -145,27 +148,31 @@ public class RouteService {
 		}
 		
 		// Each destination to others
+		Log.v(TAG, "Getting distance from each destination to the others");
 		List<Distance> distsFromDest = null;
 		for (int i = 0; i < destinations.size(); i++) {
 			List<Address> otherDests = new ArrayList<Address>(destinations);
 			otherDests.remove(i);
+			Log.v(TAG, "otherDests size=" + otherDests.size());
 			
-			distsFromDest = distanceService.getDistanceMatrix(destinations.get(i), otherDests, sensor);
-			
-			int idx = 0;
-			int entered = 0;
-			
-			while (entered < distsFromDest.size()) {
-				if (i != idx) {
-					if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
-						distances[i+1][idx] = distsFromDest.get(entered).getDuration();
-					} else {
-						distances[i+1][idx] = distsFromDest.get(entered).getDistance();
-					}
-					entered++;
-				}
-				idx++;
+			if (otherDests.size() > 0) {
+				distsFromDest = distanceService.getDistanceMatrix(destinations.get(i), otherDests, sensor);
 				
+				int idx = 0;
+				int entered = 0;
+				
+				while (entered < distsFromDest.size()) {
+					if (i != idx) {
+						if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
+							distances[i+1][idx] = distsFromDest.get(entered).getDuration();
+						} else {
+							distances[i+1][idx] = distsFromDest.get(entered).getDistance();
+						}
+						entered++;
+					}
+					idx++;
+					
+				}
 			}
 		}
 	}

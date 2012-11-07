@@ -5,6 +5,8 @@ import java.util.UUID;
 import org.routy.R;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -58,6 +60,25 @@ public abstract class DestinationInputView extends LinearLayout {
 		
 		editText = (EditText) findViewById(R.id.edittext_destination_add);
 		editText.setText(address);
+		editText.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				setValid();
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		
 		Button removeButton = (Button) findViewById(R.id.button_destination_remove);
 		removeButton.setOnClickListener(new OnClickListener() {
@@ -79,6 +100,12 @@ public abstract class DestinationInputView extends LinearLayout {
 		// TODO do what's necessary visually to show that this destination is invalid
 		editText.setTextColor(getResources().getColor(R.color.Red));
 //		editText.setBackgroundColor(getResources().getColor(R.color.Pink));
+	}
+
+
+	public void setValid() {
+		// TODO Undo whatever setInvalid() does
+		editText.setTextColor(getResources().getColor(R.color.White));
 	}
 	
 	

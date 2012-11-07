@@ -12,6 +12,7 @@ import junit.framework.Assert;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
+import org.routy.fragment.OneButtonDialog;
 import org.routy.model.AppProperties;
 import org.routy.model.Route;
 import org.routy.model.RouteRequest;
@@ -19,7 +20,9 @@ import org.routy.service.AddressService;
 import org.routy.task.CalculateRouteTask;
 import org.routy.view.DestinationInputView;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
 import android.location.Geocoder;
@@ -40,7 +43,7 @@ public class DestinationActivity extends FragmentActivity {
 	
 	private final String TAG = "DestinationActivity";
 	
-	private Context mContext;
+	private FragmentActivity mContext;
 	private Address origin;
 	private LinearLayout destLayout;
 	
@@ -157,43 +160,54 @@ public class DestinationActivity extends FragmentActivity {
 		
 		// Validate the addresses and highlight any errors.
 		List<Address> validatedAddresses = validateDestinations();
-		boolean hasErrors = false;
-		for (int i = 0; i < validatedAddresses.size(); i++) {
-			if (validatedAddresses.get(i) == null) {
-				flagInvalidDestination(i);
-				hasErrors = true;
-			}
-		}
 		
-		if (!hasErrors) {
-			// TODO Calculate route and go to results activity
-			Toast.makeText(mContext, getString(R.string.validated), Toast.LENGTH_LONG).show();	// XXX temp
+		Log.v(TAG, validatedAddresses.size() + " addresses");
+		
+		if (validatedAddresses.size() == 0) {
+			// All fields were empty
+			showErrorDialog("Please enter at least 1 destination to continue.");
+		} else {
+			boolean hasErrors = false;
+			for (int i = 0; i < validatedAddresses.size(); i++) {
+				if (validatedAddresses.get(i) == null) {
+					flagInvalidDestination(i);
+					hasErrors = true;
+				}
+			}
 			
-			// TODO: fill in last two parameters of RouteService instantiation with user choice
-        	// Instantiates a Route object with validated addresses and calls ResultsActivity
-        	try {
-				/*RouteService routeService = new RouteService(origin, validatedAddresses, RouteOptimizePreference.PREFER_DURATION, false);
-				Route route = routeService.getBestRoute();*/
-        		
-        		CalculateRouteTask task = new CalculateRouteTask() {
-					
-					@Override
-					public void onRouteCalculated(Route route) {
-						Toast.makeText(mContext, getString(R.string.routed), Toast.LENGTH_LONG).show();	// XXX temp
+			if (!hasErrors) {
+				// TODO Calculate route and go to results activity
+//				Toast.makeText(mContext, getString(R.string.validated), Toast.LENGTH_LONG).show();	// XXX temp
+				
+				// TODO: fill in last two parameters of RouteService instantiation with user choice
+	        	// Instantiates a Route object with validated addresses and calls ResultsActivity
+	        	try {
+					/*RouteService routeService = new RouteService(origin, validatedAddresses, RouteOptimizePreference.PREFER_DURATION, false);
+					Route route = routeService.getBestRoute();*/
+	        		
+	        		CalculateRouteTask task = new CalculateRouteTask() {
 						
-						// Call ResultsActivity activity
-		    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-		    			resultsIntent.putExtra("addresses", (Serializable) route.getAddresses());
-		    			resultsIntent.putExtra("distance", route.getTotalDistance());
-		    			startActivity(resultsIntent);
-					}
-				};
-				
-				task.execute(new RouteRequest(origin, validatedAddresses, false));
-				
-			} catch (Exception e) {
-				// TODO error handling
-				e.printStackTrace();
+						@Override
+						public void onRouteCalculated(Route route) {
+							Toast.makeText(mContext, getString(R.string.routed), Toast.LENGTH_LONG).show();	// XXX temp
+							
+							// Call ResultsActivity activity
+			    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
+			    			resultsIntent.putExtra("addresses", (Serializable) route.getAddresses());
+			    			resultsIntent.putExtra("distance", route.getTotalDistance());
+			    			startActivity(resultsIntent);
+						}
+					};
+					
+					task.execute(new RouteRequest(origin, validatedAddresses, false));
+					
+				} catch (Exception e) {
+					// TODO error handling
+					e.printStackTrace();
+				}
+			} else {
+				Log.e(TAG, "Errors found in destinations.");
+				showErrorDialog("The addresses in red are invalid.  Try being more specific.");
 			}
 		}
 	}
@@ -217,13 +231,17 @@ public class DestinationActivity extends FragmentActivity {
     	// TODO: "please wait" screen so activity doesn't block.
 		DestinationInputView view = null;
 		Address address = null;
+		String userInput = null;
 		
 		// gets the destination text from the EditText boxes and tries to validate the strings
     	for (int i = 0; i < destLayout.getChildCount(); i++){
 			try {
         		view = (DestinationInputView) destLayout.getChildAt(i);
-        		address = addressService.getAddressForLocationString(((EditText) view.findViewById(R.id.edittext_destination_add)).getText().toString());
-        		addresses.add(address);
+        		userInput = ((EditText) view.findViewById(R.id.edittext_destination_add)).getText().toString();
+        		if (userInput != null && userInput.trim().length() > 0) {
+        			address = addressService.getAddressForLocationString(userInput);
+            		addresses.add(address);
+        		}
 			} catch (AmbiguousAddressException e) {
 				// TODO error handling - must step out of this OnClick
 				Log.v(TAG, "Ambiguous address.");
@@ -245,6 +263,23 @@ public class DestinationActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_destination, menu);
         return true;
+    }
+	
+	
+	/**
+     * Displays an {@link AlertDialog} with one button that dismisses the dialog.  Use this to display error messages 
+     * to the user.
+     * 
+     * @param message
+     */
+    private void showErrorDialog(String message) {
+    	OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {
+			@Override
+			public void onButtonClicked(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		};
+		dialog.show(mContext.getSupportFragmentManager(), TAG);
     }
 
 }
