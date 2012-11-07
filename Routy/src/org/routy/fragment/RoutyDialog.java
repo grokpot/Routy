@@ -18,6 +18,7 @@ public abstract class RoutyDialog extends DialogFragment {
 
 	private String mErrorMessage;
 	private TextView mTextView;
+	private String[] mButtonLabels;
 	
 	private String rightButtonLabel;
 	private String middleButtonLabel;
@@ -42,18 +43,12 @@ public abstract class RoutyDialog extends DialogFragment {
 	public RoutyDialog(String title, String message, String[] buttonLabels, boolean showPositive, boolean showNeutral, boolean showNegative) {
 		super();
 		
-		if (message != null) {
-			mErrorMessage = message;
-		} else {
-			mErrorMessage = getResources().getString(R.string.default_error_message);
-		}
+		mErrorMessage = message;
 		
-		if (buttonLabels == null) {
-			setDefaultButtonLabels();
-		} else if (buttonLabels.length == 3) {
-			assignButtonLabels(buttonLabels);
-		} else {
+		if (buttonLabels != null && buttonLabels.length != 3) {
 			throw new IllegalArgumentException("buttonLabels passed into RoutyDialog (or a subclass) needs to be a String[] of length 3.");
+		} else {
+			mButtonLabels = buttonLabels;
 		}
 		
 		this.showPositive = showPositive;
@@ -63,9 +58,11 @@ public abstract class RoutyDialog extends DialogFragment {
 	
 	
 	private void setDefaultButtonLabels() {
-		this.rightButtonLabel = getString(R.string.ok);
-		this.middleButtonLabel = getString(R.string.cancel);
-		this.leftButtonLabel = getString(R.string.no);
+		if (isAdded()) {
+			this.rightButtonLabel = getResources().getString(R.string.ok);
+			this.middleButtonLabel = getResources().getString(R.string.cancel);
+			this.leftButtonLabel = getResources().getString(R.string.no);
+		}
 	}
 	
 	
@@ -89,6 +86,16 @@ public abstract class RoutyDialog extends DialogFragment {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		if (mErrorMessage == null) {
+			mErrorMessage = getResources().getString(R.string.default_error_message);
+		}
+		
+		if (mButtonLabels == null) {
+			setDefaultButtonLabels();
+		} else {
+			assignButtonLabels(mButtonLabels);
+		}
 	}
 	
 	
