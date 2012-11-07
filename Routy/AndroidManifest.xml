@@ -20,6 +20,7 @@
 
     <application
         android:icon="@drawable/icon"
+        android:label="@string/app_name"
         android:theme="@style/AppTheme" >
 
         <!-- For MapView and Geocoder -->
