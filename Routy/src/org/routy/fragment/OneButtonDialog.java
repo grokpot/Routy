@@ -2,7 +2,7 @@ package org.routy.fragment;
 
 import android.content.DialogInterface;
 
-public abstract class OneButtonDialog extends RoutyDialog {
+public abstract class OneButtonDialog extends RoutyAlertDialog {
 	
 	public OneButtonDialog(String title, String message) {
 		super(title, message, null, true, false, false);

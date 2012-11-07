@@ -2,7 +2,7 @@ package org.routy.fragment;
 
 import android.content.DialogInterface;
 
-public abstract class ThreeButtonDialog extends RoutyDialog {
+public abstract class ThreeButtonDialog extends RoutyAlertDialog {
 	
 	/**
 	 * Creates a 3-button alert dialog with the given title and message.  The buttons will 

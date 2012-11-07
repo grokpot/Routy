@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 // Backwards compatible in case they're on pre-API11
 
-public abstract class RoutyDialog extends DialogFragment {
+public abstract class RoutyAlertDialog extends DialogFragment {
 
 	private String mErrorMessage;
 	private TextView mTextView;
@@ -28,7 +28,7 @@ public abstract class RoutyDialog extends DialogFragment {
 	private boolean showNeutral;
 	private boolean showNegative;
 	
-	public RoutyDialog() {
+	public RoutyAlertDialog() {
 		super();
 		mErrorMessage = getResources().getString(R.string.default_error_message);
 		
@@ -40,7 +40,7 @@ public abstract class RoutyDialog extends DialogFragment {
 	}
 	
 	
-	public RoutyDialog(String title, String message, String[] buttonLabels, boolean showPositive, boolean showNeutral, boolean showNegative) {
+	public RoutyAlertDialog(String title, String message, String[] buttonLabels, boolean showPositive, boolean showNeutral, boolean showNegative) {
 		super();
 		
 		mErrorMessage = message;

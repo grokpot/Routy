@@ -2,7 +2,7 @@ package org.routy.fragment;
 
 import android.content.DialogInterface;
 
-public abstract class TwoButtonDialog extends RoutyDialog {
+public abstract class TwoButtonDialog extends RoutyAlertDialog {
 	
 	public TwoButtonDialog(String title, String message) {
 		this(title, message, null);
