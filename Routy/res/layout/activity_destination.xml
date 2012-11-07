@@ -1,44 +1,79 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+    android:orientation="vertical" >
+    
+    <TextView 
+        android:id="@+id/textview_destinations_origin" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:layout_marginTop="10dp" />
 
-    <TableLayout
+    <!-- <TableLayout
         android:id="@+id/TableLayout_destinations"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp" >
-    </TableLayout>
+    </TableLayout> -->
+    
+    <ScrollView 
+        android:id="@+id/ScrollView_destinations" 
+        android:layout_width="fill_parent" 
+        android:layout_height="0dp" 
+        android:layout_weight="1" >
+        
+        <LinearLayout 
+            android:id="@+id/LinearLayout_destinations" 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"  
+            android:orientation="vertical" />
+        
+    </ScrollView>
+        
+    <LinearLayout 
+        android:id="@+id/LinearLayout_destinations_buttons" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:orientation="vertical" >
+        
+        <Button 
+            android:id="@+id/button_test_defaults" 
+            style="android:buttonStyle" 
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content" />
+        
+        <Button
+	        android:id="@+id/button_destination_add"
+	        style="android:buttonStyle"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content" 
+	        android:onClick="addAnotherDestination" 
+	        android:text="@string/destination_add" />
+	
+	<!-- <Button
+	        android:id="@+id/button_test_defaults"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_above="@+id/button_origin_modify"
+	        android:text="Test defaults"
+	        tools:ignore="HardcodedText" /> -->
+	
+	<!-- <Button
+	        android:id="@+id/button_origin_modify"
+	        style="android:buttonStyle"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_above="@+id/button_route_it"
+	        android:text="@string/origin_modify" /> -->
+	
+	    <Button
+	        android:id="@+id/button_route_it"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:onClick="acceptDestinations" 
+	        android:text="@string/route_it" />
+        
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/button_destination_add"
-        style="android:buttonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_test_defaults"
-        android:text="@string/destination_add" />
-
-    <Button
-        android:id="@+id/button_test_defaults"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_origin_modify"
-        android:text="Test defaults"
-        tools:ignore="HardcodedText" />
-
-    <Button
-        android:id="@+id/button_origin_modify"
-        style="android:buttonStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/button_route_it"
-        android:text="@string/origin_modify" />
-
-    <Button
-        android:id="@+id/button_route_it"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="@string/route_it" />
-
-</RelativeLayout>
+</LinearLayout>
