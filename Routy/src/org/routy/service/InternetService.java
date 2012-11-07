@@ -13,15 +13,21 @@ public class InternetService {
 
 	private static final String TAG = "InternetService";
 	
-	
-	public static String getJSONResponse(String url) throws MalformedURLException, IOException, NoInternetConnectionException {
-		URL distMatUrl = new URL(url.toString());
+	// Using this method: http://docs.oracle.com/javase/tutorial/networking/urls/readingWriting.html
+	public static String getJSONResponse(String url) throws MalformedURLException, IOException {
+		URL distMatUrl = null;
+		
+		try {
+			distMatUrl = new URL(url.toString());
+		} catch (MalformedURLException e) {
+			throw new MalformedURLException("Distance Matrix URL [" + url + "] is malformed.");
+		}
 		
 		URLConnection conn = null;
 		try {
 			conn = distMatUrl.openConnection();
 		} catch (IOException e) {
-			throw new NoInternetConnectionException("Could not get connection to URL: " + distMatUrl.toExternalForm());
+			throw new IOException("Could not establish a connection to URL: " + distMatUrl.toExternalForm());
 		}
 		
 		if (conn != null) {
@@ -39,7 +45,7 @@ public class InternetService {
 				in.close();
 			}
 		} else {
-			throw new NoInternetConnectionException("Could not get connection to URL: " + distMatUrl.toExternalForm());
+			throw new IOException("Could not establish a connection to URL: " + distMatUrl.toExternalForm());
 		}
 	}
 }

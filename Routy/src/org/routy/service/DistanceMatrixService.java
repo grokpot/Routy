@@ -1,9 +1,7 @@
 package org.routy.service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.model.AppProperties;
 import org.routy.model.Distance;
 
@@ -31,9 +30,10 @@ public class DistanceMatrixService {
 	 * @param destinations
 	 * @param sensor
 	 * @return
+	 * @throws NoInternetConnectionException 
 	 * @throws Exception
 	 */
-	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor) throws Exception {
+	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor) throws NoInternetConnectionException {
 		return getClosestDestination(origin, destinations, sensor, PREFER_DISTANCE);
 	}
 	
@@ -45,28 +45,45 @@ public class DistanceMatrixService {
 	 * @param sensor
 	 * @param preference
 	 * @return					address from destination list that is closest in travel time or distance to the origin address
+	 * @throws JSONException 
+	 * @throws NoInternetConnectionException 
+	 * @throws IOException 
+	 * @throws MalformedURLException 
 	 * @throws Exception
 	 */
-	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor, int preference) throws Exception {
+	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor, int preference) throws NoInternetConnectionException {
 		int idx = 0;
 		int best = -1;
 		
-		List<Distance> distances = getDistanceMatrix(origin, destinations, sensor);
-		
-		for (int i = 0; i < distances.size(); i++) {
-			Log.d(TAG, "current distance: " + distances.get(i).getDistance());
-			if (preference == PREFER_DISTANCE && (best == -1 || distances.get(i).getDistance() < best)) {
-				best = distances.get(i).getDistance();
-				idx = i;
-				Log.d(TAG, "new best distance: " + distances.get(i).getDistance());
-				Log.d(TAG, "idx=" + idx);
-			} else if (preference == PREFER_DURATION && (best == -1 || distances.get(i).getDuration() < best)) {
-				best = distances.get(i).getDuration();
-				idx = i;
-			}
+		List<Distance> distances = null;
+		try {
+			distances = getDistanceMatrix(origin, destinations, sensor);
+		} catch (MalformedURLException e) {
+			Log.e(TAG, e.getMessage());
+		} catch (IOException e) {
+			
+		} catch (JSONException e) {
+			
 		}
 		
-		return destinations.get(idx);
+		if (distances != null) {
+			for (int i = 0; i < distances.size(); i++) {
+				Log.d(TAG, "current distance: " + distances.get(i).getDistance());
+				if (preference == PREFER_DISTANCE && (best == -1 || distances.get(i).getDistance() < best)) {
+					best = distances.get(i).getDistance();
+					idx = i;
+					Log.d(TAG, "new best distance: " + distances.get(i).getDistance());
+					Log.d(TAG, "idx=" + idx);
+				} else if (preference == PREFER_DURATION && (best == -1 || distances.get(i).getDuration() < best)) {
+					best = distances.get(i).getDuration();
+					idx = i;
+				}
+			}
+			
+			return destinations.get(idx);
+		}
+		
+		return null;
 	}
 	
 	
@@ -77,14 +94,27 @@ public class DistanceMatrixService {
 	 * @param destinations
 	 * @param sensor
 	 * @return
+	 * @throws NoInternetConnectionException 
+	 * @throws IOException 
+	 * @throws MalformedURLException 
+	 * @throws JSONException 
 	 * @throws Exception
 	 */
-	public List<Distance> getDistanceMatrix(final Address origin, final List<Address> destinations, boolean sensor) throws Exception {
+	public List<Distance> getDistanceMatrix(final Address origin, final List<Address> destinations, boolean sensor) throws MalformedURLException, IOException, NoInternetConnectionException, JSONException {
 		// Get the JSON string response from the webservice
-		String jsonResp = getJSONResponse(origin, destinations, sensor);
-		Log.v(TAG, "jsonResp: " + jsonResp);
+		String jsonResp = null;
+		try {
+			jsonResp = getJSONResponse(origin, destinations, sensor);
+			Log.v(TAG, "jsonResp: " + jsonResp);
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage());
+			throw new NoInternetConnectionException(e.getMessage());
+		}
 		
-		List<Distance> distances = parseJSONResponse(jsonResp);
+		List<Distance> distances = new ArrayList<Distance>();
+		if (jsonResp != null) {
+			distances = parseJSONResponse(jsonResp);
+		}
 		
 		return distances;
 	}
@@ -122,9 +152,10 @@ public class DistanceMatrixService {
 	 * @param destinations
 	 * @param sensor
 	 * @return
-	 * @throws Exception
+	 * @throws IOException 
+	 * @throws MalformedURLException 
 	 */
-	private String getJSONResponse(Address origin, List<Address> destinations, boolean sensor) throws Exception {
+	private String getJSONResponse(Address origin, List<Address> destinations, boolean sensor) throws MalformedURLException, IOException {
 		// Add origin
 		StringBuilder url = new StringBuilder(AppProperties.G_DISTANCE_MATRIX_URL);
 		url.append("origins=");
@@ -156,7 +187,6 @@ public class DistanceMatrixService {
 		
 		Log.d(TAG, "DIST MAT URL: " + url.toString());
 		
-		// XXX Using this method: http://docs.oracle.com/javase/tutorial/networking/urls/readingWriting.html
 		return InternetService.getJSONResponse(url.toString());
 	}
 }
