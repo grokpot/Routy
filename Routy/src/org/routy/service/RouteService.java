@@ -49,6 +49,7 @@ public class RouteService {
 	 * 
 	 * @return {@link Route} object
 	 */
+	// TODO distance might be calculated incorrectly
 	public Route getBestRoute() {
 		computeAllPossibleRoutes(destinations.size());
 		Log.v(TAG, possibleRoutes.size() + " possible routes");
@@ -57,6 +58,7 @@ public class RouteService {
 		
 		for (int r = 0; r < possibleRoutes.size(); r++) {
 			List<Integer> route = possibleRoutes.get(r);
+			Log.v(TAG, "Calculating route: " + route.toArray());
 			int idx = 0;
 			int distance = distances[0][route.get(idx) - 1];
 			

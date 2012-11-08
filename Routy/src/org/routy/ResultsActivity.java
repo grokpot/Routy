@@ -52,7 +52,7 @@ public class ResultsActivity extends FragmentActivity {
 		LinearLayout resultsLayout = (LinearLayout) findViewById(R.id.layout_results);
 		
 		TextView text_total_distance = (TextView) findViewById(R.id.textview_total_distance);
-		text_total_distance.setText(getString(R.string.total_distance) + route.getTotalDistance());
+		text_total_distance.setText(getString(R.string.total_distance) + ((double) route.getTotalDistance())/1000 + "km");
 		
 		for (int addressIndex = 0; addressIndex < addressesSize; addressIndex++){
 			
