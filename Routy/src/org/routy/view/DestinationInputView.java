@@ -8,7 +8,11 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -16,7 +20,9 @@ import android.widget.LinearLayout;
 
 public abstract class DestinationInputView extends LinearLayout {
 
-	
+	private final String TAG = "DestinationInputView";
+
+//	private Context context;
 	private UUID id;
 //	private Destination destination;
 	private String address;
@@ -37,6 +43,7 @@ public abstract class DestinationInputView extends LinearLayout {
 	public DestinationInputView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		
+//		this.context = context;
 		this.id = UUID.randomUUID();
 		this.address = "";
 		
@@ -46,6 +53,7 @@ public abstract class DestinationInputView extends LinearLayout {
 	public DestinationInputView(Context context, String address) {
 		super(context);
 		
+//		this.context = context;
 		this.id = UUID.randomUUID();
 		this.address = address;
 		
@@ -57,6 +65,26 @@ public abstract class DestinationInputView extends LinearLayout {
 		// Inflate the view for an "add destination" text field and remove button
 		LayoutInflater inflater = LayoutInflater.from(context);
 		inflater.inflate(R.layout.view_destination_add, this);
+		
+		final GestureDetector gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+			
+			/*@Override
+			public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+				Log.v(TAG, "flinged!");
+				return true;
+			}*/
+			
+			@Override
+			public boolean onScroll(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+				Log.v(TAG, "scrolled! -- velocityX=" + velocityX);
+				if (Math.abs(velocityX) >= 40.0) {
+					onRemoveClicked(id);
+				}
+				return true;
+			}
+			
+		});
+		
 		
 		editText = (EditText) findViewById(R.id.edittext_destination_add);
 		editText.setText(address);
@@ -77,6 +105,16 @@ public abstract class DestinationInputView extends LinearLayout {
 			public void afterTextChanged(Editable s) {
 				// TODO Auto-generated method stub
 				
+			}
+		});
+		
+		editText.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				// TODO Auto-generated method stub
+				gestureDetector.onTouchEvent(event);
+				return true;
 			}
 		});
 		
@@ -107,6 +145,4 @@ public abstract class DestinationInputView extends LinearLayout {
 		// TODO Undo whatever setInvalid() does
 		editText.setTextColor(getResources().getColor(R.color.White));
 	}
-	
-	
 }

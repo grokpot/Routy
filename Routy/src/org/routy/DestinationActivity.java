@@ -10,7 +10,6 @@ import java.util.UUID;
 import junit.framework.Assert;
 
 import org.routy.exception.AmbiguousAddressException;
-import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.model.AppProperties;
@@ -21,7 +20,6 @@ import org.routy.task.CalculateRouteTask;
 import org.routy.view.DestinationInputView;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
@@ -30,7 +28,9 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnGenericMotionListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
@@ -113,6 +113,7 @@ public class DestinationActivity extends FragmentActivity {
 				removeDestinationAddView(id);
 			}
 		};
+		
 		
 		destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 	}
