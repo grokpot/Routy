@@ -77,7 +77,7 @@ public abstract class DestinationInputView extends LinearLayout {
 			@Override
 			public boolean onScroll(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 				Log.v(TAG, "scrolled! -- velocityX=" + velocityX);
-				if (Math.abs(velocityX) >= 40.0) {
+				if (Math.abs(velocityX) >= 35.0) {
 					onRemoveClicked(id);
 				}
 				return true;
@@ -114,7 +114,7 @@ public abstract class DestinationInputView extends LinearLayout {
 			public boolean onTouch(View v, MotionEvent event) {
 				// TODO Auto-generated method stub
 				gestureDetector.onTouchEvent(event);
-				return true;
+				return false;
 			}
 		});
 		
