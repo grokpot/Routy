@@ -267,6 +267,14 @@ public class DestinationActivity extends FragmentActivity {
 	
 	
 	/**
+	 * Onclick for "Go back and choose a new origin" button. Calls finish() which closes DestinationActivity and returns to OriginActivity
+	 */
+	public void changeOrigin(View v){
+		finish();
+	}
+
+	
+	/**
      * Displays an {@link AlertDialog} with one button that dismisses the dialog.  Use this to display error messages 
      * to the user.
      * 
