@@ -59,14 +59,6 @@
 	        android:text="Test defaults"
 	        tools:ignore="HardcodedText" /> -->
 	
-		<Button
-	        android:id="@+id/button_origin_modify"
-	        style="android:buttonStyle"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:onClick="changeOrigin"
-	        android:text="@string/origin_modify" />
-	
 	    <Button
 	        android:id="@+id/button_route_it"
 	        android:layout_width="match_parent"

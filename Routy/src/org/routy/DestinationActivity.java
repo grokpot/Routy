@@ -5,6 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import junit.framework.Assert;
@@ -24,6 +26,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -46,6 +49,8 @@ public class DestinationActivity extends FragmentActivity {
 	private FragmentActivity mContext;
 	private Address origin;
 	private LinearLayout destLayout;
+	// shared prefs for destination persistence
+	private SharedPreferences destinationActivityPrefs;
 	
 	
 	@Override
@@ -56,6 +61,10 @@ public class DestinationActivity extends FragmentActivity {
 		
 		mContext = this;
 		
+		// Get the layout containg the list of destination
+		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
+		
+		// Get the origin address passed from OriginActivity
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			origin = (Address) extras.get("origin");
@@ -66,9 +75,21 @@ public class DestinationActivity extends FragmentActivity {
 			originText.setText("Starting from: \n" + origin.getExtras().getString("formatted_address"));
 		}
 		
-		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
+		// Initialize shared preferences
+		destinationActivityPrefs = getSharedPreferences("destination_prefs", MODE_PRIVATE);
+		Set<String> storedAddresses = destinationActivityPrefs.getStringSet("saved_destination_strings", new TreeSet<String>());
 		
-		addDestinationInputView();
+		// If there were stored addresses, initialize destination views with them
+		if (storedAddresses.size() != 0){
+			Object[] addresses =  storedAddresses.toArray();
+			for (int i = 0; i < addresses.length; i++){
+				addDestinationInputView((String)addresses[i]);
+			}
+		}
+		// Otherwise initialize the screen with one empty destination
+		else{
+			addDestinationInputView();
+		}
 		
 		// XXX temp "Test defaults"
         Button buttonTestDefaults = (Button) findViewById(R.id.button_test_defaults);
@@ -102,18 +123,33 @@ public class DestinationActivity extends FragmentActivity {
 	
 	
     /**
-     * Puts another EditText and "remove" button on the screen for another destination.
+     * Puts an empty EditText and "remove" button on the screen for another destination.
      */
 	void addDestinationInputView() {
 		DestinationInputView v = new DestinationInputView(mContext) {
-
 			@Override
 			public void onRemoveClicked(UUID id) {
 				Log.v(TAG, "Remove DestinationAddView id=" + id);
 				removeDestinationAddView(id);
 			}
 		};
-		
+		destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+	}
+	
+	
+    /**
+     * Puts an EditText with a given address and "remove" button on the screen for another destination.
+     * 
+     * @param an address to initialize the EditText with
+     */
+	void addDestinationInputView(String address) {
+		DestinationInputView v = new DestinationInputView(mContext, address) {
+			@Override
+			public void onRemoveClicked(UUID id) {
+				Log.v(TAG, "Remove DestinationAddView id=" + id);
+				removeDestinationAddView(id);
+			}
+		};
 		destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 	}
 	
@@ -265,12 +301,26 @@ public class DestinationActivity extends FragmentActivity {
         return true;
     }
 	
-	
 	/**
-	 * Onclick for "Go back and choose a new origin" button. Calls finish() which closes DestinationActivity and returns to OriginActivity
+	 * In the case that a user presses back to change an origin, or any other reason why they leave the destination screen,
+	 * we save their entered destinations to shared prefs so they don't have to re-enter the destinations again
 	 */
-	public void changeOrigin(View v){
-		finish();
+	@Override
+	public void onPause(){
+		super.onPause();
+		
+		// http://stackoverflow.com/questions/1463284/hashset-vs-treeset
+		Set<String> storedAddresses = new TreeSet<String>();
+		// iterate through every destinationInputView
+		for (int i = 0; i < destLayout.getChildCount(); i++) {
+			DestinationInputView destView = (DestinationInputView) destLayout.getChildAt(i);
+			// Add the text in the EditText of the destination to storedAddresses
+			storedAddresses.add(destView.getAddressString());
+		}
+		// Put the storedAddresses into shared prefs via a set of strings
+		SharedPreferences.Editor ed = destinationActivityPrefs.edit();
+		ed.putStringSet("saved_destination_strings", storedAddresses);
+		ed.commit();
 	}
 
 	

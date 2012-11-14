@@ -95,6 +95,9 @@ public abstract class DestinationInputView extends LinearLayout {
 		return this.id;
 	}
 	
+	public String getAddressString(){
+		return this.editText.getText().toString();
+	}
 	
 	public void setInvalid() {
 		// TODO do what's necessary visually to show that this destination is invalid
