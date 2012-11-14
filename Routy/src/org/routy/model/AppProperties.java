@@ -22,7 +22,7 @@ public class AppProperties {
 	public static final String G_DISTANCE_MATRIX_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?";
 	
 	/** The base URL for accessing the <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding Web API</a> */
-	public static final String G_GEOCODING_API_URL = "https://maps.googleapis.com/maps/api/geocode/json?";
+	public static final String G_GEOCODING_API_URL = "https://maps.googleapis.com/maps/api/geocode/xml?";
 
 	public static final int NUM_MAX_DESTINATIONS = 5;
 	
