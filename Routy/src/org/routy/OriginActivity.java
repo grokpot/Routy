@@ -7,6 +7,7 @@ import java.util.Locale;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.RoutyException;
+import org.routy.fragment.LoadingDialog;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.fragment.TwoButtonDialog;
 import org.routy.model.AppProperties;
@@ -14,6 +15,7 @@ import org.routy.service.AddressService;
 import org.routy.service.LocationService;
 
 import android.app.AlertDialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
@@ -169,7 +171,7 @@ public class OriginActivity extends FragmentActivity {
     public void findUserLocation(View view) {
     	if (!locating) {
         	findUserButton.setText(R.string.stop_locating);
-        	
+        	//showLoadingDialog();
         	try {
         		locating = true;
         		locationService.getCurrentLocation();
@@ -225,6 +227,16 @@ public class OriginActivity extends FragmentActivity {
     			showErrorDialog(getResources().getString(R.string.bad_origin_address_error));
     		}
     	}
+    }
+    
+    
+    /**
+     * Displays a {@link LoadingDialog}.  Use this to entertain the user while we find their location.
+     * 
+     */
+    private void showLoadingDialog() {
+    	LoadingDialog dialog = new LoadingDialog(getResources().getString(R.string.default_loading_message));
+		dialog.show(context.getSupportFragmentManager(), TAG);
     }
     
     
