@@ -61,9 +61,9 @@ public class DestinationActivity extends FragmentActivity {
 			origin = (Address) extras.get("origin");
 			Assert.assertNotNull(origin);
 			
-			Log.v(TAG, "Origin address: " + origin.getAddressLine(0));
+			Log.v(TAG, "Origin address: " + origin.getExtras().getString("formatted_address"));
 			TextView originText = (TextView) findViewById(R.id.textview_destinations_origin);
-			originText.setText("Starting from: " + origin.getAddressLine(0));
+			originText.setText("Starting from: \n" + origin.getExtras().getString("formatted_address"));
 		}
 		
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);

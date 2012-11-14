@@ -26,7 +26,7 @@ public class AddressServiceTest extends AndroidTestCase {
 	}
 	
 	
-	public void testGetAddressForCoordinates() {
+	/*public void testGetAddressForCoordinates() {
 		Log.v(TAG, "Get address for coordinates via Geocoder backend");
 		
 		Address result = null;
@@ -56,7 +56,7 @@ public class AddressServiceTest extends AndroidTestCase {
 				Log.v(TAG, result.getAddressLine(i));
 			}
 		}
-	}
+	}*/
 	
 	
 	public void testGetAddressForLocationNameWeb() {
@@ -79,15 +79,13 @@ public class AddressServiceTest extends AndroidTestCase {
 		if (result == null) {
 			Log.e(TAG, "resulting address was null");
 		} else {
-			for (int i = 0; i < result.getMaxAddressLineIndex() + 1; i++) {
-				Log.v(TAG, result.getAddressLine(0));
-				Log.v(TAG, result.getLatitude() + ", " + result.getLongitude());
-			}
+			Log.v(TAG, result.getAddressLine(0));
+			Log.v(TAG, result.getLatitude() + ", " + result.getLongitude());
 		}
 	}
 	
 	
-	public void testGetAddressForCoordinatesWeb() {
+	/*public void testGetAddressForCoordinatesWeb() {
 		Log.v(TAG, "Get address for coordinates via WEB API");
 		
 		Address result = null;
@@ -109,7 +107,7 @@ public class AddressServiceTest extends AndroidTestCase {
 				Log.v(TAG, result.getAddressLine(i));
 			}
 		}
-	}
+	}*/
 	
 	
 	public void tearDown() throws Exception {
