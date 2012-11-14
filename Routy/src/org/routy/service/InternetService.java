@@ -2,6 +2,7 @@ package org.routy.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -35,7 +36,7 @@ public class InternetService {
 	
 	// Using this method: http://docs.oracle.com/javase/tutorial/networking/urls/readingWriting.html
 	/**
-	 * Reads JSON response from a given URL.
+	 * Reads back the response from a given URL as a string.
 	 * 
 	 * @param url
 	 * @return
@@ -43,45 +44,55 @@ public class InternetService {
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
 	 * 							read from the URL
 	 */
-	public static String getJSONResponse(String url) throws RoutyException, IOException {
-		URL distMatUrl = null;
+	public static String getStringResponse(String url) throws RoutyException, IOException {
+		InputStream inputStream;
+		try {
+			inputStream = getStreamResponse(url);
+		} catch (IOException e) {
+			Log.e(TAG, "Could not establish a connection to URL: " + url);
+			throw new IOException("Could not establish a connection to URL: " + url);
+		}
 		
 		try {
-			distMatUrl = new URL(url.toString());
+			BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+			StringBuffer jsonResp = new StringBuffer();
+			
+			try {
+				String line = null;
+				while ((line = in.readLine()) != null) {
+					jsonResp.append(line);
+				}
+				
+				return jsonResp.toString();
+			} finally {
+				in.close();
+			}
+		} catch (IOException e) {
+			Log.e(TAG, e.getMessage() + "\nCould not read from URL: " + url);
+			throw new IOException("Could not read from URL: " + url);
+		}
+	}
+	
+	
+	/**
+	 * Gets an {@link InputStream} to read a response from the given URL.
+	 * 
+	 * @param url
+	 * @return
+	 * @throws RoutyException
+	 * @throws IOException
+	 */
+	public static InputStream getStreamResponse(String url) throws RoutyException, IOException {
+		URL u = null;
+		
+		try {
+			u = new URL(url);
 		} catch (MalformedURLException e) {
 			Log.e(TAG, "Distance Matrix URL [" + url + "] is malformed.");
 			throw new RoutyException();
 		}
 		
-		URLConnection conn;
-		try {
-			conn = distMatUrl.openConnection();
-		} catch (IOException e) {
-			conn = null;
-		}
-		
-		if (conn != null) {
-			try {
-				BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				StringBuffer jsonResp = new StringBuffer();
-				
-				try {
-					String line = null;
-					while ((line = in.readLine()) != null) {
-						jsonResp.append(line);
-					}
-					
-					return jsonResp.toString();
-				} finally {
-					in.close();
-				}
-			} catch (IOException e) {
-				Log.e(TAG, e.getMessage() + "\nCould not read from URL: " + distMatUrl.toExternalForm());
-				throw new IOException("Could not read from URL: " + distMatUrl.toExternalForm());
-			}
-		} else {
-			Log.e(TAG, "Could not establish a connection to URL: " + distMatUrl.toExternalForm());
-			throw new IOException("Could not establish a connection to URL: " + distMatUrl.toExternalForm());
-		}
+		URLConnection conn = u.openConnection();
+		return conn.getInputStream();
 	}
 }

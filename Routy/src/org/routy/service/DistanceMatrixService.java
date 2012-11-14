@@ -172,6 +172,6 @@ public class DistanceMatrixService {
 		
 		Log.d(TAG, "DIST MAT URL: " + url.toString());
 		
-		return InternetService.getJSONResponse(url.toString());
+		return InternetService.getStringResponse(url.toString());
 	}
 }
