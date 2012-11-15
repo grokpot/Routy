@@ -25,11 +25,13 @@ public class AppProperties {
 	public static final String G_GEOCODING_API_URL = "https://maps.googleapis.com/maps/api/geocode/xml?";
 	
 	/** The base URL for accessing the <a href="">Google Places Web API</a> */
-	public static final String G_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/xml?";
+	public static final String G_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/xml?";
 
 	public static final int NUM_MAX_DESTINATIONS = 5;
 	
 	public static final long SPLASH_SCREEN_DELAY_MS = 1250;
+
+	public static final String G_API_KEY = "AIzaSyAsBYyw8a9WUt60WvRLf2ibSe8UfRSnV9g";
 	
 	
 }

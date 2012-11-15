@@ -1,31 +1,23 @@
 package org.routy;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.UUID;
 
 import junit.framework.Assert;
 
-import org.routy.exception.RoutyException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.model.AppProperties;
 import org.routy.model.Route;
-import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
-import org.routy.service.AddressService;
-import org.routy.service.RouteService;
 import org.routy.task.CalculateRouteTask;
 import org.routy.view.DestinationInputView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.location.Address;
-import android.location.Geocoder;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -172,11 +164,11 @@ public class DestinationActivity extends FragmentActivity {
 			Log.v(TAG, "Destination " + i + ": " + row.getAddressString());
 			
 			if (row.getAddressString() != null && row.getAddressString().length() > 0) {
-				if (row.getValidStatus() == DestinationInputView.NOT_VALIDATED) {
+				if (row.getStatus() == DestinationInputView.NOT_VALIDATED) {
 					row.validate();
 				}
 				
-				if (row.getValidStatus() == DestinationInputView.INVALID) {
+				if (row.getStatus() == DestinationInputView.INVALID) {
 					hasErrors = true;
 				} else {
 					validAddresses.add(row.getAddress());
@@ -208,71 +200,18 @@ public class DestinationActivity extends FragmentActivity {
 			Log.e(TAG, "Errors found in destinations.");
 			showErrorDialog("The addresses in red are invalid.  Try being more specific.");
 		}
-		
-		// Validate the addresses and highlight any errors.
-		/*List<Address> validatedAddresses = validateDestinations();
-		
-		Log.v(TAG, validatedAddresses.size() + " addresses");
-		
-		if (validatedAddresses.size() == 0) {
-			// All fields were empty
-			showErrorDialog("Please enter at least 1 destination to continue.");
-		} else {
-			boolean hasErrors = false;
-			for (int i = 0; i < validatedAddresses.size(); i++) {
-				if (validatedAddresses.get(i) == null) {
-					flagInvalidDestination(i);
-					hasErrors = true;
-				}
-			}
-			
-			if (!hasErrors) {
-				// TODO Calculate route and go to results activity
-//				Toast.makeText(mContext, getString(R.string.validated), Toast.LENGTH_LONG).show();	// XXX temp
-				
-				// TODO: fill in last two parameters of RouteService instantiation with user choice
-	        	// Instantiates a Route object with validated addresses and calls ResultsActivity
-	        	try {
-					RouteService routeService = new RouteService(origin, validatedAddresses, RouteOptimizePreference.PREFER_DURATION, false);
-					Route route = routeService.getBestRoute();
-	        		
-	        		CalculateRouteTask task = new CalculateRouteTask() {
-						
-						@Override
-						public void onRouteCalculated(Route route) {
-							Toast.makeText(mContext, getString(R.string.routed), Toast.LENGTH_LONG).show();	// XXX temp
-							
-							// Call ResultsActivity activity
-			    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-			    			resultsIntent.putExtra("addresses", (Serializable) route.getAddresses());
-			    			resultsIntent.putExtra("distance", route.getTotalDistance());
-			    			startActivity(resultsIntent);
-						}
-					};
-					
-					task.execute(new RouteRequest(origin, validatedAddresses, false));
-					
-				} catch (Exception e) {
-					// TODO error handling
-					e.printStackTrace();
-				}
-			} else {
-				Log.e(TAG, "Errors found in destinations.");
-				showErrorDialog("The addresses in red are invalid.  Try being more specific.");
-			}
-		}*/
 	}
 	
 	
-	private void flagInvalidDestination(int position) {
+/*	private void flagInvalidDestination(int position) {
 		if (position >= 0 && position < destLayout.getChildCount()) {
 			DestinationInputView view = (DestinationInputView) destLayout.getChildAt(position);
 			view.setInvalid();
 		}
-	}
+	}*/
 	
 	
-	private List<Address> validateDestinations() {
+/*	private List<Address> validateDestinations() {
 		List<Address> addresses = new ArrayList<Address>();
 		
 		// Iterates through entered locations and validates them into addresses.
@@ -303,7 +242,7 @@ public class DestinationActivity extends FragmentActivity {
     	}
 		
 		return addresses;
-	}
+	}*/
 	
 	
 	@Override

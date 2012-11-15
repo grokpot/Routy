@@ -31,11 +31,10 @@ public abstract class DestinationInputView extends LinearLayout {
 	
 	private Context context;
 	private UUID id;
-//	private Destination destination;
 	private Address address;
 	private String addressString;
 	private EditText editText;
-	private int validStatus;
+	private int status;
 	
 	
 	/**
@@ -43,13 +42,6 @@ public abstract class DestinationInputView extends LinearLayout {
 	 * @param id		the {@link UUID} of the DestinationAddView to remove
 	 */
 	public abstract void onRemoveClicked(UUID id);
-	
-	
-	/**
-	 * Called when the EditText inside this DestinationInputView loses focus.
-	 * @param id		the {@link UUID} of the DestinationAddView to remove
-	 */
-	/*public abstract void onLostFocus(UUID id);*/
 	
 	
 	public DestinationInputView(Context context) {
@@ -63,7 +55,7 @@ public abstract class DestinationInputView extends LinearLayout {
 		this.id = UUID.randomUUID();
 		this.address = null;
 		this.addressString = "";
-		this.validStatus = DestinationInputView.NOT_VALIDATED;
+		this.status = DestinationInputView.NOT_VALIDATED;
 		
 		initViews(context);
 	}
@@ -75,7 +67,7 @@ public abstract class DestinationInputView extends LinearLayout {
 		this.id = UUID.randomUUID();
 		this.address = null;
 		this.addressString = addressString;
-		this.validStatus = DestinationInputView.NOT_VALIDATED;
+		this.status = DestinationInputView.NOT_VALIDATED;
 		
 		initViews(context);
 	}
@@ -139,7 +131,7 @@ public abstract class DestinationInputView extends LinearLayout {
 	 * @return					true if the address string can be geocoded into an Address, false otherwise
 	 */
 	public void validate() {
-		if (validStatus == DestinationInputView.INVALID || validStatus == DestinationInputView.NOT_VALIDATED) {
+		if (status == DestinationInputView.INVALID || status == DestinationInputView.NOT_VALIDATED) {
 			String addressString = editText.getText().toString();
 			Log.v(TAG, "validating: " + addressString);
 			
@@ -180,24 +172,24 @@ public abstract class DestinationInputView extends LinearLayout {
 	
 	public void setInvalid() {
 		editText.setTextColor(getResources().getColor(R.color.Red));
-		validStatus = DestinationInputView.INVALID;
+		status = DestinationInputView.INVALID;
 	}
 
 
 	public void setValid() {
 		editText.setTextColor(getResources().getColor(R.color.White));
-		validStatus = DestinationInputView.VALID;
+		status = DestinationInputView.VALID;
 	}
 	
 	
 	public void clearValidStatus() {
 		editText.setTextColor(getResources().getColor(R.color.White));
-		validStatus = DestinationInputView.NOT_VALIDATED;
+		status = DestinationInputView.NOT_VALIDATED;
 	}
 	
 	
-	public int getValidStatus() {
-		return validStatus;
+	public int getStatus() {
+		return status;
 	}
 	
 	
