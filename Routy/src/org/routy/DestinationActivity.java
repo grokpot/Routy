@@ -9,21 +9,21 @@ import java.util.UUID;
 
 import junit.framework.Assert;
 
-import org.routy.exception.AmbiguousAddressException;
-import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.model.AppProperties;
 import org.routy.model.Route;
+import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
 import org.routy.service.AddressService;
+import org.routy.service.RouteService;
 import org.routy.task.CalculateRouteTask;
 import org.routy.view.DestinationInputView;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
@@ -46,6 +46,7 @@ public class DestinationActivity extends FragmentActivity {
 	private FragmentActivity mContext;
 	private Address origin;
 	private LinearLayout destLayout;
+	private Button routeItButton;
 	
 	
 	@Override
@@ -67,6 +68,7 @@ public class DestinationActivity extends FragmentActivity {
 		}
 		
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
+		routeItButton = (Button) findViewById(R.id.button_route_it);
 		
 		addDestinationInputView();
 		
@@ -160,13 +162,55 @@ public class DestinationActivity extends FragmentActivity {
 	// TODO Right now it's validating ALL destinations every time (regardless of if any were already validated) -- make it more efficient
 	public void acceptDestinations(View v) {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
+		v.requestFocus();
 		
+		boolean hasErrors = false;
+		List<Address> validAddresses = new ArrayList<Address>();
+		// Check if there are any invalid rows
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			Log.v(TAG, "Destination " + i + ": " + ((EditText) ((DestinationInputView) destLayout.getChildAt(i)).findViewById(R.id.edittext_destination_add)).getText().toString());
+			DestinationInputView row = (DestinationInputView) destLayout.getChildAt(i);
+			Log.v(TAG, "Destination " + i + ": " + row.getAddressString());
+			
+			if (row.getAddressString() != null && row.getAddressString().length() > 0) {
+				if (row.getValidStatus() == DestinationInputView.NOT_VALIDATED) {
+					row.validate();
+				}
+				
+				if (row.getValidStatus() == DestinationInputView.INVALID) {
+					hasErrors = true;
+				} else {
+					validAddresses.add(row.getAddress());
+				}
+			}
+		}
+		
+		if (!hasErrors) {
+			if (validAddresses.size() == 0) {
+				showErrorDialog("Please enter at least 1 destination to continue.");
+			} else {
+				CalculateRouteTask task = new CalculateRouteTask() {
+					
+					@Override
+					public void onRouteCalculated(Route route) {
+						Toast.makeText(mContext, getString(R.string.routed), Toast.LENGTH_LONG).show();	// XXX temp
+						
+						// Call ResultsActivity activity
+		    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
+		    			resultsIntent.putExtra("addresses", (Serializable) route.getAddresses());
+		    			resultsIntent.putExtra("distance", route.getTotalDistance());
+		    			startActivity(resultsIntent);
+					}
+				};
+				
+				task.execute(new RouteRequest(origin, validAddresses, false));
+			}
+		} else {
+			Log.e(TAG, "Errors found in destinations.");
+			showErrorDialog("The addresses in red are invalid.  Try being more specific.");
 		}
 		
 		// Validate the addresses and highlight any errors.
-		List<Address> validatedAddresses = validateDestinations();
+		/*List<Address> validatedAddresses = validateDestinations();
 		
 		Log.v(TAG, validatedAddresses.size() + " addresses");
 		
@@ -189,8 +233,8 @@ public class DestinationActivity extends FragmentActivity {
 				// TODO: fill in last two parameters of RouteService instantiation with user choice
 	        	// Instantiates a Route object with validated addresses and calls ResultsActivity
 	        	try {
-					/*RouteService routeService = new RouteService(origin, validatedAddresses, RouteOptimizePreference.PREFER_DURATION, false);
-					Route route = routeService.getBestRoute();*/
+					RouteService routeService = new RouteService(origin, validatedAddresses, RouteOptimizePreference.PREFER_DURATION, false);
+					Route route = routeService.getBestRoute();
 	        		
 	        		CalculateRouteTask task = new CalculateRouteTask() {
 						
@@ -216,7 +260,7 @@ public class DestinationActivity extends FragmentActivity {
 				Log.e(TAG, "Errors found in destinations.");
 				showErrorDialog("The addresses in red are invalid.  Try being more specific.");
 			}
-		}
+		}*/
 	}
 	
 	

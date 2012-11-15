@@ -25,12 +25,17 @@ public abstract class DestinationInputView extends LinearLayout {
 
 	private final String TAG = "DestinationInputView";
 	
+	public static final int VALID = 0;
+	public static final int NOT_VALIDATED = 1;
+	public static final int INVALID = 2;
+	
 	private Context context;
 	private UUID id;
 //	private Destination destination;
 	private Address address;
 	private String addressString;
 	private EditText editText;
+	private int validStatus;
 	
 	
 	/**
@@ -58,6 +63,7 @@ public abstract class DestinationInputView extends LinearLayout {
 		this.id = UUID.randomUUID();
 		this.address = null;
 		this.addressString = "";
+		this.validStatus = DestinationInputView.NOT_VALIDATED;
 		
 		initViews(context);
 	}
@@ -69,6 +75,7 @@ public abstract class DestinationInputView extends LinearLayout {
 		this.id = UUID.randomUUID();
 		this.address = null;
 		this.addressString = addressString;
+		this.validStatus = DestinationInputView.NOT_VALIDATED;
 		
 		initViews(context);
 	}
@@ -85,8 +92,7 @@ public abstract class DestinationInputView extends LinearLayout {
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				setValid();
-				address = null;
+				clearValidStatus();
 			}
 			
 			@Override
@@ -109,13 +115,8 @@ public abstract class DestinationInputView extends LinearLayout {
 					// NO-OP
 				} else {
 //					onLostFocus(id);
-					if (address == null) {
-						address = validate(((EditText) v).getText().toString());
-						
-						if (address == null) {
-							setInvalid();
-						}
-					}
+					Log.v(TAG, "edittext lost focus");
+					validate();
 				}
 			}
 		});
@@ -137,27 +138,38 @@ public abstract class DestinationInputView extends LinearLayout {
 	 * @param addressString
 	 * @return					true if the address string can be geocoded into an Address, false otherwise
 	 */
-	private Address validate(String addressString) {
-		Log.v(TAG, "validating: " + addressString);
-		AddressService addressService = new AddressService(new Geocoder(context, Locale.getDefault()), false);
-		try {
-			return addressService.getAddressForLocationString(addressString);
-		} catch (RoutyException e) {
-			// TODO How to handle this?
-			Log.e(TAG, "RoutyException: " + e.getMessage());
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO How to handle this?
-			Log.e(TAG, "IOException: " + e.getMessage());
-			e.printStackTrace();
+	public void validate() {
+		if (validStatus == DestinationInputView.INVALID || validStatus == DestinationInputView.NOT_VALIDATED) {
+			String addressString = editText.getText().toString();
+			Log.v(TAG, "validating: " + addressString);
+			
+			AddressService addressService = new AddressService(new Geocoder(context, Locale.getDefault()), false);
+			try {
+				address = addressService.getAddressForLocationString(addressString);
+				
+				if (address == null) {
+					setInvalid();
+				}
+			} catch (RoutyException e) {
+				// TODO How to handle this?
+				Log.e(TAG, "RoutyException: " + e.getMessage());
+				setInvalid();
+			} catch (IOException e) {
+				// TODO How to handle this?
+				Log.e(TAG, "IOException: " + e.getMessage());
+				setInvalid();
+			}
 		}
-		
-		return null;
 	}
 	
 	
 	public UUID getUUID() {
 		return this.id;
+	}
+	
+	
+	public String getAddressString() {
+		return editText.getText().toString();
 	}
 	
 	
@@ -167,15 +179,25 @@ public abstract class DestinationInputView extends LinearLayout {
 	
 	
 	public void setInvalid() {
-		// TODO do what's necessary visually to show that this destination is invalid
 		editText.setTextColor(getResources().getColor(R.color.Red));
-//		editText.setBackgroundColor(getResources().getColor(R.color.Pink));
+		validStatus = DestinationInputView.INVALID;
 	}
 
 
 	public void setValid() {
-		// TODO Undo whatever setInvalid() does
 		editText.setTextColor(getResources().getColor(R.color.White));
+		validStatus = DestinationInputView.VALID;
+	}
+	
+	
+	public void clearValidStatus() {
+		editText.setTextColor(getResources().getColor(R.color.White));
+		validStatus = DestinationInputView.NOT_VALIDATED;
+	}
+	
+	
+	public int getValidStatus() {
+		return validStatus;
 	}
 	
 	

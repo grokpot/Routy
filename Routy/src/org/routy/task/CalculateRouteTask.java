@@ -1,5 +1,8 @@
 package org.routy.task;
 
+import java.io.IOException;
+
+import org.routy.exception.RoutyException;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
@@ -34,8 +37,10 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 			}
 			
 			
-		} catch (Exception e) {
-			Log.e(TAG, e.getMessage());
+		} catch (RoutyException e) {
+			Log.e(TAG, "RoutyException");
+		} catch (IOException e) {
+			Log.e(TAG, "IOException");
 		}
 		return null;
 	}
