@@ -54,9 +54,9 @@ public class DestinationActivity extends FragmentActivity {
 			origin = (Address) extras.get("origin");
 			Assert.assertNotNull(origin);
 			
-			Log.v(TAG, "Origin address: " + origin.getAddressLine(0));
+			Log.v(TAG, "Origin address: " + origin.getExtras().getString("formatted_address"));
 			TextView originText = (TextView) findViewById(R.id.textview_destinations_origin);
-			originText.setText("Starting from: " + origin.getAddressLine(0));
+			originText.setText("Starting from: \n" + origin.getExtras().getString("formatted_address"));
 		}
 		
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
@@ -251,6 +251,14 @@ public class DestinationActivity extends FragmentActivity {
         return true;
     }
 	
+	
+	/**
+	 * Onclick for "Go back and choose a new origin" button. Calls finish() which closes DestinationActivity and returns to OriginActivity
+	 */
+	public void changeOrigin(View v){
+		finish();
+	}
+
 	
 	/**
      * Displays an {@link AlertDialog} with one button that dismisses the dialog.  Use this to display error messages 

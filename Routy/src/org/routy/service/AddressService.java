@@ -1,9 +1,14 @@
 package org.routy.service;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
+import java.io.StringReader;
 import java.util.List;
 import java.util.Locale;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -14,10 +19,14 @@ import org.routy.exception.GeocoderAPIException;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.model.AppProperties;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Bundle;
 import android.util.Log;
 
 /**
@@ -122,18 +131,6 @@ public class AddressService {
 		
 		if (results != null && results.size() > 0) {
 			return results.get(0);
-			// TODO Maybe do this if we want the user to pick from the ambiguous addresses
-			/*if (results.size() == 1) {
-				return results.get(0);
-			} else {
-				for (int j = 0; j < results.size(); j++) {
-					Log.v(TAG, "Resulting Address " + j);
-					for (int i = 0; i < results.get(j).getMaxAddressLineIndex(); i++) {
-						Log.v(TAG, results.get(j).getAddressLine(i));
-					}
-				}
-				throw new AmbiguousAddressException(results);
-			}*/
 		}
 		
 		return null;
@@ -154,12 +151,6 @@ public class AddressService {
 		
 		if (results != null && results.size() > 0) {
 			return results.get(0);
-			// TODO Maybe do this if we want the user to pick from the ambiguous addresses
-			/*if (results.size() == 1) {
-				return results.get(0);
-			} else {
-				throw new AmbiguousAddressException(results);
-			}*/
 		}
 		
 		return null;
@@ -223,17 +214,15 @@ public class AddressService {
 	 * @throws RoutyException 
 	 */
 	Address getAddressForURL(String url) throws IOException, RoutyException {
-		// TODO Get this as an XML response so we can more thoroughly fill in the Address object (eg. different address lines, locality, etc)
 		if (url != null && url.length() > 0) {
 			try {
 				// Get the JSON response from the Geocoding API
 				Log.v(TAG, "Geocoding API URL: " + url);
-				String jsonResp = InternetService.getJSONResponse(url);
-
-				// Parse the response into an Address
-				if (jsonResp != null && jsonResp.length() > 0) {
-					Address result = parseJSONResponse(jsonResp);
-					Log.v(TAG, "Address Line 0: " + result.getAddressLine(0));
+				
+				String xmlResponse = InternetService.getStringResponse(url);
+				if (xmlResponse != null && xmlResponse.length() > 0) {
+					Address result = parseXMLResponse(xmlResponse);
+					
 					return result;
 				}
 				
@@ -241,9 +230,6 @@ public class AddressService {
 				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {
 				Log.e(TAG, e.getMessage());
-			} catch (JSONException e) {
-				Log.e(TAG, e.getMessage());
-				throw new RoutyException();
 			}
 			
 			return null;
@@ -286,5 +272,130 @@ public class AddressService {
 		} else {
 			throw new GeocoderAPIException("Geocoding API failed with status=" + status);
 		}
+	}
+
+	
+	Address parseXMLResponse(String xmlResponse) throws GeocoderAPIException, RoutyException {
+		XPath xpath = XPathFactory.newInstance().newXPath();
+		String expr;
+		
+		InputSource inputSource = new InputSource(new StringReader(xmlResponse));
+		
+		try {
+			expr = "/";
+			Node root = (Node) xpath.evaluate(expr, inputSource, XPathConstants.NODE);
+
+			
+			// GET THE RESPONSE STATUS
+			expr = "/GeocodeResponse/status";
+//			String status = (String) xpath.evaluate(expr, inputSource, XPathConstants.STRING);
+			String status = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+			Log.v(TAG, "status=" + status);
+			if (status == null || status.length() == 0) {
+				Log.e(TAG, "Failed parsing Geocoder API response status.");
+				throw new RoutyException("There was a problem understanding an address.");
+			} else if (!status.equalsIgnoreCase("ok")) {
+				Log.e(TAG, "Geocoder API response status not ok -- status=" + status);
+				throw new RoutyException("There was a problem understanding an address.");
+			} else { 
+				// TODO status is ok - parse the XML into an Address object
+				int lineNumber = 0;
+				Address result = new Address(Locale.getDefault());
+				
+				expr = "/GeocodeResponse/result";
+				NodeList results = (NodeList) xpath.evaluate(expr, root, XPathConstants.NODESET);
+				if (results.getLength() == 0) {
+					return null;
+				}
+				
+				// GET THE PLACE NAME (ESTABLISHMENT) IF THERE IS ONE (EX. "UNIVERSITY OF TEXAS")
+				expr = "/GeocodeResponse/result[1]/address_component[type=\"establishment\"]/long_name";
+				String establishment = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+				result.setFeatureName(establishment);
+//				Log.v(TAG, "establishment=" + establishment);
+				
+				// GET THE STREET NUMBER AND NAME
+				expr = "/GeocodeResponse/result[1]/address_component[type=\"street_number\"]/long_name";
+				String streetNumber = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+//				Log.v(TAG, "street number=" + streetNumber);
+				
+				expr = "/GeocodeResponse/result[1]/address_component[type=\"route\"]/long_name";
+				String streetName = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+//				Log.v(TAG, "street name=" + streetName);
+				
+				result.setAddressLine(lineNumber, (streetNumber==null?"":streetNumber) + (streetName==null?"":(" " + streetName)));
+				lineNumber++;
+				
+				
+				StringBuffer line1 = new StringBuffer();
+					
+				// GET THE CITY, STATE AND ZIPCODE
+				expr = "/GeocodeResponse/result[1]/address_component[type=\"locality\"]/long_name";
+				String cityName = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+				if (cityName != null) {
+					result.setLocality(cityName);
+					
+					line1.append(cityName);
+					line1.append(", ");
+				}
+				
+				expr = "/GeocodeResponse/result[1]/address_component[type=\"administrative_area_level_1\"]/long_name";
+				String stateName = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+				if (stateName != null) {
+					result.setAdminArea(stateName);
+				}
+				
+				expr = "/GeocodeResponse/result[1]/address_component[type=\"administrative_area_level_1\"]/short_name";
+				String stateAbbr = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+				if (stateAbbr != null) {
+					result.setSubAdminArea(stateAbbr);
+					
+					line1.append(stateAbbr);
+					line1.append(", ");
+				}
+				
+				expr = "/GeocodeResponse/result[1]/address_component[type=\"postal_code\"]/long_name";
+				String zipcode = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+				if (zipcode != null) {
+					result.setAdminArea(zipcode);
+					
+					line1.append(zipcode);
+				}
+				
+				result.setAddressLine(lineNumber, line1.toString());
+				lineNumber++;
+				
+				
+				// GET THE COORDINATE INFORMATION
+				expr = "/GeocodeResponse/result[1]/geometry/location/lat";
+				String latitude = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+				if (latitude != null && latitude.length() > 0) {
+					result.setLatitude(Double.parseDouble(latitude));
+				}
+				
+				expr = "/GeocodeResponse/result[1]/geometry/location/lng";
+				String longitude = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+				if (longitude != null && longitude.length() > 0) {
+					result.setLongitude(Double.parseDouble(longitude));
+				}
+				
+				
+				// GET THE FORMATTED ADDRESS
+				expr = "/GeocoderResponse/result[1]/formatted_address";
+				String formattedAddress = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
+				Bundle extras = new Bundle();
+				extras.putString("formatted_address", formattedAddress);
+				result.setExtras(extras);
+				
+				Log.v(TAG, "Done parsing XML.");
+				return result;
+			}
+			
+		} catch (XPathExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

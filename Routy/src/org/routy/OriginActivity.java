@@ -108,7 +108,7 @@ public class OriginActivity extends FragmentActivity {
 					addressStr.append(address.getAddressLine(address.getMaxAddressLineIndex()));
 					
 					Log.v(TAG, "Address: " + addressStr.toString());
-					originAddressField.setText(addressStr.toString());
+					originAddressField.setText(addressStr.toString());		// Sets the current location (obtained from sensors) in the EditText so we can validate when "Done" is clicked
 				} else {
 					Log.e(TAG, "Couldn't reverse geocode the address.");
 					showErrorDialog(getString(R.string.locating_fail_error));
@@ -215,7 +215,7 @@ public class OriginActivity extends FragmentActivity {
 			}
         	
         	if (originAddress != null) {
-//    			Toast.makeText(this, getString(R.string.origin_validated), Toast.LENGTH_LONG).show();	// XXX temp
+        		Log.v(TAG, "Validated origin address: " + originAddress.getFeatureName());
         		// Origin address is good...move on to Destinations
         		Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
     			destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
