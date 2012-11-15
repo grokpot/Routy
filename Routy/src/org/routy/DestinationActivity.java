@@ -112,10 +112,17 @@ public class DestinationActivity extends FragmentActivity {
 				Log.v(TAG, "Remove DestinationAddView id=" + id);
 				removeDestinationAddView(id);
 			}
+
+			/*@Override
+			public void onLostFocus(UUID id) {
+				// TODO Validate the address entered into this view
+				Log.v(TAG, "Need to validate: ");
+			}*/
 		};
 		
 		destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 	}
+
 	
 	
 	/**
@@ -242,10 +249,6 @@ public class DestinationActivity extends FragmentActivity {
         			address = addressService.getAddressForLocationString(userInput);
             		addresses.add(address);
         		}
-			} catch (AmbiguousAddressException e) {
-				// TODO error handling - must step out of this OnClick
-				Log.v(TAG, "Ambiguous address.");
-				addresses.add(null);
 			} catch (RoutyException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

@@ -1,4 +1,4 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
@@ -8,20 +8,14 @@
         android:id="@+id/textview_destinations_origin" 
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content" 
-        android:layout_marginTop="10dp" />
+        android:layout_marginTop="10dp" 
+        android:layout_alignParentTop="true" />
 
-    <!-- <TableLayout
-        android:id="@+id/TableLayout_destinations"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp" >
-    </TableLayout> -->
-    
     <ScrollView 
         android:id="@+id/ScrollView_destinations" 
         android:layout_width="fill_parent" 
-        android:layout_height="0dp" 
-        android:layout_weight="1" >
+        android:layout_height="wrap_content" 
+        android:layout_below="@id/textview_destinations_origin" >
         
         <LinearLayout 
             android:id="@+id/LinearLayout_destinations" 
@@ -35,7 +29,8 @@
         android:id="@+id/LinearLayout_destinations_buttons" 
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content" 
-        android:orientation="vertical" >
+        android:orientation="vertical"
+        android:layout_alignParentBottom="true" >
         
         <Button 
             android:id="@+id/button_test_defaults" 
@@ -51,22 +46,6 @@
 	        android:onClick="addAnotherDestination" 
 	        android:text="@string/destination_add" />
 	
-	<!-- <Button
-	        android:id="@+id/button_test_defaults"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/button_origin_modify"
-	        android:text="Test defaults"
-	        tools:ignore="HardcodedText" /> -->
-	
-	<!-- <Button
-	        android:id="@+id/button_origin_modify"
-	        style="android:buttonStyle"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:layout_above="@+id/button_route_it"
-	        android:text="@string/origin_modify" /> -->
-	
 	    <Button
 	        android:id="@+id/button_route_it"
 	        android:layout_width="match_parent"
@@ -75,5 +54,5 @@
 	        android:text="@string/route_it" />
         
     </LinearLayout>
-
-</LinearLayout>
+    
+</RelativeLayout>

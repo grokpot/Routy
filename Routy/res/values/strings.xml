@@ -16,6 +16,7 @@
     <string name="locating_fail_error">Well that\'s no good&#8230; Routy couldn\'t find your location. Try typing it in manually!</string>
     <string name="enable_gps_prompt">Routy noticed your GPS is not enabled, would you like to enable it so he can try locating you again?</string>
     <string name="default_loading_message">Hang tight!</string>
+    <string name="default_listpicker_title">Select&#8230;</string>
     
     <!-- Toasts -->
     <string name="validated">Addresses validated!</string>

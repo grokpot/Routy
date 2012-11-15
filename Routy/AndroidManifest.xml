@@ -50,11 +50,11 @@
             android:label="@string/title_activity_destination" 
             android:screenOrientation="portrait" >
         </activity>
-        <activity
+        <!-- <activity
             android:name=".DestinationListAdapterActivity"
             android:label="@string/title_activity_destination" 
             android:screenOrientation="portrait" >
-        </activity>
+        </activity> -->
         <activity
             android:name=".ResultsActivity"
             android:label="@string/title_activity_results" 

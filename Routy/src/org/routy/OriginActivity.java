@@ -201,10 +201,10 @@ public class OriginActivity extends FragmentActivity {
         	Address originAddress = null;
         	try {
         		originAddress = addressService.getAddressForLocationString(originAddressField.getText().toString());
-        	} catch (AmbiguousAddressException e) {
+        	}/* catch (AmbiguousAddressException e) {
         		Log.d(TAG, "Got more than one result for the given origin address.  We'll use the first one.");
         		originAddress = e.getFirstAddress();
-        	} catch (RoutyException e) {
+        	}*/ catch (RoutyException e) {
         		// Display an error to the user...it was already logged
         		Log.e(TAG, "Error getting an Address object for origin address.");
 				showErrorDialog(getResources().getString(R.string.default_error_message));

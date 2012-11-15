@@ -30,7 +30,7 @@ public abstract class RoutyAlertDialog extends DialogFragment {
 	
 	public RoutyAlertDialog() {
 		super();
-		mErrorMessage = getResources().getString(R.string.default_error_message);
+		mErrorMessage = null;
 		
 		setDefaultButtonLabels();
 		

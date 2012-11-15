@@ -57,7 +57,7 @@ public class AddressService {
 	 * @throws RoutyException 
 	 * @throws IOException 
 	 */
-	public Address getAddressForLocationString(String locationName) throws AmbiguousAddressException, RoutyException, IOException {
+	public Address getAddressForLocationString(String locationName) throws RoutyException, IOException {
 		if (locationName != null) {
 			if (!Geocoder.isPresent()) {
 				return getAddressViaWeb(locationName);
@@ -116,12 +116,14 @@ public class AddressService {
 	 * @throws IOException
 	 * @throws AmbiguousAddressException
 	 */
-	Address getAddressViaGeocoder(String locationName) throws IOException, AmbiguousAddressException {
+	Address getAddressViaGeocoder(String locationName) throws IOException {
 		Log.v(TAG, "Getting Address for locationName=" + locationName + " via Geocoder");
 		List<Address> results = geocoder.getFromLocationName(locationName, 2);
 		
 		if (results != null && results.size() > 0) {
-			if (results.size() == 1) {
+			return results.get(0);
+			// TODO Maybe do this if we want the user to pick from the ambiguous addresses
+			/*if (results.size() == 1) {
 				return results.get(0);
 			} else {
 				for (int j = 0; j < results.size(); j++) {
@@ -131,7 +133,7 @@ public class AddressService {
 					}
 				}
 				throw new AmbiguousAddressException(results);
-			}
+			}*/
 		}
 		
 		return null;
@@ -147,15 +149,17 @@ public class AddressService {
 	 * @throws IOException
 	 * @throws AmbiguousAddressException
 	 */
-	Address getAddressViaGeocoder(double latitude, double longitude) throws IOException, AmbiguousAddressException {
+	Address getAddressViaGeocoder(double latitude, double longitude) throws IOException {
 		List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
 		
 		if (results != null && results.size() > 0) {
-			if (results.size() == 1) {
+			return results.get(0);
+			// TODO Maybe do this if we want the user to pick from the ambiguous addresses
+			/*if (results.size() == 1) {
 				return results.get(0);
 			} else {
 				throw new AmbiguousAddressException(results);
-			}
+			}*/
 		}
 		
 		return null;
