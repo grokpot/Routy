@@ -59,7 +59,7 @@ public class DestinationActivity extends FragmentActivity {
 			origin = (Address) extras.get("origin");
 			Assert.assertNotNull(origin);
 			
-			Log.v(TAG, "Origin address: " + origin.getExtras().getString("formatted_address"));
+			Log.v(TAG, "Origin address: " + origin.getExtras().getString("formatted_address"));			// We need to pass the whole Address object if possible
 			TextView originText = (TextView) findViewById(R.id.textview_destinations_origin);
 			originText.setText("Starting from: \n" + origin.getExtras().getString("formatted_address"));
 		}
@@ -67,7 +67,7 @@ public class DestinationActivity extends FragmentActivity {
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
 		routeItButton = (Button) findViewById(R.id.button_route_it);
 		
-		addDestinationInputView();
+		addDestinationEntryRow();
 		
 		// XXX temp "Test defaults"
         Button buttonTestDefaults = (Button) findViewById(R.id.button_test_defaults);
@@ -84,7 +84,7 @@ public class DestinationActivity extends FragmentActivity {
         public void onClick(View v) {
         	if (destLayout.getChildCount() < 3) {
         		for (int i = destLayout.getChildCount(); i < 3; i++) {
-        			addDestinationInputView();
+        			addDestinationEntryRow();
         		}
         	}
         	
@@ -101,55 +101,58 @@ public class DestinationActivity extends FragmentActivity {
 	
 	
     /**
-     * Puts another EditText and "remove" button on the screen for another destination.
+     * Puts another destination entry row on the screen.
      */
-	void addDestinationInputView() {
-		DestinationInputView v = new DestinationInputView(mContext) {
+	void addDestinationEntryRow() {
+		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
+			DestinationInputView v = new DestinationInputView(mContext) {
 
-			@Override
-			public void onRemoveClicked(UUID id) {
-				Log.v(TAG, "Remove DestinationAddView id=" + id);
-				removeDestinationAddView(id);
-			}
+				@Override
+				public void onRemoveClicked(UUID id) {
+					removeDestinationAddView(id);
+				}
 
-			/*@Override
-			public void onLostFocus(UUID id) {
-				// TODO Validate the address entered into this view
-				Log.v(TAG, "Need to validate: ");
-			}*/
-
-			@Override
-			public void onAddClicked(UUID id) {
-				// TODO validate this destination row
-				
-			}
-		};
-		
-		destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+				@Override
+				public void onAddClicked(UUID id) {
+					// TODO validate this destination row
+					Log.v(TAG, "Add clicked from id=" + id);
+					addDestinationEntryRow();
+				}
+			};
+			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+		}
 	}
 
 	
 	
 	/**
-	 * Removes the EditText and "remove" button row ({@link DestinationInputView}} with the given {@link UUID} from the screen.
+	 * Removes the destination entry row ({@link DestinationInputView}) with the given {@link UUID} from the screen.
 	 * @param id
 	 */
 	void removeDestinationAddView(UUID id) {
 		// Go through the views list and remove the one that has the given UUID
 		
 		// TODO check out views.remove(Object o) and see how it compares objects to find the right one
+		Log.v(TAG, "Remove DestinationAddView id=" + id);
 		
-		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			if (((DestinationInputView) destLayout.getChildAt(i)).getUUID().equals(id)) {
-				destLayout.removeViewAt(i);
-				break;
+		if (destLayout.getChildCount() > 1) {
+			for (int i = 0; i < destLayout.getChildCount(); i++) {
+				if (((DestinationInputView) destLayout.getChildAt(i)).getUUID().equals(id)) {
+					destLayout.removeViewAt(i);
+					break;
+				}
 			}
+			
+			// Re-enable the "+" button on the last row, so they can add more if they want
+			((DestinationInputView) destLayout.getChildAt(destLayout.getChildCount() - 1)).resetButtons();
+		} else {
+			((DestinationInputView) destLayout.getChildAt(0)).clear();
 		}
 	}
 	
 	
 	/**
-	 * Adds a {@link DestinationInputView} row to the list if we're not maxed out.  Max number 
+	 * Adds a destination entry {@link DestinationInputView} row to the list if we're not maxed out.  Max number 
 	 * of rows is set in {@link AppProperties}.
 	 * @param v
 	 *//*

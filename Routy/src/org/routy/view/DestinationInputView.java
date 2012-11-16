@@ -42,6 +42,7 @@ public abstract class DestinationInputView extends LinearLayout {
 	private double centerLng;
 	private int radius;
 	private EditText editText;
+	private Button addButton;
 	private int status;
 	
 	
@@ -105,8 +106,11 @@ public abstract class DestinationInputView extends LinearLayout {
 	}
 	
 	
+	/**
+	 * Prepares the view for a single destination entry row.
+	 * @param context
+	 */
 	private void initViews(Context context) {
-		// Inflate the view for an "add destination" text field and remove button
 		LayoutInflater inflater = LayoutInflater.from(context);
 		inflater.inflate(R.layout.view_destination_add, this);
 		
@@ -131,19 +135,18 @@ public abstract class DestinationInputView extends LinearLayout {
 				
 			}
 		});
-		/*editText.setOnFocusChangeListener(new OnFocusChangeListener() {
+		
+		addButton = (Button) findViewById(R.id.button_destination_add);
+		addButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if (hasFocus) {
-					// NO-OP
-				} else {
-					Log.v(TAG, "edittext lost focus");
-					onLostFocus(id);
-//					validate();
+			public void onClick(View v) {
+				if (editText.getText().toString().length() > 0) { 
+					v.setVisibility(INVISIBLE);
+					onAddClicked(id);
 				}
 			}
-		});*/
+		});
 		
 		Button removeButton = (Button) findViewById(R.id.button_destination_remove);
 		removeButton.setOnClickListener(new OnClickListener() {
@@ -265,4 +268,14 @@ public abstract class DestinationInputView extends LinearLayout {
 	}
 	
 	
+	public void clear() {
+		clearValidStatus();
+		
+		editText.setText("");
+		addButton.setVisibility(VISIBLE);
+	}
+	
+	public void resetButtons() {
+		addButton.setVisibility(VISIBLE);
+	}
 }
