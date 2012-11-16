@@ -38,13 +38,13 @@
             android:layout_width="match_parent" 
             android:layout_height="wrap_content" />
         
-        <Button
+        <!-- <Button
 	        android:id="@+id/button_destination_add"
 	        style="android:buttonStyle"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content" 
 	        android:onClick="addAnotherDestination" 
-	        android:text="@string/destination_add" />
+	        android:text="@string/destination_add" /> -->
 	
 		<Button
 	        android:id="@+id/button_origin_modify"

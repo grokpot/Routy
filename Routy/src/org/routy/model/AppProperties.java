@@ -13,7 +13,7 @@ public class AppProperties {
 	public static final double LOCATION_ACCURACY_THRESHOLD_M = 50;
 	
 	/** The amount of time before the last known location provided by Android is deemed "stale" */
-	public static final double LOCATION_EXPIRE_TIME_MS = 0;//300000;
+	public static final double LOCATION_EXPIRE_TIME_MS = 300000;
 	
 	/** The amount of time Routy should spend searching for the user's location in milliseconds */
 	public static final long LOCATION_FETCH_TIMEOUT_MS = 10000;
@@ -26,11 +26,13 @@ public class AppProperties {
 
 	/** The base URL for accessing the <a href="">Google Places Web API</a> */
 	public static final String G_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/xml?";
+	
+	public static final int G_PLACES_MAX_RESULTS = 5;
 
 	public static final int NUM_MAX_DESTINATIONS = 5;
 	
 	public static final long SPLASH_SCREEN_DELAY_MS = 1250;
-
+	
 	public static final String G_API_KEY = "AIzaSyAsBYyw8a9WUt60WvRLf2ibSe8UfRSnV9g";
 	
 	

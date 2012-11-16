@@ -2,23 +2,27 @@ package org.routy.adapter;
 
 import java.util.List;
 
+import org.routy.R;
 import org.routy.model.GooglePlace;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-public class GooglePlacesListAdapter extends BaseAdapter {
+public class PlacesListAdapter extends BaseAdapter {
 
+	private final String TAG = "PlacesListAdapter";
+	
 	private Context mContext;
 	private List<GooglePlace> mPlaces;
 
 	
-	public GooglePlacesListAdapter(Context context, List<GooglePlace> places) {
+	public PlacesListAdapter(Context context, List<GooglePlace> places) {
 		super();
 		
 		mContext = context;
@@ -33,26 +37,27 @@ public class GooglePlacesListAdapter extends BaseAdapter {
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		View row = convertView;		// This is the view we need to use (it can be "re-used" by Android)
-		TwoLineHolder holder = null;
+		GPlaceLineItemHolder holder = null;
 		
 		if (row == null) {		// This means Android handed us a previously used row View...so we gotta rebuild it
 			LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-			row = inflater.inflate(android.R.layout.two_line_list_item, parent, false);
-			
-			holder = new TwoLineHolder();
-			holder.line1 = (TextView) row.findViewById(android.R.id.text1);
-			holder.line2 = (TextView) row.findViewById(android.R.id.text2);
+			row = inflater.inflate(R.layout.gplace_list_item, parent, false);
+
+			holder = new GPlaceLineItemHolder();
+			holder.nameLine = (TextView) row.findViewById(R.id.textview_gplace_name);
+			holder.addressLine = (TextView) row.findViewById(R.id.textview_gplace_address);
 			
 			row.setTag(holder);		// The "tag" is being used as a place to store data
 		} else {
-			holder = (TwoLineHolder) row.getTag();
+			holder = (GPlaceLineItemHolder) row.getTag();
 		}
 		
 		GooglePlace place = mPlaces.get(position);
-		holder.line1.setText(place.getPlaceName());
-		holder.line2.setText(place.getPlaceAddress());
+//		Log.v(TAG, "Displaying: " + place.getName() + " - " + place.getFormattedAddress());
+		holder.nameLine.setText(place.getName());
+		holder.addressLine.setText(place.getFormattedAddress());
 		
-		return null;
+		return row;
 	}
 	
 	
@@ -62,10 +67,10 @@ public class GooglePlacesListAdapter extends BaseAdapter {
 	 * @author jtran
 	 *
 	 */
-	private class TwoLineHolder {
+	private class GPlaceLineItemHolder {
 		
-		public TextView line1;
-		public TextView line2;
+		public TextView nameLine;
+		public TextView addressLine;
 	}
 
 
@@ -76,7 +81,7 @@ public class GooglePlacesListAdapter extends BaseAdapter {
 
 
 	@Override
-	public Object getItem(int position) {
+	public GooglePlace getItem(int position) {
 		return mPlaces.get(position);
 	}
 

@@ -6,18 +6,18 @@ import org.routy.service.DistanceMatrixService;
 
 import android.location.Address;
 
-public class RouteRequest {
+public class CalculateRouteRequest {
 
 	private Address origin;
 	private List<Address> destinations;
 	private boolean sensor;
 	private int preference;
 	
-	public RouteRequest(Address origin, List<Address> destinations, boolean sensor) {
+	public CalculateRouteRequest(Address origin, List<Address> destinations, boolean sensor) {
 		this(origin, destinations, sensor, DistanceMatrixService.PREFER_DISTANCE);
 	}
 	
-	public RouteRequest(Address origin, List<Address> destinations, boolean sensor, int preference) {
+	public CalculateRouteRequest(Address origin, List<Address> destinations, boolean sensor, int preference) {
 		super();
 		this.origin = origin;
 		this.destinations = destinations;

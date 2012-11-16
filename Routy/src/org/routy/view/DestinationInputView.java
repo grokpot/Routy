@@ -1,16 +1,21 @@
 package org.routy.view;
 
-import java.io.IOException;
-import java.util.Locale;
+import java.util.List;
 import java.util.UUID;
 
 import org.routy.R;
+import org.routy.adapter.PlacesListAdapter;
 import org.routy.exception.RoutyException;
-import org.routy.service.AddressService;
+import org.routy.fragment.ListPickerDialog;
+import org.routy.fragment.OneButtonDialog;
+import org.routy.model.GooglePlace;
+import org.routy.model.ValidateDestinationRequest;
+import org.routy.task.ValidateDestinationTask;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.location.Address;
-import android.location.Geocoder;
+import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -29,29 +34,45 @@ public abstract class DestinationInputView extends LinearLayout {
 	public static final int NOT_VALIDATED = 1;
 	public static final int INVALID = 2;
 	
-	private Context context;
+	private FragmentActivity mContext;
 	private UUID id;
 	private Address address;
 	private String addressString;
+	private double centerLat;
+	private double centerLng;
+	private int radius;
 	private EditText editText;
 	private int status;
 	
 	
 	/**
+	 * Called when the "+" button is clicked for a DestinationInputView row.  The 
+	 * string in this row should be validated when this happens.
+	 * @param id		the {@link UUID} of the DestinationInputView row
+	 */
+	public abstract void onAddClicked(UUID id);
+	
+	/**
 	 * Called when the "remove" button is clicked for a DestinationAddView
-	 * @param id		the {@link UUID} of the DestinationAddView to remove
+	 * @param id		the {@link UUID} of the DestinationInputView to remove
 	 */
 	public abstract void onRemoveClicked(UUID id);
 	
+	/**
+	 * Called when the {@link EditText} in this DestinationInputView row loses focus.
+	 * @param id		the {@link UUID} of the DestinationInputView to remove
+	 *//*
+	public abstract void onLostFocus(UUID id);*/
 	
-	public DestinationInputView(Context context) {
+	
+	public DestinationInputView(FragmentActivity context) {
 		this(context, "");
 	}
 	
-	public DestinationInputView(Context context, AttributeSet attrs) {
+	public DestinationInputView(FragmentActivity context, AttributeSet attrs) {
 		super(context, attrs);
 		
-		this.context = context;
+		this.mContext = context;
 		this.id = UUID.randomUUID();
 		this.address = null;
 		this.addressString = "";
@@ -60,13 +81,24 @@ public abstract class DestinationInputView extends LinearLayout {
 		initViews(context);
 	}
 	
-	public DestinationInputView(Context context, String addressString) {
+	public DestinationInputView(FragmentActivity context, String addressString) {
+		this(context, addressString, -1, -1, 0);
+	}
+	
+	public DestinationInputView(FragmentActivity context, double centerLat, double centerLng, int radius) {
+		this(context, "", centerLat, centerLng, radius);
+	}
+	
+	public DestinationInputView(FragmentActivity context, String addressString, double centerLat, double centerLng, int radius) {
 		super(context);
 		
-		this.context = context;
+		this.mContext = context;
 		this.id = UUID.randomUUID();
 		this.address = null;
 		this.addressString = addressString;
+		this.centerLat = centerLat;
+		this.centerLng = centerLng;
+		this.radius = radius;
 		this.status = DestinationInputView.NOT_VALIDATED;
 		
 		initViews(context);
@@ -99,19 +131,19 @@ public abstract class DestinationInputView extends LinearLayout {
 				
 			}
 		});
-		editText.setOnFocusChangeListener(new OnFocusChangeListener() {
+		/*editText.setOnFocusChangeListener(new OnFocusChangeListener() {
 			
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (hasFocus) {
 					// NO-OP
 				} else {
-//					onLostFocus(id);
 					Log.v(TAG, "edittext lost focus");
-					validate();
+					onLostFocus(id);
+//					validate();
 				}
 			}
-		});
+		});*/
 		
 		Button removeButton = (Button) findViewById(R.id.button_destination_remove);
 		removeButton.setOnClickListener(new OnClickListener() {
@@ -135,23 +167,63 @@ public abstract class DestinationInputView extends LinearLayout {
 			String addressString = editText.getText().toString();
 			Log.v(TAG, "validating: " + addressString);
 			
-			AddressService addressService = new AddressService(new Geocoder(context, Locale.getDefault()), false);
-			try {
-				address = addressService.getAddressForLocationString(addressString);
-				
-				if (address == null) {
-					setInvalid();
-				}
-			} catch (RoutyException e) {
-				// TODO How to handle this?
-				Log.e(TAG, "RoutyException: " + e.getMessage());
-				setInvalid();
-			} catch (IOException e) {
-				// TODO How to handle this?
-				Log.e(TAG, "IOException: " + e.getMessage());
-				setInvalid();
+			if (addressString != null && addressString.length() > 0) {
+				new ValidateDestinationTask() {
+					
+					@Override
+					public void onResult(List<GooglePlace> results) {
+						if (results == null || results.size() < 1) {
+							// No results.  Display a message.
+							Log.v(TAG, "No places found for query");
+							setInvalid();
+							showErrorDialog("No places or addresses found for this destination.  Try broadening your search.");
+						} else if (results.size() == 1) {
+							// Only one result.  Turn it into an address, set it, and set the valid status
+							Log.v(TAG, "1 place found for query");
+							address = results.get(0).getAddress();
+							setValid();
+						} else {
+							// More than 1 result.  Display the pickable list dialog.
+							Log.v(TAG, "More than 1 place found for query -- " + results.size() + " results");
+							showPlacePickerDialog(results);
+						}
+					}
+
+					@Override
+					public void onFailure(RoutyException exception) {
+						showErrorDialog(exception.getMessage());
+					}
+				}.execute(new ValidateDestinationRequest(addressString, centerLat, centerLng, radius));
 			}
 		}
+	}
+	
+	
+	private void showErrorDialog(String message) {
+    	OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {
+			@Override
+			public void onButtonClicked(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		};
+		dialog.show(mContext.getSupportFragmentManager(), TAG);
+    }
+	
+	
+	private void showPlacePickerDialog(List<GooglePlace> options) {
+		Log.v(TAG, "Show place picker dialog");
+		final PlacesListAdapter adapter = new PlacesListAdapter(mContext, options);
+		ListPickerDialog dialog = new ListPickerDialog("Select...", adapter) {
+
+			@Override
+			public void onSelection(int which) {
+				address = ((GooglePlace) adapter.getItem(which)).getAddress();
+				setValid();
+				Log.v(TAG, "Address: " + address.getLatitude() + ", " + address.getLongitude());
+			}
+			
+		};
+		dialog.show(mContext.getSupportFragmentManager(), TAG);
 	}
 	
 	

@@ -5,13 +5,13 @@ import java.io.IOException;
 import org.routy.exception.RoutyException;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
-import org.routy.model.RouteRequest;
+import org.routy.model.CalculateRouteRequest;
 import org.routy.service.RouteService;
 
 import android.os.AsyncTask;
 import android.util.Log;
 
-public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, Route> {
+public abstract class CalculateRouteTask extends AsyncTask<CalculateRouteRequest, Void, Route> {
 
 	private final String TAG = "CalculateRouteTask";
 
@@ -22,13 +22,13 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 	
 	
 	@Override
-	protected Route doInBackground(RouteRequest...requests) {
+	protected Route doInBackground(CalculateRouteRequest...requests) {
 		try {
 //			List<Route> routes = getRoutes(requests[0].getOrigin(), requests[0].getDestinations(), null);
 			if (requests.length == 0) {
 				// TODO Handle this error...
 			} else {
-				RouteRequest request = requests[0];
+				CalculateRouteRequest request = requests[0];
 				
 				RouteService routeService = new RouteService(request.getOrigin(), request.getDestinations(), RouteOptimizePreference.PREFER_DISTANCE, false);
 				Route bestRoute = routeService.getBestRoute();

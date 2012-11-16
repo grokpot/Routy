@@ -7,17 +7,22 @@ import java.util.UUID;
 
 import junit.framework.Assert;
 
+import org.routy.exception.RoutyException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.model.AppProperties;
+import org.routy.model.CalculateRouteRequest;
+import org.routy.model.GooglePlace;
 import org.routy.model.Route;
-import org.routy.model.RouteRequest;
+import org.routy.model.ValidateDestinationRequest;
 import org.routy.task.CalculateRouteTask;
+import org.routy.task.ValidateDestinationTask;
 import org.routy.view.DestinationInputView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -112,6 +117,12 @@ public class DestinationActivity extends FragmentActivity {
 				// TODO Validate the address entered into this view
 				Log.v(TAG, "Need to validate: ");
 			}*/
+
+			@Override
+			public void onAddClicked(UUID id) {
+				// TODO validate this destination row
+				
+			}
 		};
 		
 		destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -141,17 +152,16 @@ public class DestinationActivity extends FragmentActivity {
 	 * Adds a {@link DestinationInputView} row to the list if we're not maxed out.  Max number 
 	 * of rows is set in {@link AppProperties}.
 	 * @param v
-	 */
+	 *//*
 	public void addAnotherDestination(View v) {
 		Log.v(TAG, "Add another destination.");
 		
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
 			addDestinationInputView();
 		}
-	}
+	}*/
 	
 	
-	// TODO Right now it's validating ALL destinations every time (regardless of if any were already validated) -- make it more efficient
 	public void acceptDestinations(View v) {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
 		v.requestFocus();
@@ -171,6 +181,7 @@ public class DestinationActivity extends FragmentActivity {
 				if (row.getStatus() == DestinationInputView.INVALID) {
 					hasErrors = true;
 				} else {
+					Log.v(TAG, row.getAddressString() + " validated");
 					validAddresses.add(row.getAddress());
 				}
 			}
@@ -180,6 +191,7 @@ public class DestinationActivity extends FragmentActivity {
 			if (validAddresses.size() == 0) {
 				showErrorDialog("Please enter at least 1 destination to continue.");
 			} else {
+				Log.v(TAG, "All addresses validated!");
 				CalculateRouteTask task = new CalculateRouteTask() {
 					
 					@Override
@@ -194,7 +206,7 @@ public class DestinationActivity extends FragmentActivity {
 					}
 				};
 				
-				task.execute(new RouteRequest(origin, validAddresses, false));
+				task.execute(new CalculateRouteRequest(origin, validAddresses, false));
 			}
 		} else {
 			Log.e(TAG, "Errors found in destinations.");

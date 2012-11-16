@@ -130,7 +130,12 @@ public class AddressService {
 		List<Address> results = geocoder.getFromLocationName(locationName, 2);
 		
 		if (results != null && results.size() > 0) {
-			return results.get(0);
+			Address result = results.get(0);
+			
+			Bundle extras = new Bundle();
+			extras.putString("formatted_address", getFormattedAddressString(result));
+			result.setExtras(extras);
+			return result;
 		}
 		
 		return null;
@@ -150,7 +155,12 @@ public class AddressService {
 		List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
 		
 		if (results != null && results.size() > 0) {
-			return results.get(0);
+			Address result = results.get(0);
+			
+			Bundle extras = new Bundle();
+			extras.putString("formatted_address", getFormattedAddressString(result));
+			result.setExtras(extras);
+			return result;
 		}
 		
 		return null;
@@ -239,6 +249,19 @@ public class AddressService {
 	}
 	
 	
+	private String getFormattedAddressString(Address result) {
+		StringBuffer formattedAddress = new StringBuffer();
+		
+		for (int i = 0; i < result.getMaxAddressLineIndex(); i++) {
+			formattedAddress.append(result.getAddressLine(i));
+			formattedAddress.append(", ");
+		}
+		formattedAddress.append(result.getAddressLine(result.getMaxAddressLineIndex()));
+		
+		return formattedAddress.toString();
+	}
+	
+	
 	/**
 	 * Parses a JSON response from the <a href="https://developers.google.com/maps/documentation/geocoding/">Google Geocoding API</a>.<br/>
 	 * (Used internally)
@@ -248,7 +271,7 @@ public class AddressService {
 	 * @throws JSONException
 	 * @throws GeocoderAPIException
 	 */
-	Address parseJSONResponse(String jsonResp) throws JSONException, GeocoderAPIException {
+	/*Address parseJSONResponse(String jsonResp) throws JSONException, GeocoderAPIException {
 		JSONObject response = (JSONObject) new JSONTokener(jsonResp.toString()).nextValue();
 		String status = response.getString("status");
 		
@@ -272,7 +295,7 @@ public class AddressService {
 		} else {
 			throw new GeocoderAPIException("Geocoding API failed with status=" + status);
 		}
-	}
+	}*/
 
 	
 	Address parseXMLResponse(String xmlResponse) throws GeocoderAPIException, RoutyException {
