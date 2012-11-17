@@ -3,6 +3,8 @@ package org.routy;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoLocationProviderException;
@@ -18,6 +20,7 @@ import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -44,6 +47,10 @@ public class OriginActivity extends FragmentActivity {
 	private EditText originAddressField;
 	private Button findUserButton;
 	private boolean locating;
+	
+	// shared prefs for origin persistence
+	private SharedPreferences originActivityPrefs;
+
 
 	
     @Override
@@ -51,16 +58,26 @@ public class OriginActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_origin);
         
-        context = this;
-        
-        originAddressField = (EditText) findViewById(R.id.origin_address_field);
-        findUserButton = (Button) findViewById(R.id.find_user_button);
+        // Initializations
+        context 			= this;
+        originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
+        findUserButton 		= (Button) findViewById(R.id.find_user_button);
         resetLocateButton();
-        
-        locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        
-        addressService = new AddressService(new Geocoder(this, Locale.getDefault()), false);		// TODO make getting sensor true/false dynamic
-        locationService = initLocationService();
+        locationManager 	= (LocationManager) getSystemService(LOCATION_SERVICE);
+        addressService 		= new AddressService(new Geocoder(this, Locale.getDefault()), false);		// TODO make getting sensor true/false dynamic
+        locationService 	= initLocationService();
+		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
+		
+		// Get persisted origin from shared prefs
+		String storedOrigin = originActivityPrefs.getString("saved_origin_string", null);
+		
+		// If there wasn't a stored origin, set the hint text
+		if (null == storedOrigin){
+			originAddressField.setHint(R.string.origin_prompt);
+		// Else set the EditText
+		} else {
+			originAddressField.setText(storedOrigin);
+		}
     }
     
     
@@ -218,6 +235,9 @@ public class OriginActivity extends FragmentActivity {
         	
         	if (originAddress != null) {
         		Log.v(TAG, "Validated origin address: " + originAddress.getFeatureName());
+   		
+        		saveOriginInSharedPrefs();
+        		
         		// Origin address is good...move on to Destinations
         		Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
     			destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
@@ -229,8 +249,17 @@ public class OriginActivity extends FragmentActivity {
     	}
     }
     
-    
     /**
+     *  Saves the validated origin in shared preferences, saves user time when using Routy next.
+     */
+    private void saveOriginInSharedPrefs() {
+		SharedPreferences.Editor ed = originActivityPrefs.edit();
+		ed.putString("saved_origin_string", originAddressField.getText().toString());
+		ed.commit();	
+	}
+
+
+	/**
      * Displays a {@link LoadingDialog}.  Use this to entertain the user while we find their location.
      * 
      */
