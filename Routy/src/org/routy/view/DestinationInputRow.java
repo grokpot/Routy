@@ -26,7 +26,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
-public abstract class DestinationInputView extends LinearLayout {
+public abstract class DestinationInputRow extends LinearLayout {
 
 	private final String TAG = "DestinationInputView";
 	
@@ -66,31 +66,31 @@ public abstract class DestinationInputView extends LinearLayout {
 	public abstract void onLostFocus(UUID id);*/
 	
 	
-	public DestinationInputView(FragmentActivity context) {
+	public DestinationInputRow(FragmentActivity context) {
 		this(context, "");
 	}
 	
-	public DestinationInputView(FragmentActivity context, AttributeSet attrs) {
+	public DestinationInputRow(FragmentActivity context, AttributeSet attrs) {
 		super(context, attrs);
 		
 		this.mContext = context;
 		this.id = UUID.randomUUID();
 		this.address = null;
 		this.addressString = "";
-		this.status = DestinationInputView.NOT_VALIDATED;
+		this.status = DestinationInputRow.NOT_VALIDATED;
 		
 		initViews(context);
 	}
 	
-	public DestinationInputView(FragmentActivity context, String addressString) {
+	public DestinationInputRow(FragmentActivity context, String addressString) {
 		this(context, addressString, -1, -1, 0);
 	}
 	
-	public DestinationInputView(FragmentActivity context, double centerLat, double centerLng, int radius) {
+	public DestinationInputRow(FragmentActivity context, double centerLat, double centerLng, int radius) {
 		this(context, "", centerLat, centerLng, radius);
 	}
 	
-	public DestinationInputView(FragmentActivity context, String addressString, double centerLat, double centerLng, int radius) {
+	public DestinationInputRow(FragmentActivity context, String addressString, double centerLat, double centerLng, int radius) {
 		super(context);
 		
 		this.mContext = context;
@@ -100,7 +100,7 @@ public abstract class DestinationInputView extends LinearLayout {
 		this.centerLat = centerLat;
 		this.centerLng = centerLng;
 		this.radius = radius;
-		this.status = DestinationInputView.NOT_VALIDATED;
+		this.status = DestinationInputRow.NOT_VALIDATED;
 		
 		initViews(context);
 	}
@@ -165,7 +165,7 @@ public abstract class DestinationInputView extends LinearLayout {
 	 * @param addressString
 	 * @return					true if the address string can be geocoded into an Address, false otherwise
 	 */
-	public void validate() {
+	/*public void validate() {
 		if (status == DestinationInputView.INVALID || status == DestinationInputView.NOT_VALIDATED) {
 			String addressString = editText.getText().toString();
 			Log.v(TAG, "validating: " + addressString);
@@ -199,7 +199,7 @@ public abstract class DestinationInputView extends LinearLayout {
 				}.execute(new ValidateDestinationRequest(addressString, centerLat, centerLng, radius));
 			}
 		}
-	}
+	}*/
 	
 	
 	private void showErrorDialog(String message) {
@@ -240,6 +240,11 @@ public abstract class DestinationInputView extends LinearLayout {
 	}
 	
 	
+	public void setAddress(Address address) {
+		this.address = address;
+	}
+	
+	
 	public Address getAddress() {
 		return address;
 	}
@@ -247,19 +252,19 @@ public abstract class DestinationInputView extends LinearLayout {
 	
 	public void setInvalid() {
 		editText.setTextColor(getResources().getColor(R.color.Red));
-		status = DestinationInputView.INVALID;
+		status = DestinationInputRow.INVALID;
 	}
 
 
 	public void setValid() {
 		editText.setTextColor(getResources().getColor(R.color.White));
-		status = DestinationInputView.VALID;
+		status = DestinationInputRow.VALID;
 	}
 	
 	
 	public void clearValidStatus() {
 		editText.setTextColor(getResources().getColor(R.color.White));
-		status = DestinationInputView.NOT_VALIDATED;
+		status = DestinationInputRow.NOT_VALIDATED;
 	}
 	
 	

@@ -7,7 +7,9 @@ import java.util.UUID;
 
 import junit.framework.Assert;
 
+import org.routy.adapter.PlacesListAdapter;
 import org.routy.exception.RoutyException;
+import org.routy.fragment.ListPickerDialog;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.model.AppProperties;
 import org.routy.model.CalculateRouteRequest;
@@ -16,13 +18,12 @@ import org.routy.model.Route;
 import org.routy.model.ValidateDestinationRequest;
 import org.routy.task.CalculateRouteTask;
 import org.routy.task.ValidateDestinationTask;
-import org.routy.view.DestinationInputView;
+import org.routy.view.DestinationInputRow;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.location.Address;
-import android.location.Location;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -88,13 +89,13 @@ public class DestinationActivity extends FragmentActivity {
         		}
         	}
         	
-        	DestinationInputView view = (DestinationInputView) destLayout.getChildAt(0);
+        	DestinationInputRow view = (DestinationInputRow) destLayout.getChildAt(0);
         	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_1));
         	
-        	view = (DestinationInputView) destLayout.getChildAt(1);
+        	view = (DestinationInputRow) destLayout.getChildAt(1);
         	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_2));
         	
-        	view = (DestinationInputView) destLayout.getChildAt(2);
+        	view = (DestinationInputRow) destLayout.getChildAt(2);
         	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_3));
         }
     };
@@ -105,17 +106,18 @@ public class DestinationActivity extends FragmentActivity {
      */
 	void addDestinationEntryRow() {
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
-			DestinationInputView v = new DestinationInputView(mContext) {
+			DestinationInputRow v = new DestinationInputRow(mContext) {
 
 				@Override
 				public void onRemoveClicked(UUID id) {
-					removeDestinationAddView(id);
+					removeDestinationEntryRow(id);
 				}
 
 				@Override
 				public void onAddClicked(UUID id) {
 					// TODO validate this destination row
 					Log.v(TAG, "Add clicked from id=" + id);
+					validateDestination(id);
 					addDestinationEntryRow();
 				}
 			};
@@ -126,10 +128,10 @@ public class DestinationActivity extends FragmentActivity {
 	
 	
 	/**
-	 * Removes the destination entry row ({@link DestinationInputView}) with the given {@link UUID} from the screen.
+	 * Removes the destination entry row ({@link DestinationInputRow}) with the given {@link UUID} from the screen.
 	 * @param id
 	 */
-	void removeDestinationAddView(UUID id) {
+	void removeDestinationEntryRow(UUID id) {
 		// Go through the views list and remove the one that has the given UUID
 		
 		// TODO check out views.remove(Object o) and see how it compares objects to find the right one
@@ -137,16 +139,16 @@ public class DestinationActivity extends FragmentActivity {
 		
 		if (destLayout.getChildCount() > 1) {
 			for (int i = 0; i < destLayout.getChildCount(); i++) {
-				if (((DestinationInputView) destLayout.getChildAt(i)).getUUID().equals(id)) {
+				if (((DestinationInputRow) destLayout.getChildAt(i)).getUUID().equals(id)) {
 					destLayout.removeViewAt(i);
 					break;
 				}
 			}
 			
 			// Re-enable the "+" button on the last row, so they can add more if they want
-			((DestinationInputView) destLayout.getChildAt(destLayout.getChildCount() - 1)).resetButtons();
+			((DestinationInputRow) destLayout.getChildAt(destLayout.getChildCount() - 1)).resetButtons();
 		} else {
-			((DestinationInputView) destLayout.getChildAt(0)).clear();
+			((DestinationInputRow) destLayout.getChildAt(0)).clear();
 		}
 	}
 	
@@ -165,6 +167,86 @@ public class DestinationActivity extends FragmentActivity {
 	}*/
 	
 	
+	/**
+	 * Validate a single row in the destinations list.
+	 * @param id
+	 */
+	// TODO Show a loading spinner while it's validating.
+	private void validateDestination(UUID id) {
+		final DestinationInputRow row = getRowById(id);
+		
+		if (row != null) {
+			validateDestination(row);
+		} else {
+			Log.e(TAG, "Couldn't find a row for id=" + id);
+		}
+	}
+	
+	
+	private void validateDestination(final DestinationInputRow row) {
+		/*if (row.getStatus() == DestinationInputRow.INVALID || row.getStatus() == DestinationInputRow.NOT_VALIDATED) {
+			String addressString = row.getAddressString();
+			Log.v(TAG, "validating: " + addressString);
+			
+			if (addressString != null && addressString.length() > 0) {
+				// Doing this in an AsyncTask because it uses the network.
+				new ValidateDestinationTask() {
+					
+					@Override
+					public void onResult(List<GooglePlace> results) {
+						if (results == null || results.size() < 1) {
+							// No results.  Display a message.
+							Log.v(TAG, "No places found for query");
+							row.setInvalid();
+							showErrorDialog("No places or addresses found for this destination.  Try broadening your search.");
+						} else if (results.size() == 1) {
+							// Only one result.  Turn it into an address, set it, and set the valid status
+							Log.v(TAG, "1 place found for query");
+							row.setAddress(results.get(0).getAddress());
+							row.setValid();
+						} else {
+							// More than 1 result.  Display the pickable list dialog.
+							Log.v(TAG, "More than 1 place found for query -- " + results.size() + " results");
+							showPlacePickerDialog(row, results);
+						}
+					}
+
+					@Override
+					public void onFailure(RoutyException exception) {
+						showErrorDialog(exception.getMessage());
+					}
+				}.execute(new ValidateDestinationRequest(addressString, origin.getLatitude(), origin.getLongitude(), AppProperties.G_PLACES_SEARCH_RADIUS_M));
+			}
+		}*/
+	}
+	
+	
+	private int getRowIndexById(UUID id) {
+		for (int i = 0; i < destLayout.getChildCount(); i++) {
+			if (((DestinationInputRow) destLayout.getChildAt(i)).getUUID().equals(id)) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
+	
+	
+	private DestinationInputRow getRowById(UUID id) {
+		int idx = getRowIndexById(id);
+		
+		if (idx < 0) {
+			return null;
+		} else {
+			return (DestinationInputRow) destLayout.getChildAt(idx);
+		}
+	}
+	
+	
+	/**
+	 * Called when "Route It!" button is clicked.
+	 * @param v
+	 */
 	public void acceptDestinations(View v) {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
 		v.requestFocus();
@@ -173,15 +255,18 @@ public class DestinationActivity extends FragmentActivity {
 		List<Address> validAddresses = new ArrayList<Address>();
 		// Check if there are any invalid rows
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			DestinationInputView row = (DestinationInputView) destLayout.getChildAt(i);
+			DestinationInputRow row = (DestinationInputRow) destLayout.getChildAt(i);
 			Log.v(TAG, "Destination " + i + ": " + row.getAddressString());
 			
 			if (row.getAddressString() != null && row.getAddressString().length() > 0) {
-				if (row.getStatus() == DestinationInputView.NOT_VALIDATED) {
-					row.validate();
+				if (row.getStatus() == DestinationInputRow.NOT_VALIDATED) {
+//					row.validate();
+					validateDestination(row);
 				}
 				
-				if (row.getStatus() == DestinationInputView.INVALID) {
+				// TODO this will continue processing as the async task goes off and does the validation.  Need to control this.
+				
+				if (row.getStatus() == DestinationInputRow.INVALID) {
 					hasErrors = true;
 				} else {
 					Log.v(TAG, row.getAddressString() + " validated");
@@ -218,48 +303,6 @@ public class DestinationActivity extends FragmentActivity {
 	}
 	
 	
-/*	private void flagInvalidDestination(int position) {
-		if (position >= 0 && position < destLayout.getChildCount()) {
-			DestinationInputView view = (DestinationInputView) destLayout.getChildAt(position);
-			view.setInvalid();
-		}
-	}*/
-	
-	
-/*	private List<Address> validateDestinations() {
-		List<Address> addresses = new ArrayList<Address>();
-		
-		// Iterates through entered locations and validates them into addresses.
-    	Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
-    	AddressService addressService =  new AddressService(geocoder, false);		// TODO make getting sensor true/false dynamic	
-
-    	// TODO: "please wait" screen so activity doesn't block.
-		DestinationInputView view = null;
-		Address address = null;
-		String userInput = null;
-		
-		// gets the destination text from the EditText boxes and tries to validate the strings
-    	for (int i = 0; i < destLayout.getChildCount(); i++){
-			try {
-        		view = (DestinationInputView) destLayout.getChildAt(i);
-        		userInput = ((EditText) view.findViewById(R.id.edittext_destination_add)).getText().toString();
-        		if (userInput != null && userInput.trim().length() > 0) {
-        			address = addressService.getAddressForLocationString(userInput);
-            		addresses.add(address);
-        		}
-			} catch (RoutyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
-		
-		return addresses;
-	}*/
-	
-	
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.activity_destination, menu);
@@ -290,5 +333,22 @@ public class DestinationActivity extends FragmentActivity {
 		};
 		dialog.show(mContext.getSupportFragmentManager(), TAG);
     }
+    
+    
+    private void showPlacePickerDialog(final DestinationInputRow row, List<GooglePlace> options) {
+		Log.v(TAG, "Show place picker dialog");
+		final PlacesListAdapter adapter = new PlacesListAdapter(mContext, options);
+		ListPickerDialog dialog = new ListPickerDialog("Select...", adapter) {
+
+			@Override
+			public void onSelection(int which) {
+				row.setAddress(((GooglePlace) adapter.getItem(which)).getAddress());
+				row.setValid();
+				Log.v(TAG, "Address: " + row.getAddress().getLatitude() + ", " + row.getAddress().getLongitude());
+			}
+			
+		};
+		dialog.show(mContext.getSupportFragmentManager(), TAG);
+	}
 
 }

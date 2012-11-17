@@ -28,6 +28,8 @@ public class AppProperties {
 	public static final String G_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/xml?";
 	
 	public static final int G_PLACES_MAX_RESULTS = 5;
+	
+	public static final int G_PLACES_SEARCH_RADIUS_M = 5000;
 
 	public static final int NUM_MAX_DESTINATIONS = 5;
 	
