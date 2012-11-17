@@ -3,7 +3,6 @@ package org.routy.service;
 import java.io.IOException;
 import java.util.Locale;
 
-import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.RoutyException;
 
 import android.location.Address;

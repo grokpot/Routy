@@ -7,7 +7,6 @@ import java.util.Locale;
 
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
-import org.routy.service.RouteService;
 
 import android.location.Address;
 import android.location.Geocoder;

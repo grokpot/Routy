@@ -3,12 +3,10 @@ package org.routy.service;
 import java.util.Date;
 import java.util.List;
 
-import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.NoInternetConnectionException;
+import org.routy.exception.NoLocationProviderException;
 import org.routy.model.AppProperties;
 
-import android.location.GpsStatus;
-import android.location.GpsStatus.Listener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
