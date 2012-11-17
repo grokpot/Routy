@@ -73,7 +73,7 @@ public class OriginActivity extends FragmentActivity {
 		
 		// If there wasn't a stored origin, set the hint text
 		if (null == storedOrigin){
-			originAddressField.setHint(R.string.origin_prompt);
+			originAddressField.setHint(R.string.origin_hint);
 		// Else set the EditText
 		} else {
 			originAddressField.setText(storedOrigin);
