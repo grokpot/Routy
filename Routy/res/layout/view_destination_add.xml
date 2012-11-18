@@ -14,9 +14,15 @@
         android:ellipsize="end" />
     
     <Button 
+        android:id="@+id/button_destination_add" 
+        android:layout_width="wrap_content" 
+        android:layout_height="wrap_content" 
+        android:text="@string/destination_add_short" />
+    
+    <Button 
         android:id="@+id/button_destination_remove" 
         android:layout_width="wrap_content" 
         android:layout_height="wrap_content" 
-        android:text="@string/destination_remove" />
+        android:text="@string/destination_remove_short" />
         
 </LinearLayout>

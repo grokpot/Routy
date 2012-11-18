@@ -14,10 +14,12 @@ import org.routy.exception.RoutyException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.model.AppProperties;
 import org.routy.model.Route;
+import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
 import org.routy.service.AddressService;
+import org.routy.service.RouteService;
 import org.routy.task.CalculateRouteTask;
-import org.routy.view.DestinationInputView;
+import org.routy.view.DestinationRowView;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -66,7 +68,8 @@ public class DestinationActivity extends FragmentActivity {
 		
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
 		
-		addDestinationInputView();
+		// Initially display 1 destination row.
+		addDestinationRow();
 		
 		// XXX temp "Test defaults"
         Button buttonTestDefaults = (Button) findViewById(R.id.button_test_defaults);
@@ -75,85 +78,94 @@ public class DestinationActivity extends FragmentActivity {
 	}
 	
 	
-	// XXX temp
 	/**
-	 * Loads the 3 test destinations we've been using.
-	 */
-	View.OnClickListener listenerTestDefaults = new View.OnClickListener() {
-        public void onClick(View v) {
-        	if (destLayout.getChildCount() < 3) {
-        		for (int i = destLayout.getChildCount(); i < 3; i++) {
-        			addDestinationInputView();
-        		}
-        	}
-        	
-        	DestinationInputView view = (DestinationInputView) destLayout.getChildAt(0);
-        	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_1));
-        	
-        	view = (DestinationInputView) destLayout.getChildAt(1);
-        	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_2));
-        	
-        	view = (DestinationInputView) destLayout.getChildAt(2);
-        	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_3));
-        }
-    };
-	
-	
-    /**
      * Puts another EditText and "remove" button on the screen for another destination.
      */
-	void addDestinationInputView() {
-		DestinationInputView v = new DestinationInputView(mContext) {
+	void addDestinationRow() {
+		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
+			DestinationRowView v = new DestinationRowView(mContext) {
 
-			@Override
-			public void onRemoveClicked(UUID id) {
-				Log.v(TAG, "Remove DestinationAddView id=" + id);
-				removeDestinationAddView(id);
-			}
-		};
-		
-		destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-	}
-	
-	
-	/**
-	 * Removes the EditText and "remove" button row ({@link DestinationInputView}} with the given {@link UUID} from the screen.
-	 * @param id
-	 */
-	void removeDestinationAddView(UUID id) {
-		// Go through the views list and remove the one that has the given UUID
-		
-		// TODO check out views.remove(Object o) and see how it compares objects to find the right one
-		
-		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			if (((DestinationInputView) destLayout.getChildAt(i)).getUUID().equals(id)) {
-				destLayout.removeViewAt(i);
-				break;
-			}
+				@Override
+				public void onRemoveClicked(UUID id) {
+					removeDestinationRow(id);
+				}
+
+				@Override
+				public void onAddClicked(UUID id) {
+					// TODO Do validation before displaying the additional row
+					addDestinationRow();
+				}
+
+				@Override
+				public void onFocusLost(UUID id) {
+					// TODO Do validation and show a loading spinner while working
+				}
+			};
+			
+			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+		} else {
+			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
+			((DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1)).showAddButton();
 		}
 	}
 	
 	
 	/**
-	 * Adds a {@link DestinationInputView} row to the list if we're not maxed out.  Max number 
+	 * Removes the EditText and "remove" button row ({@link DestinationRowView}} with the given {@link UUID} from the screen.
+	 * @param id
+	 */
+	void removeDestinationRow(UUID id) {
+		if (destLayout.getChildCount() > 1) {
+			int idx = getRowIndexById(id);
+			
+			if (idx >= 0) {
+				Log.v(TAG, "Remove DestinationAddView id=" + id);
+				destLayout.removeViewAt(idx);
+				
+				// If we removed the last row, re-enable the "+" button on the NEW last row
+				if (idx >= destLayout.getChildCount()) {
+					((DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1)).showAddButton();
+				}
+			} else {
+				Log.e(TAG, "attempt to remove a row that does not exist -- id=" + id);
+			}
+		} else if (destLayout.getChildCount() == 1) {
+			int idx = getRowIndexById(id);
+			
+			((DestinationRowView) destLayout.getChildAt(idx)).reset();
+		}
+	}
+	
+	
+	/**
+	 * Adds a {@link DestinationRowView} row to the list if we're not maxed out.  Max number 
 	 * of rows is set in {@link AppProperties}.
 	 * @param v
 	 */
-	public void addAnotherDestination(View v) {
+	/*public void onClickFromDestinationAdd(View v) {
 		Log.v(TAG, "Add another destination.");
 		
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
-			addDestinationInputView();
+			addDestinationRow();
+		} else {
+			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
 		}
-	}
+	}*/
 	
 	
-	// TODO Right now it's validating ALL destinations every time (regardless of if any were already validated) -- make it more efficient
+	/**
+	 * Called when "Route It!" is clicked.  Does any final validation and preparations before calculating 
+	 * the best route and passing route data to the results activity.
+	 * 
+	 * @param v
+	 */
 	public void acceptDestinations(View v) {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
 		
+		// TODO
+		
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			Log.v(TAG, "Destination " + i + ": " + ((EditText) ((DestinationInputView) destLayout.getChildAt(i)).findViewById(R.id.edittext_destination_add)).getText().toString());
+			Log.v(TAG, "Destination " + i + ": " + ((EditText) ((DestinationRowView) destLayout.getChildAt(i)).findViewById(R.id.edittext_destination_add)).getText().toString());
 		}
 		
 		// Validate the addresses and highlight any errors.
@@ -180,10 +192,7 @@ public class DestinationActivity extends FragmentActivity {
 				// TODO: fill in last two parameters of RouteService instantiation with user choice
 	        	// Instantiates a Route object with validated addresses and calls ResultsActivity
 	        	try {
-					/*RouteService routeService = new RouteService(origin, validatedAddresses, RouteOptimizePreference.PREFER_DURATION, false);
-					Route route = routeService.getBestRoute();*/
-	        		
-	        		CalculateRouteTask task = new CalculateRouteTask() {
+	        		new CalculateRouteTask() {
 						
 						@Override
 						public void onRouteCalculated(Route route) {
@@ -195,10 +204,7 @@ public class DestinationActivity extends FragmentActivity {
 			    			resultsIntent.putExtra("distance", route.getTotalDistance());
 			    			startActivity(resultsIntent);
 						}
-					};
-					
-					task.execute(new RouteRequest(origin, validatedAddresses, false));
-					
+					}.execute(new RouteRequest(origin, validatedAddresses, false));
 				} catch (Exception e) {
 					// TODO error handling
 					e.printStackTrace();
@@ -213,7 +219,7 @@ public class DestinationActivity extends FragmentActivity {
 	
 	private void flagInvalidDestination(int position) {
 		if (position >= 0 && position < destLayout.getChildCount()) {
-			DestinationInputView view = (DestinationInputView) destLayout.getChildAt(position);
+			DestinationRowView view = (DestinationRowView) destLayout.getChildAt(position);
 			view.setInvalid();
 		}
 	}
@@ -227,14 +233,14 @@ public class DestinationActivity extends FragmentActivity {
     	AddressService addressService =  new AddressService(geocoder, false);		// TODO make getting sensor true/false dynamic	
 
     	// TODO: "please wait" screen so activity doesn't block.
-		DestinationInputView view = null;
+		DestinationRowView view = null;
 		Address address = null;
 		String userInput = null;
 		
 		// gets the destination text from the EditText boxes and tries to validate the strings
     	for (int i = 0; i < destLayout.getChildCount(); i++){
 			try {
-        		view = (DestinationInputView) destLayout.getChildAt(i);
+        		view = (DestinationRowView) destLayout.getChildAt(i);
         		userInput = ((EditText) view.findViewById(R.id.edittext_destination_add)).getText().toString();
         		if (userInput != null && userInput.trim().length() > 0) {
         			address = addressService.getAddressForLocationString(userInput);
@@ -287,5 +293,40 @@ public class DestinationActivity extends FragmentActivity {
 		};
 		dialog.show(mContext.getSupportFragmentManager(), TAG);
     }
+    
+    
+    private int getRowIndexById(UUID id) {
+    	for (int i = 0; i < destLayout.getChildCount(); i++) {
+			if (((DestinationRowView) destLayout.getChildAt(i)).getUUID().equals(id)) {
+				return i;
+			}
+		}
+    	
+    	return -1;
+    }
+
+
+	// XXX temp
+	/**
+	 * Loads the 3 test destinations we've been using.
+	 */
+	View.OnClickListener listenerTestDefaults = new View.OnClickListener() {
+	    public void onClick(View v) {
+	    	if (destLayout.getChildCount() < 3) {
+	    		for (int i = destLayout.getChildCount(); i < 3; i++) {
+	    			addDestinationRow();
+	    		}
+	    	}
+	    	
+	    	DestinationRowView view = (DestinationRowView) destLayout.getChildAt(0);
+	    	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_1));
+	    	
+	    	view = (DestinationRowView) destLayout.getChildAt(1);
+	    	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_2));
+	    	
+	    	view = (DestinationRowView) destLayout.getChildAt(2);
+	    	((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_3));
+	    }
+	};
 
 }
