@@ -24,7 +24,7 @@
     <string name="origin_failed_validate">Bad origin address.</string>
     
     <!-- Origin Screen Stuff -->
-    <string name="address_field_hint">Enter Starting Address</string>
+    <string name="origin_hint">Enter Starting Address</string>
     <string name="origin_prompt">Origin</string>
     <string name="find_user_prompt">Find Me</string>
     <string name="clear_screen">Clear</string>
@@ -54,5 +54,8 @@
     <string name="no">No</string>
     <string name="destination_add_short">+</string>
     <string name="destination_remove_short">-</string>
+    <string name="origin_logo">Routy Origin Logo</string>
+    <string name="origin_welcome">Welcome to Routy-\n an app to simplify your driving,\n and your life!</string>
+    <string name="results_header">Here\'s the shortest route for your destinations:</string>
 
 </resources>
