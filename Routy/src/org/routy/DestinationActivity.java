@@ -15,10 +15,13 @@ import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.RoutyException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.model.AppProperties;
+import org.routy.model.GooglePlace;
+import org.routy.model.GooglePlacesQuery;
 import org.routy.model.Route;
 import org.routy.model.RouteRequest;
 import org.routy.service.AddressService;
 import org.routy.task.CalculateRouteTask;
+import org.routy.task.GooglePlacesQueryTask;
 import org.routy.view.DestinationRowView;
 
 import android.app.AlertDialog;
@@ -112,13 +115,55 @@ public class DestinationActivity extends FragmentActivity {
 
 				@Override
 				public void onAddClicked(UUID id) {
-					// TODO Do validation before displaying the additional row
-					addDestinationRow();
+					// Do validation and then display the additional row
+					final DestinationRowView row = getRowById(id);
+					if (row.getAddressString() != null && row.getAddressString().length() > 0) {
+						
+						// If this row was invalid or hasn't been validated, do validation.
+						if (row.getStatus() == DestinationRowView.INVALID || row.getStatus() == DestinationRowView.NOT_VALIDATED) {
+							new GooglePlacesQueryTask(mContext) {
+								
+								@Override
+								public void onResult(GooglePlace place) {
+									if (place != null && place.getAddress() != null) {
+										row.setValid();
+										row.setAddress(place.getAddress());
+										addDestinationRow();
+									} else {
+										row.setInvalid();
+										addDestinationRow();		// TODO Show another row if the last one was invalid??
+									}
+								}
+							}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+						} else {
+							addDestinationRow();
+						}
+					} else {
+						Log.v(TAG, "attempted to add an empty row...ignoring that request");
+						row.reset();
+					}
 				}
 
 				@Override
 				public void onFocusLost(UUID id) {
-					// TODO Do validation and show a loading spinner while working
+					// TODO Do validation and SHOW A LOADING SPINNER while working
+					final DestinationRowView row = getRowById(id);
+					
+					// The user tapped on a different text box.  Do validation if necessary, but don't add an additional row.
+					if (row.getStatus() == DestinationRowView.INVALID || row.getStatus() == DestinationRowView.NOT_VALIDATED) {
+						new GooglePlacesQueryTask(mContext) {
+							
+							@Override
+							public void onResult(GooglePlace place) {
+								if (place != null && place.getAddress() != null) {
+									row.setValid();
+									row.setAddress(place.getAddress());
+								} else {
+									row.setInvalid();
+								}
+							}
+						}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+					}
 				}
 			};
 			
@@ -185,10 +230,14 @@ public class DestinationActivity extends FragmentActivity {
 		// TODO
 		
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			Log.v(TAG, "Destination " + i + ": " + ((EditText) ((DestinationRowView) destLayout.getChildAt(i)).findViewById(R.id.edittext_destination_add)).getText().toString());
+			DestinationRowView row = (DestinationRowView) destLayout.getChildAt(i);
+			
+			if (row.getAddressString() != null && row.getAddressString().length() > 0) {
+				Log.v(TAG, "Destination " + i + ": " + (row.getStatus() == DestinationRowView.VALID));
+			}
 		}
 		
-		// Validate the addresses and highlight any errors.
+		/*// Validate the addresses and highlight any errors.
 		List<Address> validatedAddresses = validateDestinations();
 		
 		Log.v(TAG, validatedAddresses.size() + " addresses");
@@ -233,7 +282,7 @@ public class DestinationActivity extends FragmentActivity {
 				Log.e(TAG, "Errors found in destinations.");
 				showErrorDialog("The addresses in red are invalid.  Try being more specific.");
 			}
-		}
+		}*/
 	}
 	
 	
@@ -337,6 +386,12 @@ public class DestinationActivity extends FragmentActivity {
 		}
     	
     	return -1;
+    }
+    
+    
+    private DestinationRowView getRowById(UUID id) {
+    	int idx = getRowIndexById(id);
+    	return (DestinationRowView) destLayout.getChildAt(idx);
     }
 
 

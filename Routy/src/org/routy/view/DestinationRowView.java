@@ -5,6 +5,7 @@ import java.util.UUID;
 import org.routy.R;
 
 import android.content.Context;
+import android.location.Address;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
@@ -27,6 +28,7 @@ public abstract class DestinationRowView extends LinearLayout {
 	private int status;
 	
 	private String addressString;
+	private Address address;
 	private EditText editText;
 	private Button addButton;
 	private Button removeButton;
@@ -52,6 +54,7 @@ public abstract class DestinationRowView extends LinearLayout {
 		
 		this.id = UUID.randomUUID();
 		this.addressString = "";
+		this.address = null;
 		this.status = DestinationRowView.NOT_VALIDATED;
 		
 		initViews(context);
@@ -62,6 +65,7 @@ public abstract class DestinationRowView extends LinearLayout {
 		
 		this.id = UUID.randomUUID();
 		this.addressString = addressString;
+		this.address = null;
 		this.status = DestinationRowView.NOT_VALIDATED;
 		
 		initViews(context);
@@ -175,5 +179,9 @@ public abstract class DestinationRowView extends LinearLayout {
 
 	public void showAddButton() {
 		addButton.setVisibility(VISIBLE);
+	}
+
+	public void setAddress(Address address) {
+		this.address = address;
 	}
 }
