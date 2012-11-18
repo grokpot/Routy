@@ -8,6 +8,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ListAdapter;
 
 /**
@@ -39,6 +41,7 @@ public abstract class ListPickerDialog extends DialogFragment {
 	
 	
 	public abstract void onSelection(int which);
+	public abstract void onCancelled();
 	
 	
 	@Override
@@ -57,18 +60,48 @@ public abstract class ListPickerDialog extends DialogFragment {
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(mTitle);
 		builder.setAdapter(mAdapter, pickerListener);
+		builder.setCancelable(true);
 
-		return builder.create();
+		AlertDialog dialog = builder.create();
+		dialog.setCanceledOnTouchOutside(true);
+		dialog.setOnDismissListener(onDismissListener);
+		
+		return dialog;
+	}
+	
+	
+	/*@Override
+	public void onDismiss(DialogInterface dialog) {
+		super.onDismiss(dialog);
+		
+		Log.v(TAG, "ListPickerDialog dismissed");
+	}*/
+	
+	
+	@Override
+	public void onCancel(DialogInterface dialog) {
+		super.onCancel(dialog);
+		
+		onCancelled();
 	}
 	
 	
 	private DialogInterface.OnClickListener pickerListener = new DialogInterface.OnClickListener() {
 		
-		@SuppressWarnings("unchecked")
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
 			Log.v(TAG, which + " selected");
 			onSelection(which);
+		}
+	};
+	
+	
+	private DialogInterface.OnDismissListener onDismissListener = new DialogInterface.OnDismissListener() {
+		
+		@Override
+		public void onDismiss(DialogInterface dialog) {
+			Log.v(TAG, "Place picker dialog dismissed.");
+			onCancelled();
 		}
 	};
 }

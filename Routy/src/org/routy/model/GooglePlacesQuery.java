@@ -8,15 +8,15 @@ package org.routy.model;
 public class GooglePlacesQuery {
 
 	private String query;
-	private double centerLat;
-	private double centerLng;
+	private Double centerLat;
+	private Double centerLng;
 	private int radius;
 	
-	public GooglePlacesQuery(String query, double centerLat, double centerLng) {
+	public GooglePlacesQuery(String query, Double centerLat, Double centerLng) {
 		this(query, centerLat, centerLng, AppProperties.G_PLACES_SEARCH_RADIUS_M);
 	}
 	
-	public GooglePlacesQuery(String query, double centerLat, double centerLng, int radius) {
+	public GooglePlacesQuery(String query, Double centerLat, Double centerLng, int radius) {
 		super();
 		
 		this.query = query;
@@ -33,19 +33,19 @@ public class GooglePlacesQuery {
 		this.query = query;
 	}
 	
-	public double getCenterLatitude() {
+	public Double getCenterLatitude() {
 		return centerLat;
 	}
 	
-	public void setCenterLatitude(double centerLat) {
+	public void setCenterLatitude(Double centerLat) {
 		this.centerLat = centerLat;
 	}
 	
-	public double getCenterLongitude() {
+	public Double getCenterLongitude() {
 		return centerLng;
 	}
 	
-	public void setCenterLongitude(double centerLng) {
+	public void setCenterLongitude(Double centerLng) {
 		this.centerLng = centerLng;
 	}
 	
@@ -55,5 +55,21 @@ public class GooglePlacesQuery {
 	
 	public void setRadius(int radius) {
 		this.radius = radius;
+	}
+	
+	@Override
+	public String toString() {
+		StringBuffer out = new StringBuffer("Google Places Query: ");
+		
+		out.append("query=");
+		out.append(getQuery());
+		out.append(" center=");
+		out.append(getCenterLatitude());
+		out.append(",");
+		out.append(getCenterLongitude());
+		out.append(" radius=");
+		out.append(getRadius());
+		
+		return out.toString();
 	}
 }

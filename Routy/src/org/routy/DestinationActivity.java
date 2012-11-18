@@ -113,6 +113,7 @@ public class DestinationActivity extends FragmentActivity {
 					removeDestinationRow(id);
 				}
 
+				// The "+" button was clicked on a destination row
 				@Override
 				public void onAddClicked(UUID id) {
 					// Do validation and then display the additional row
@@ -134,6 +135,14 @@ public class DestinationActivity extends FragmentActivity {
 										addDestinationRow();		// TODO Show another row if the last one was invalid??
 									}
 								}
+
+								@Override
+								public void onNoSelection() {
+									// TODO Auto-generated method stub
+									Log.v(TAG, "no selection made");
+									row.clearValidationStatus();
+									row.showAddButton();
+								}
 							}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
 						} else {
 							addDestinationRow();
@@ -144,6 +153,7 @@ public class DestinationActivity extends FragmentActivity {
 					}
 				}
 
+				// The user tapped on a different row and this row lost focus
 				@Override
 				public void onFocusLost(UUID id) {
 					// TODO Do validation and SHOW A LOADING SPINNER while working
@@ -161,6 +171,12 @@ public class DestinationActivity extends FragmentActivity {
 								} else {
 									row.setInvalid();
 								}
+							}
+
+							@Override
+							public void onNoSelection() {
+								// TODO Auto-generated method stub
+								
 							}
 						}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
 					}
@@ -329,6 +345,11 @@ public class DestinationActivity extends FragmentActivity {
     	}
 		
 		return addresses;
+	}
+	
+	
+	public void changeOrigin(View v) {
+		finish();
 	}
 	
 	

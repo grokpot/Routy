@@ -20,6 +20,7 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 	private FragmentActivity fragmentActivity;
 	
 	public abstract void onResult(GooglePlace place);
+	public abstract void onNoSelection();
 	
 	public GooglePlacesQueryTask(FragmentActivity fragmentActivity) {
 		super();
@@ -32,7 +33,7 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 		// Use the GooglePlacesService to get the result(s)
 		if (params != null && params.length > 0) {
 			GooglePlacesQuery q = params[0];
-			Log.v(TAG, "Searching Google Places for " + q.getQuery());		// XXX Possible injection point -- this is straight from the EditText the user inputs in some cases (Let Google worry about it?)
+			Log.v(TAG, "Searching..." + q);		// XXX Possible injection point -- this is straight from the EditText the user inputs in some cases (Let Google worry about it?)
 			
 			GooglePlacesService gpSvc = new GooglePlacesService();
 			try {
@@ -73,6 +74,13 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 			public void onSelection(int which) {
 				onResult(adapter.getItem(which));
 			}
+
+			@Override
+			public void onCancelled() {
+				onNoSelection();
+			}
+			
+			
 		}.show(fragmentActivity.getSupportFragmentManager(), TAG);
 	}
 }

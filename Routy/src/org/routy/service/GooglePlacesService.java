@@ -19,7 +19,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import android.location.Location;
 import android.util.Log;
 
 /**
@@ -48,7 +47,7 @@ public class GooglePlacesService {
 	 * @return
 	 * @throws RoutyException
 	 */
-	public List<GooglePlace> getPlacesForKeyword(String query, double centerLat, double centerLng, int radius) throws RoutyException {
+	public List<GooglePlace> getPlacesForKeyword(String query, Double centerLat, Double centerLng, int radius) throws RoutyException {
 		List<GooglePlace> results = new ArrayList<GooglePlace>();
 		
 		// We have to have a query
@@ -57,7 +56,7 @@ public class GooglePlacesService {
 		}
 		
 		// Center is not required.  If they don't give us a center, we don't need a radius either.
-		if (centerLat > -1 && centerLng > -1) {
+		if (centerLat != null && centerLng != null) {
 			if (radius < 0 || radius > 50000) {			// The limits on the radius are set by Google in their API docs
 				return results;
 			}
@@ -70,7 +69,7 @@ public class GooglePlacesService {
 		placesUrl.append("&query=");
 		placesUrl.append(query);
 		
-		if (centerLat > -1 && centerLng > -1) {
+		if (centerLat != null && centerLng != null) {
 			placesUrl.append("&location=");
 			placesUrl.append(centerLat);
 			placesUrl.append(",");
@@ -179,6 +178,7 @@ public class GooglePlacesService {
 		try {
 			// Get response from Google Places API call
 			URL u = new URL(url);
+			Log.v(TAG, "Google Places API: " + u.toExternalForm());
 			String xmlResp = InternetService.getStringResponse(u.toExternalForm());
 			return xmlResp;
 		} catch (MalformedURLException e) {
