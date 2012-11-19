@@ -25,7 +25,7 @@
         android:minHeight="300dp"
         android:layout_above="@+id/origin_textview_welcome"
         android:scaleType="fitCenter"
-        android:src="@drawable/midlogo" />
+        android:src="@drawable/hilogo" />
     
     <TextView
         android:id="@+id/origin_textview_welcome"
