@@ -31,7 +31,7 @@
     <string name="clear_screen">Clear</string>
     <string name="please_wait">Looking</string>
     <string name="stop_locating">Stop</string>
-    <string name="goto_destinations">Done</string>
+    <string name="goto_destinations">Next</string>
     
     <string name="title_activity_destination">DestinationActivity</string>
     <string name="title_activity_results">ResultsActivity</string>
