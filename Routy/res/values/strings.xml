@@ -56,7 +56,8 @@
     <string name="destination_add_short">+</string>
     <string name="destination_remove_short">-</string>
     <string name="origin_logo">Routy Origin Logo</string>
-    <string name="origin_welcome">Welcome to Routy - enter a\ntarting point for your trip and\nwe\'ll help you find the best route!</string>
+    <string name="origin_name">Welcome to Routy -</string>
+    <string name="origin_welcome">Enter a starting point\nfor your trip and we\'ll\nhelp you find the best route!</string>
     <string name="results_header">Here\'s the shortest route for your destinations:</string>
 
 </resources>

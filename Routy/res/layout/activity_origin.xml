@@ -17,21 +17,22 @@
 
     <ImageView
         android:id="@+id/origin_routy_logo"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="-40dp"
         android:adjustViewBounds="true"
+        android:layout_centerInParent="true"
         android:contentDescription="@string/origin_logo"
-        android:maxHeight="300dp"
-        android:scaleType="fitXY"
+        android:minHeight="300dp"
+        android:layout_above="@+id/origin_textview_welcome"
+        android:scaleType="centerInside"
         android:src="@drawable/splashwoback" />
-
+    
     <TextView
         android:id="@+id/origin_textview_welcome"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_below="@id/origin_routy_logo"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/origin_address_field"
         android:gravity="center_horizontal|center_vertical"
         android:paddingLeft="10dp"
