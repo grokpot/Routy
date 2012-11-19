@@ -153,6 +153,7 @@ public abstract class DestinationRowView extends LinearLayout {
 	
 	
 	public void clearValidationStatus() {
+		editText.setTextColor(getResources().getColor(R.color.White));
 		status = DestinationRowView.NOT_VALIDATED;
 	}
 	
@@ -183,5 +184,9 @@ public abstract class DestinationRowView extends LinearLayout {
 
 	public void setAddress(Address address) {
 		this.address = address;
+		
+		String formattedAddress = this.address.getExtras().getString("formatted_address");
+		editText.setText(address.getFeatureName() + " - " + formattedAddress);
+		
 	}
 }

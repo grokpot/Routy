@@ -127,8 +127,8 @@ public class DestinationActivity extends FragmentActivity {
 								@Override
 								public void onResult(GooglePlace place) {
 									if (place != null && place.getAddress() != null) {
-										row.setValid();
 										row.setAddress(place.getAddress());
+										row.setValid();
 										addDestinationRow();
 									} else {
 										row.setInvalid();
@@ -138,7 +138,7 @@ public class DestinationActivity extends FragmentActivity {
 
 								@Override
 								public void onNoSelection() {
-									// TODO Auto-generated method stub
+									// The user dismissed the place picker dialog without making a selection (e.g. tapped outside the dialog box)
 									Log.v(TAG, "no selection made");
 									row.clearValidationStatus();
 									row.showAddButton();
@@ -159,26 +159,30 @@ public class DestinationActivity extends FragmentActivity {
 					// TODO Do validation and SHOW A LOADING SPINNER while working
 					final DestinationRowView row = getRowById(id);
 					
+					Log.v(TAG, row.getAddressString() + " valid status=" + row.getStatus());
+					
 					// The user tapped on a different text box.  Do validation if necessary, but don't add an additional row.
-					if (row.getStatus() == DestinationRowView.INVALID || row.getStatus() == DestinationRowView.NOT_VALIDATED) {
-						new GooglePlacesQueryTask(mContext) {
-							
-							@Override
-							public void onResult(GooglePlace place) {
-								if (place != null && place.getAddress() != null) {
-									row.setValid();
-									row.setAddress(place.getAddress());
-								} else {
-									row.setInvalid();
-								}
-							}
-
-							@Override
-							public void onNoSelection() {
-								// TODO Auto-generated method stub
+					if (row.getAddressString() != null && row.getAddressString().length() > 0) {
+						if (row.getStatus() == DestinationRowView.INVALID || row.getStatus() == DestinationRowView.NOT_VALIDATED) {
+							new GooglePlacesQueryTask(mContext) {
 								
-							}
-						}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+								@Override
+								public void onResult(GooglePlace place) {
+									if (place != null && place.getAddress() != null) {
+										row.setValid();
+										row.setAddress(place.getAddress());
+									} else {
+										row.setInvalid();
+									}
+								}
+
+								@Override
+								public void onNoSelection() {
+									// TODO Auto-generated method stub
+									
+								}
+							}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+						}
 					}
 				}
 			};

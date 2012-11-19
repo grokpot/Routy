@@ -67,7 +67,7 @@ public class GooglePlacesService {
 		placesUrl.append("key=");
 		placesUrl.append(AppProperties.G_API_KEY);
 		placesUrl.append("&query=");
-		placesUrl.append(query);
+		placesUrl.append(query.replaceAll(" ", "+"));
 		
 		if (centerLat != null && centerLng != null) {
 			placesUrl.append("&location=");
