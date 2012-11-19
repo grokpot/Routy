@@ -20,14 +20,13 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="-40dp"
         android:adjustViewBounds="true"
         android:layout_centerInParent="true"
         android:contentDescription="@string/origin_logo"
         android:minHeight="300dp"
         android:layout_above="@+id/origin_textview_welcome"
-        android:scaleType="centerInside"
-        android:src="@drawable/splashwoback" />
+        android:scaleType="fitCenter"
+        android:src="@drawable/largelogo" />
     
     <TextView
         android:id="@+id/origin_textview_welcome"
