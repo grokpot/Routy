@@ -155,11 +155,11 @@ public class DestinationActivity extends FragmentActivity {
 
 				// The user tapped on a different row and this row lost focus
 				@Override
-				public void onFocusLost(UUID id) {
+				public void onFocusLost(final UUID id) {
 					// TODO Do validation and SHOW A LOADING SPINNER while working
 					final DestinationRowView row = getRowById(id);
 					
-					Log.v(TAG, row.getAddressString() + " valid status=" + row.getStatus());
+					Log.v(TAG, "FOCUS LOST row id=" + row.getUUID() + ": " + row.getAddressString() + " valid status=" + row.getStatus());
 					
 					// The user tapped on a different text box.  Do validation if necessary, but don't add an additional row.
 					if (row.getAddressString() != null && row.getAddressString().length() > 0) {
@@ -169,8 +169,12 @@ public class DestinationActivity extends FragmentActivity {
 								@Override
 								public void onResult(GooglePlace place) {
 									if (place != null && place.getAddress() != null) {
-										row.setValid();
 										row.setAddress(place.getAddress());
+										row.setValid();
+										
+										if (getRowIndexById(id) == destLayout.getChildCount() - 1) {
+											row.showAddButton();
+										}
 									} else {
 										row.setInvalid();
 									}
@@ -179,7 +183,7 @@ public class DestinationActivity extends FragmentActivity {
 								@Override
 								public void onNoSelection() {
 									// TODO Auto-generated method stub
-									
+									// Doing nothing leaves it NOT_VALIDATED
 								}
 							}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
 						}
@@ -244,7 +248,7 @@ public class DestinationActivity extends FragmentActivity {
 	 * 
 	 * @param v
 	 */
-	public void acceptDestinations(View v) {
+	public void acceptDestinations(final View v) {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
 		
 		// TODO
@@ -257,52 +261,70 @@ public class DestinationActivity extends FragmentActivity {
 			}
 		}
 		
-		/*// Validate the addresses and highlight any errors.
-		List<Address> validatedAddresses = validateDestinations();
-		
-		Log.v(TAG, validatedAddresses.size() + " addresses");
-		
-		if (validatedAddresses.size() == 0) {
-			// All fields were empty
-			showErrorDialog("Please enter at least 1 destination to continue.");
-		} else {
-			boolean hasErrors = false;
-			for (int i = 0; i < validatedAddresses.size(); i++) {
-				if (validatedAddresses.get(i) == null) {
-					flagInvalidDestination(i);
-					hasErrors = true;
-				}
-			}
+		// Go through the list until you find one that is INVALID or NOT_VALIDATED
+		List<Address> validAddresses = new ArrayList<Address>();
+		boolean hasError = false;
+		DestinationRowView row = null;
+		for (int i = 0; i < destLayout.getChildCount(); i++) {
+			row = (DestinationRowView) destLayout.getChildAt(i);
 			
-			if (!hasErrors) {
-				// TODO Calculate route and go to results activity
-//				Toast.makeText(mContext, getString(R.string.validated), Toast.LENGTH_LONG).show();	// XXX temp
-				
-				// TODO: fill in last two parameters of RouteService instantiation with user choice
-	        	// Instantiates a Route object with validated addresses and calls ResultsActivity
-	        	try {
-	        		new CalculateRouteTask() {
-						
-						@Override
-						public void onRouteCalculated(Route route) {
-							Toast.makeText(mContext, getString(R.string.routed), Toast.LENGTH_LONG).show();	// XXX temp
-							
-							// Call ResultsActivity activity
-			    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-			    			resultsIntent.putExtra("addresses", (Serializable) route.getAddresses());
-			    			resultsIntent.putExtra("distance", route.getTotalDistance());
-			    			startActivity(resultsIntent);
-						}
-					}.execute(new RouteRequest(origin, validatedAddresses, false));
-				} catch (Exception e) {
-					// TODO error handling
-					e.printStackTrace();
+			if (row.getAddressString() != null && row.getAddressString().length() > 0) {
+				if (row.getStatus() == DestinationRowView.INVALID || row.getStatus() == DestinationRowView.NOT_VALIDATED) {
+					hasError = true;
+					Log.v(TAG, "row id=" + row.getId() + " has valid status=" + row.getStatus());
+					break;
+				} else {
+					validAddresses.add(row.getAddress());
 				}
-			} else {
-				Log.e(TAG, "Errors found in destinations.");
-				showErrorDialog("The addresses in red are invalid.  Try being more specific.");
 			}
-		}*/
+		}
+		
+		// If you encountered an "error" take steps to validate it.  When it's done validating, call acceptDestinations again.
+		if (hasError && row != null) {
+			Log.v(TAG, "The destinations list has a row (id=" + row.getUUID() + ") in need of validation.");
+			// Validate "row"
+			final DestinationRowView r = row;
+			new GooglePlacesQueryTask(mContext) {
+				
+				@Override
+				public void onResult(GooglePlace place) {
+					if (place != null && place.getAddress() != null) {
+						r.setAddress(place.getAddress());
+						r.setValid();
+						
+						if (getRowIndexById(r.getUUID()) == destLayout.getChildCount() - 1) {
+							r.showAddButton();
+						}
+						
+						acceptDestinations(v);
+					} else {
+						r.setInvalid();
+					}
+				}
+
+				@Override
+				public void onNoSelection() {
+					// TODO Auto-generated method stub
+					// Doing nothing leaves it NOT_VALIDATED
+				}
+			}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+		} else {
+			Log.v(TAG, "All destinations have been validated.");
+			
+			// If everything is valid, move on to the Results screen
+			new CalculateRouteTask() {
+				
+				@Override
+				public void onRouteCalculated(Route route) {
+					// Call ResultsActivity activity
+	    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
+	    			resultsIntent.putExtra("addresses", (Serializable) route.getAddresses());
+	    			resultsIntent.putExtra("distance", route.getTotalDistance());
+	    			startActivity(resultsIntent);
+				}
+			}.execute(new RouteRequest(origin, validAddresses, false));
+		}
+		
 	}
 	
 	

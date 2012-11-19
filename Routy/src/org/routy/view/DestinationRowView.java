@@ -69,6 +69,8 @@ public abstract class DestinationRowView extends LinearLayout {
 		this.status = DestinationRowView.NOT_VALIDATED;
 		
 		initViews(context);
+		
+		Log.v(TAG, "new destination row view with id=" + this.id);
 	}
 	
 	
@@ -188,5 +190,9 @@ public abstract class DestinationRowView extends LinearLayout {
 		String formattedAddress = this.address.getExtras().getString("formatted_address");
 		editText.setText(address.getFeatureName() + " - " + formattedAddress);
 		
+	}
+	
+	public Address getAddress() {
+		return this.address;
 	}
 }
