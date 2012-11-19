@@ -38,6 +38,7 @@ public class ResultsActivity extends FragmentActivity {
         if (extras != null) {
             int distance = (Integer) extras.get("distance");
             ArrayList<Address> addresses =  (ArrayList<Address>) extras.get("addresses");
+            Log.v(TAG, "Results: " + addresses.size() + " addresses");
             route = new Route(addresses, distance);
         }
         
@@ -60,7 +61,11 @@ public class ResultsActivity extends FragmentActivity {
 			segmentTexts[addressIndex] = new TextView(this);
 			
 			// Dynamically set the text for the TextViews
-			String addressText = route.getAddresses().get(addressIndex).getAddressLine(0);
+//			String addressText = route.getAddresses().get(addressIndex).getAddressLine(0);
+			String addressText = route.getAddresses().get(addressIndex).getFeatureName();
+			if (addressText == null || addressText.length() == 0) {
+				addressText = route.getAddresses().get(addressIndex).getExtras().getString("formatted_address");
+			}
 			segmentTexts[addressIndex].setText(addressText);
 			
 			// Dynamically position TextView on the screen
