@@ -21,12 +21,11 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:adjustViewBounds="true"
-        android:layout_centerInParent="true"
         android:contentDescription="@string/origin_logo"
         android:minHeight="300dp"
         android:layout_above="@+id/origin_textview_welcome"
         android:scaleType="fitCenter"
-        android:src="@drawable/largelogo" />
+        android:src="@drawable/midlogo" />
     
     <TextView
         android:id="@+id/origin_textview_welcome"
@@ -51,23 +50,27 @@
         android:hint="@string/origin_hint"
         android:scrollHorizontally="true"
         android:singleLine="true" />
-
+    
     <Button
         android:id="@+id/enter_destinations_button"
-        android:layout_width="96dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:drawableRight="@drawable/done"
         android:onClick="goToDestinationsScreen"
+        style="?android:attr/borderlessButtonStyle"
         android:text="@string/goto_destinations" />
 
     <Button
         android:id="@+id/find_user_button"
-        android:layout_width="96dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_toLeftOf="@id/enter_destinations_button"
+        android:layout_alignParentLeft="true"
+        android:drawableLeft="@drawable/findme"
         android:onClick="findUserLocation"
+        style="?android:attr/borderlessButtonStyle"
         android:text="@string/find_user_prompt" />
 
 </RelativeLayout>

@@ -15,14 +15,16 @@
     
     <Button 
         android:id="@+id/button_destination_add" 
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content" 
-        android:text="@string/destination_add_short" />
+        android:layout_width="40dp" 
+        android:layout_height="40dp" 
+        android:background="@drawable/pos"
+        style="?android:attr/borderlessButtonStyle"/>
     
     <Button 
         android:id="@+id/button_destination_remove" 
-        android:layout_width="wrap_content" 
-        android:layout_height="wrap_content" 
-        android:text="@string/destination_remove_short" />
+        android:layout_width="43dp" 
+        android:layout_height="43dp" 
+        android:background="@drawable/neg"
+        style="?android:attr/borderlessButtonStyle"/>
         
 </LinearLayout>
