@@ -84,7 +84,11 @@ public class DestinationActivity extends FragmentActivity {
 		if (storedAddresses.size() != 0){
 			Object[] addresses =  storedAddresses.toArray();
 			for (int i = 0; i < addresses.length; i++){
-				addDestinationRow((String)addresses[i]);
+				DestinationRowView newRow = addDestinationRow((String)addresses[i]);
+				
+				if (newRow != null && i != addresses.length - 1) {
+					newRow.hideAddButton();
+				}
 			}
 		}
 		// Otherwise initialize the screen with one empty destination
@@ -99,12 +103,22 @@ public class DestinationActivity extends FragmentActivity {
 	}
 	
 	
-	void addDestinationRow() {
-		addDestinationRow("");
+	/**
+	 * Adds a {@link DestinationRowView} to the Desitinations list.
+	 * @param address
+	 * @return			the row that was added, or null if no row was added
+	 */
+	DestinationRowView addDestinationRow() {
+		return addDestinationRow("");
 	}
 	
 	
-	void addDestinationRow(String address) {
+	/**
+	 * Adds a {@link DestinationRowView} to the Desitinations list.
+	 * @param address
+	 * @return			the row that was added, or null if no row was added
+	 */
+	DestinationRowView addDestinationRow(String address) {
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
 			DestinationRowView v = new DestinationRowView(mContext, address) {
 
@@ -192,9 +206,11 @@ public class DestinationActivity extends FragmentActivity {
 			};
 			
 			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+			return v;
 		} else {
 			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
 			((DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1)).showAddButton();
+			return null;
 		}
 	}
 	

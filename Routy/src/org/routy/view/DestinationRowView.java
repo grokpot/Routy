@@ -183,6 +183,10 @@ public abstract class DestinationRowView extends LinearLayout {
 	public void showAddButton() {
 		addButton.setVisibility(VISIBLE);
 	}
+	
+	public void hideAddButton() {
+		addButton.setVisibility(INVISIBLE);
+	}
 
 	public void setAddress(Address address) {
 		this.address = address;

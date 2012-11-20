@@ -36,22 +36,14 @@
             style="android:buttonStyle" 
             android:layout_width="match_parent" 
             android:layout_height="wrap_content" />
-        
-       <!--  <Button
-	        android:id="@+id/button_destination_add"
-	        style="android:buttonStyle"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content" 
-	        android:onClick="onClickFromDestinationAdd" 
-	        android:text="@string/destination_add" /> -->
 	
-		<Button
+		<!-- <Button
 	        android:id="@+id/button_origin_modify"
 	        style="android:buttonStyle"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
 	        android:onClick="changeOrigin"
-	        android:text="@string/origin_modify" />
+	        android:text="@string/origin_modify" /> -->
 	
 	    <Button
 	        android:id="@+id/button_route_it"
