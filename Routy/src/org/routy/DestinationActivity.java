@@ -328,52 +328,6 @@ public class DestinationActivity extends FragmentActivity {
 	}
 	
 	
-	private void flagInvalidDestination(int position) {
-		if (position >= 0 && position < destLayout.getChildCount()) {
-			DestinationRowView view = (DestinationRowView) destLayout.getChildAt(position);
-			view.setInvalid();
-		}
-	}
-	
-	
-	private List<Address> validateDestinations() {
-		List<Address> addresses = new ArrayList<Address>();
-		
-		// Iterates through entered locations and validates them into addresses.
-    	Geocoder geocoder = new Geocoder(mContext, Locale.getDefault());
-    	AddressService addressService =  new AddressService(geocoder, false);		// TODO make getting sensor true/false dynamic	
-
-    	// TODO: "please wait" screen so activity doesn't block.
-		DestinationRowView view = null;
-		Address address = null;
-		String userInput = null;
-		
-		// gets the destination text from the EditText boxes and tries to validate the strings
-    	for (int i = 0; i < destLayout.getChildCount(); i++){
-			try {
-        		view = (DestinationRowView) destLayout.getChildAt(i);
-        		userInput = ((EditText) view.findViewById(R.id.edittext_destination_add)).getText().toString();
-        		if (userInput != null && userInput.trim().length() > 0) {
-        			address = addressService.getAddressForLocationString(userInput);
-            		addresses.add(address);
-        		}
-			} catch (AmbiguousAddressException e) {
-				// TODO error handling - must step out of this OnClick
-				Log.v(TAG, "Ambiguous address.");
-				addresses.add(null);
-			} catch (RoutyException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
-		
-		return addresses;
-	}
-	
-	
 	public void changeOrigin(View v) {
 		finish();
 	}
@@ -399,9 +353,12 @@ public class DestinationActivity extends FragmentActivity {
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
 			DestinationRowView destView = (DestinationRowView) destLayout.getChildAt(i);
 			// Add the text in the EditText of the destination to storedAddresses
-			storedAddresses.add(destView.getAddressString());
+			if (destView.getAddressString() != null && destView.getAddressString().length() > 0) {
+				storedAddresses.add(destView.getAddressString());
+			}
 		}
 		// Put the storedAddresses into shared prefs via a set of strings
+		Log.v(TAG, "Saving destinations in shared prefs");
 		SharedPreferences.Editor ed = destinationActivityPrefs.edit();
 		ed.putStringSet("saved_destination_strings", storedAddresses);
 		ed.commit();
