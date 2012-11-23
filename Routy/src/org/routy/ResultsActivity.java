@@ -92,7 +92,8 @@ public class ResultsActivity extends FragmentActivity {
 	}
 
     View.OnClickListener map_segment_listener = new View.OnClickListener() {
-		public void onClick(View v) {
+		@Override
+    public void onClick(View v) {
 			// Get the ID assigned in buildResultsView() so we can get the respective segment
 			final int start 	= v.getId();
 			// We need the next address to calculate a segment to send to Google, so we get the next destination index as well.

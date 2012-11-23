@@ -10,7 +10,8 @@ public class PermutationTest extends AndroidTestCase {
 
 	private int permutations;
 	
-	public void setUp() throws Exception {
+	@Override
+  public void setUp() throws Exception {
 		super.setUp();
 		permutations = 0;
 	}
@@ -74,7 +75,8 @@ public class PermutationTest extends AndroidTestCase {
 	}
 	
 	
-	public void tearDown() throws Exception {
+	@Override
+  public void tearDown() throws Exception {
 		super.tearDown();
 	}
 	

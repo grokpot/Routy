@@ -17,7 +17,8 @@ public class AddressServiceTest extends AndroidTestCase {
 	private Geocoder geocoder;
 	private AddressService addressService;
 	
-	public void setUp() throws Exception {
+	@Override
+  public void setUp() throws Exception {
 		super.setUp();
 		
 		geocoder = new Geocoder(getContext(), Locale.getDefault());
@@ -109,7 +110,8 @@ public class AddressServiceTest extends AndroidTestCase {
 	}*/
 	
 	
-	public void tearDown() throws Exception {
+	@Override
+  public void tearDown() throws Exception {
 		super.tearDown();
 	}
 }

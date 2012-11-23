@@ -44,7 +44,8 @@ public class AmbiguousAddressException extends Exception {
 	}
 	
 	
-	public String getMessage() {
+	@Override
+  public String getMessage() {
 		return super.getMessage();
 	}
 }

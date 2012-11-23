@@ -3,9 +3,6 @@ package org.routy;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.RoutyException;
@@ -17,7 +14,6 @@ import org.routy.service.AddressService;
 import org.routy.service.LocationService;
 
 import android.app.AlertDialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;

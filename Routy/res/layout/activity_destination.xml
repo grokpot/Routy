@@ -49,8 +49,10 @@
 	        android:id="@+id/button_route_it"
 	        android:layout_width="match_parent"
 	        android:layout_height="wrap_content"
-	        android:onClick="acceptDestinations" 
-	        android:text="@string/route_it" />
+	        android:onClick="acceptDestinations"
+	        android:text="@string/route_it_button"
+	        style="?android:attr/borderlessButtonStyle"
+	        android:drawableBottom="@drawable/routeit" />
         
     </LinearLayout>
 

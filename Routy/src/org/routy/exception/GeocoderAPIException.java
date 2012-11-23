@@ -13,7 +13,8 @@ public class GeocoderAPIException extends Exception {
 	}
 	
 	
-	public String getMessage() {
+	@Override
+  public String getMessage() {
 		return super.getMessage();
 	}
 }

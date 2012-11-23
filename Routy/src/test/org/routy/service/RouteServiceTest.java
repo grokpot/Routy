@@ -21,7 +21,8 @@ public class RouteServiceTest extends AndroidTestCase {
 	private RouteService routeProvider;
 	
 	
-	protected void setUp() throws Exception {
+	@Override
+  protected void setUp() throws Exception {
 		super.setUp();
 		
 		geocoder = new Geocoder(getContext(), Locale.getDefault());
@@ -195,7 +196,8 @@ public class RouteServiceTest extends AndroidTestCase {
 	}
 	
 	
-	protected void tearDown() throws Exception {
+	@Override
+  protected void tearDown() throws Exception {
 		super.tearDown();
 	}
 

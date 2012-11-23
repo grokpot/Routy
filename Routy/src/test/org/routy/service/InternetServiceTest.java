@@ -12,7 +12,8 @@ public class InternetServiceTest extends AndroidTestCase {
 	private final String TAG = "InternetServiceTest";
 	
 	
-	public void setUp() throws Exception {
+	@Override
+  public void setUp() throws Exception {
 		super.setUp();
 	}
 	
@@ -32,7 +33,8 @@ public class InternetServiceTest extends AndroidTestCase {
 	}
 	
 	
-	public void tearDown() throws Exception {
+	@Override
+  public void tearDown() throws Exception {
 		super.tearDown();
 	}
 }
