@@ -75,7 +75,9 @@ public class DestinationActivity extends FragmentActivity {
 			
 			Log.v(TAG, "Origin address: " + origin.getExtras().getString("formatted_address"));
 			TextView originText = (TextView) findViewById(R.id.textview_destinations_origin);
-			originText.setText("Starting from: \n" + origin.getExtras().getString("formatted_address"));
+//			originText.setText("Starting from: \n" + origin.getExtras().getString("formatted_address"));
+			originText.setText(origin.getExtras().getString("formatted_address"));
+
 		}
 		
 		// Initialize shared preferences

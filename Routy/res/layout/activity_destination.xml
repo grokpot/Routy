@@ -1,59 +1,91 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollview_destinations_wrapper"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/gradient"
-    android:orientation="vertical" >
-    
-    <TextView 
-        android:id="@+id/textview_destinations_origin" 
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
-        android:layout_marginTop="10dp" />
-    
-    <ScrollView 
-        android:id="@+id/ScrollView_destinations" 
-        android:layout_width="fill_parent" 
-        android:layout_height="0dp" 
-        android:layout_weight="1" >
-        
-        <LinearLayout 
-            android:id="@+id/LinearLayout_destinations" 
-            android:layout_width="fill_parent" 
-            android:layout_height="wrap_content"  
-            android:orientation="vertical" />
-        
-    </ScrollView>
-        
-    <LinearLayout 
-        android:id="@+id/LinearLayout_destinations_buttons" 
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content" 
+    android:layout_height="fill_parent"
+    android:background="@drawable/gradient" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical" >
-        
-        <Button 
-            android:id="@+id/button_test_defaults" 
-            style="android:buttonStyle" 
-            android:layout_width="match_parent" 
-            android:layout_height="wrap_content" />
-	
-		<!-- <Button
-	        android:id="@+id/button_origin_modify"
-	        style="android:buttonStyle"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:onClick="changeOrigin"
-	        android:text="@string/origin_modify" /> -->
-	
-	    <Button
-	        android:id="@+id/button_route_it"
-	        android:layout_width="match_parent"
-	        android:layout_height="wrap_content"
-	        android:onClick="acceptDestinations"
-	        android:text="@string/route_it_button"
-	        style="?android:attr/borderlessButtonStyle"
-	        android:drawableBottom="@drawable/routeit" />
-        
+
+        <TextView
+            android:id="@+id/textview_destinations_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:text="@string/destination_prompt"
+            android:textColor="@color/White"
+            android:textSize="22dp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/textview_destinations_startingat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:paddingLeft="3dp"
+            android:text="Starting at:"
+            android:textColor="@color/White"
+            android:textSize="18dp"
+            android:textStyle="bold|italic" />
+
+        <TextView
+            android:id="@+id/textview_destinations_origin"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:gravity="center_horizontal|left"
+            android:textColor="@color/White"
+            android:textSize="18dp" />
+
+        <TextView
+            android:id="@+id/textview_destinations_goingto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:paddingLeft="3dp"
+            android:text="Going to:"
+            android:textColor="@color/White"
+            android:textSize="18dp"
+            android:textStyle="bold|italic"
+            android:typeface="normal" />
+
+        <LinearLayout
+            android:id="@+id/LinearLayout_destinations"
+            android:layout_width="fill_parent"
+            android:layout_height="0dip"
+            android:layout_marginTop="5dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/LinearLayout_destinations_buttons"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <Button
+                android:id="@+id/button_test_defaults"
+                style="android:buttonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/button_route_it"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="0dip"
+                android:layout_marginBottom="15dp"
+                android:layout_weight="2"
+                android:drawableBottom="@drawable/routeit"
+                android:onClick="acceptDestinations" />
+        </LinearLayout>
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>
