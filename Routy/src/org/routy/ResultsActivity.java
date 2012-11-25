@@ -6,6 +6,8 @@ import org.routy.model.Route;
 
 import android.content.Intent;
 import android.location.Address;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
@@ -27,11 +29,16 @@ public class ResultsActivity extends FragmentActivity {
 	private Button segmentButtons[]; 
 	
 	private final String TAG = "ResultsActivity";
+	
+  private SoundPool sounds;
+  private int click;
 
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
+        click = sounds.load(this, R.raw.routyclick, 1);
         setContentView(R.layout.activity_results);
         
         Bundle extras 	= getIntent().getExtras();
@@ -94,6 +101,8 @@ public class ResultsActivity extends FragmentActivity {
     View.OnClickListener map_segment_listener = new View.OnClickListener() {
 		@Override
     public void onClick(View v) {
+		  sounds.play(click, 1, 1, 1, 0, 1);
+		  
 			// Get the ID assigned in buildResultsView() so we can get the respective segment
 			final int start 	= v.getId();
 			// We need the next address to calculate a segment to send to Google, so we get the next destination index as well.
@@ -123,4 +132,24 @@ public class ResultsActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.activity_results, menu);
         return true;
     }
+	
+  @Override
+  protected void onResume() {   
+     super.onResume(); 
+     
+     sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
+
+     click = sounds.load(this, R.raw.routyclick, 1);
+   }
+  
+  
+  @Override
+  public void onPause() {
+    super.onPause();
+    
+    if(sounds != null) { 
+      sounds.release(); 
+      sounds = null; 
+    } 
+  }
 }

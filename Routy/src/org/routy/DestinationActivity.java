@@ -1,6 +1,5 @@
 package org.routy;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -24,6 +23,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -43,19 +44,27 @@ public class DestinationActivity extends FragmentActivity {
 	private FragmentActivity mContext;
 	private Address origin;
 	private LinearLayout destLayout;
-	// shared prefs for destination persistence
-	private SharedPreferences destinationActivityPrefs;
-	
+  // shared prefs for destination persistence
+  private SharedPreferences destinationActivityPrefs;
+  
+  private SoundPool sounds;
+  private int bad;
+  private int click;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+    sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
+    
+    bad = sounds.load(this, R.raw.routybad, 1);
+    click = sounds.load(this, R.raw.routyclick, 1);
+		
 		setContentView(R.layout.activity_destination);
 		
 		mContext = this;
 		
-		// Get the layout containg the list of destination
+		// Get the layout containing the list of destination
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
 		
 		// Get the origin address passed from OriginActivity
@@ -97,7 +106,7 @@ public class DestinationActivity extends FragmentActivity {
 	
 	
 	/**
-	 * Adds a {@link DestinationRowView} to the Desitinations list.
+	 * Adds a {@link DestinationRowView} to the Destinations list.
 	 * @param address
 	 * @return			the row that was added, or null if no row was added
 	 */
@@ -107,7 +116,7 @@ public class DestinationActivity extends FragmentActivity {
 	
 	
 	/**
-	 * Adds a {@link DestinationRowView} to the Desitinations list.
+	 * Adds a {@link DestinationRowView} to the Destinations list.
 	 * @param address
 	 * @return			the row that was added, or null if no row was added
 	 */
@@ -123,6 +132,7 @@ public class DestinationActivity extends FragmentActivity {
 				// The "+" button was clicked on a destination row
 				@Override
 				public void onAddClicked(UUID id) {
+				  sounds.play(click, 1, 1, 1, 0, 1);
 					// Do validation and then display the additional row
 					final DestinationRowView row = getRowById(id);
 					if (row.getAddressString() != null && row.getAddressString().length() > 0) {
@@ -138,6 +148,7 @@ public class DestinationActivity extends FragmentActivity {
 										row.setValid();
 										addDestinationRow();
 									} else {
+									  sounds.play(bad, 1, 1, 1, 0, 1);
 										row.setInvalid();
 										addDestinationRow();		// TODO Show another row if the last one was invalid??
 									}
@@ -201,6 +212,7 @@ public class DestinationActivity extends FragmentActivity {
 			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 			return v;
 		} else {
+		  sounds.play(bad, 1, 1, 1, 0, 1);
 			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
 			((DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1)).showAddButton();
 			return null;
@@ -213,6 +225,7 @@ public class DestinationActivity extends FragmentActivity {
 	 * @param id
 	 */
 	void removeDestinationRow(UUID id) {
+	  sounds.play(click, 1, 1, 1, 0, 1);
 		if (destLayout.getChildCount() > 1) {
 			int idx = getRowIndexById(id);
 			
@@ -259,6 +272,7 @@ public class DestinationActivity extends FragmentActivity {
 	 */
 	public void acceptDestinations(final View v) {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
+		sounds.play(click, 1, 1, 1, 0, 1);
 		
 		// TODO
 		
@@ -356,6 +370,11 @@ public class DestinationActivity extends FragmentActivity {
 	public void onPause(){
 		super.onPause();
 		
+    if(sounds != null) { 
+      sounds.release(); 
+      sounds = null; 
+    } 
+		
 		// http://stackoverflow.com/questions/1463284/hashset-vs-treeset
 		Set<String> storedAddresses = new TreeSet<String>();
 		// iterate through every destinationInputView
@@ -406,7 +425,16 @@ public class DestinationActivity extends FragmentActivity {
     	int idx = getRowIndexById(id);
     	return (DestinationRowView) destLayout.getChildAt(idx);
     }
-
+    
+    @Override
+    protected void onResume() {   
+       super.onResume(); 
+       
+       sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
+       
+       bad = sounds.load(this, R.raw.routybad, 1);
+       click = sounds.load(this, R.raw.routyclick, 1);
+     }
 
 	// XXX temp
 	/**
@@ -415,6 +443,7 @@ public class DestinationActivity extends FragmentActivity {
 	View.OnClickListener listenerTestDefaults = new View.OnClickListener() {
 	    @Override
       public void onClick(View v) {
+	      sounds.play(click, 1, 1, 1, 0, 1);
 	    	if (destLayout.getChildCount() < 3) {
 	    		for (int i = destLayout.getChildCount(); i < 3; i++) {
 	    			addDestinationRow();

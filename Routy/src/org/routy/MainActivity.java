@@ -7,6 +7,8 @@ import org.routy.service.InternetService;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -19,6 +21,9 @@ public class MainActivity extends FragmentActivity {
 
 	private Context mContext;
 	private OneButtonDialog noInternetErrorDialog;
+	
+	private SoundPool sounds;
+	private int bad;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -28,6 +33,9 @@ public class MainActivity extends FragmentActivity {
 
 		mContext = this;
 		
+		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+    bad = sounds.load(this, R.raw.routybad, 1);
+    
 		initErrorDialog();
 
 		new Handler().postDelayed(new Runnable() {
@@ -46,6 +54,7 @@ public class MainActivity extends FragmentActivity {
 		
 		if (!InternetService.deviceHasInternetConnection(mContext)) {
 			Log.v(TAG, "No internet connection.");
+			sounds.play(bad, 1, 1, 1, 0, 1);
 			initErrorDialog();
 			noInternetErrorDialog.show(MainActivity.this.getSupportFragmentManager(), TAG);
 		} else {
@@ -57,6 +66,10 @@ public class MainActivity extends FragmentActivity {
 
 
 	private void gotoOriginScreen() {
+	   if(sounds != null) { 
+	      sounds.release(); 
+	      sounds = null; 
+	    }
 		// Start an intent to bring up the origin screen
 		Intent originIntent = new Intent(MainActivity.this, OriginActivity.class);
 		startActivity(originIntent);

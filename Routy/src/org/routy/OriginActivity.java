@@ -3,6 +3,7 @@ package org.routy;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
+
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.RoutyException;
@@ -21,6 +22,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -47,12 +50,25 @@ public class OriginActivity extends FragmentActivity {
 	// shared prefs for origin persistence
 	private SharedPreferences originActivityPrefs;
 
+	private SoundPool sounds;
+	private int bad;
+	private int speak;
+	private int click;
 
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+           
+        sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
+        speak = sounds.load(this, R.raw.routyspeak, 1);  
+        
+        bad = sounds.load(this, R.raw.routybad, 1);
+        click = sounds.load(this, R.raw.routyclick, 1);
+        
         setContentView(R.layout.activity_origin);
+        
+        sounds.play(speak, 1, 1, 1, 0, 1);
         
         // Initializations
         context 			= this;
@@ -182,6 +198,8 @@ public class OriginActivity extends FragmentActivity {
      * @param view
      */
     public void findUserLocation(View view) {
+      sounds.play(click, 1, 1, 1, 0, 1);  
+      
     	if (!locating) {
         	findUserButton.setText(R.string.stop_locating);
         	//showLoadingDialog();
@@ -208,6 +226,8 @@ public class OriginActivity extends FragmentActivity {
     public void goToDestinationsScreen(View view) {
     	// validate the origin address, store it, and move on to the destinations screen
     	Log.v(TAG, "Origin entered: " + originAddressField.getText());
+    	
+    	sounds.play(click, 1, 1, 1, 0, 1);  
     	
     	if (originAddressField.getText() == null || originAddressField.getText().length() == 0) {
 			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
@@ -309,10 +329,28 @@ public class OriginActivity extends FragmentActivity {
 		dialog.show(context.getSupportFragmentManager(), TAG);
     }
     
+    @Override
+    protected void onResume() {   
+       super.onResume(); 
+       
+       sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
+       
+       speak = sounds.load(this, R.raw.routyspeak, 1);  
+       
+       bad = sounds.load(this, R.raw.routybad, 1);
+       click = sounds.load(this, R.raw.routyclick, 1);
+     }
+    
     
     @Override
     public void onPause() {
     	super.onPause();
+    	
+    	if(sounds != null) { 
+        sounds.release(); 
+        sounds = null; 
+      } 
+    	
     	locationService.stop();
     }
 }
