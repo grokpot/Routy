@@ -25,7 +25,7 @@
         android:minHeight="300dp"
         android:layout_above="@+id/origin_textview_welcome"
         android:scaleType="fitCenter"
-        android:src="@drawable/hilogo" />
+        android:src="@drawable/whitesplashhi" />
     
     <TextView
         android:id="@+id/origin_textview_welcome"
@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:drawableRight="@drawable/done"
+        android:drawableRight="@drawable/nextwhite"
         android:onClick="goToDestinationsScreen"
         style="?android:attr/borderlessButtonStyle"
         android:text="@string/goto_destinations" />
@@ -68,7 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:drawableLeft="@drawable/findme"
+        android:drawableLeft="@drawable/findwhite"
         android:onClick="findUserLocation"
         style="?android:attr/borderlessButtonStyle"
         android:text="@string/find_user_prompt" />
