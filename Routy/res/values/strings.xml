@@ -43,7 +43,6 @@
     <string name="test_destination_1">5119 Burnet Road, Austin, TX</string>
     <string name="test_destination_2">1 University Station, Austin, TX</string>
     <string name="test_destination_3">1000 East 41st Street, Austin, TX</string>
-    <string name="destination_enter">Enter a destination</string>
     <string name="route_it_button">To see your route click here and</string>
     
     <!-- Route Screen Stuff -->
@@ -58,8 +57,9 @@
     <string name="destination_remove_short">-</string>
     <string name="origin_logo">Routy Origin Logo</string>
     <string name="origin_name">Welcome to Routy -</string>
-    <string name="origin_welcome">Enter a starting point\nfor your trip and we\'ll\nhelp you find the best route!</string>
+    <string name="origin_welcome">Where does your trip begin?</string>
     <string name="results_header">Here\'s the shortest route for your destinations:</string>
-    <string name="destination_prompt">Enter the destinations of your route in any order below:</string>
+    <string name="destination_prompt">Where are you going? (Any order)</string>
+    <string name="destination_origin">Starting from:</string>
 
 </resources>

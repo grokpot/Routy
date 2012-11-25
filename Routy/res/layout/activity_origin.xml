@@ -19,11 +19,12 @@
         android:id="@+id/origin_routy_logo"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/origin_logo"
         android:minHeight="300dp"
-        android:layout_above="@+id/origin_textview_welcome"
         android:scaleType="fitCenter"
         android:src="@drawable/whitesplashhi" />
     
@@ -32,45 +33,49 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/origin_address_field"
+        android:layout_marginBottom="10dp"
         android:gravity="center_horizontal|center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="@string/origin_welcome"
-        android:textColor="@color/White"
-        android:textSize="20dp" />
+        android:textColor="#FFAE00"
+        android:textSize="20dp"
+        android:textStyle="bold|italic" />
 
     <EditText
         android:id="@+id/origin_address_field"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_above="@+id/enter_destinations_button"
-        android:layout_marginBottom="15dp"
-        android:gravity="center_vertical"
+        android:layout_marginBottom="30dp"
         android:ellipsize="end"
+        android:gravity="center_vertical"
         android:hint="@string/origin_hint"
         android:scrollHorizontally="true"
         android:singleLine="true" />
     
     <Button
         android:id="@+id/enter_destinations_button"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="10dp"
         android:drawableRight="@drawable/nextwhite"
         android:onClick="goToDestinationsScreen"
-        style="?android:attr/borderlessButtonStyle"
         android:text="@string/goto_destinations" />
 
     <Button
         android:id="@+id/find_user_button"
+        style="?android:attr/borderlessButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
+        android:layout_marginBottom="10dp"
         android:drawableLeft="@drawable/findwhite"
         android:onClick="findUserLocation"
-        style="?android:attr/borderlessButtonStyle"
         android:text="@string/find_user_prompt" />
 
 </RelativeLayout>

@@ -3,7 +3,8 @@
     android:id="@+id/scrollview_destinations_wrapper"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/gradient" >
+    android:background="@drawable/gradient"
+    android:fillViewport="true" >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -11,32 +12,22 @@
         android:orientation="vertical" >
 
         <TextView
-            android:id="@+id/textview_destinations_prompt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:gravity="center_horizontal"
-            android:text="@string/destination_prompt"
-            android:textColor="@color/White"
-            android:textSize="22dp"
-            android:textStyle="bold|italic" />
-
-        <TextView
             android:id="@+id/textview_destinations_startingat"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:paddingLeft="3dp"
-            android:text="Starting at:"
-            android:textColor="@color/White"
-            android:textSize="18dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="35dp"
+            android:gravity="center_horizontal"
+            android:text="@string/destination_origin"
+            android:textColor="#FFAE00"
+            android:textSize="23dp"
             android:textStyle="bold|italic" />
 
         <TextView
             android:id="@+id/textview_destinations_origin"
-            android:layout_width="fill_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="5dp"
             android:gravity="center_horizontal|left"
             android:textColor="@color/White"
@@ -46,11 +37,12 @@
             android:id="@+id/textview_destinations_goingto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:paddingLeft="3dp"
-            android:text="Going to:"
-            android:textColor="@color/White"
-            android:textSize="18dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="35dp"
+            android:gravity="center_horizontal"
+            android:text="@string/destination_prompt"
+            android:textColor="#FFAE00"
+            android:textSize="22dp"
             android:textStyle="bold|italic"
             android:typeface="normal" />
 
@@ -61,12 +53,16 @@
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:orientation="vertical" >
+
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/LinearLayout_destinations_buttons"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="35dp"
+            android:gravity="bottom"
             android:orientation="vertical" >
 
             <Button
@@ -81,10 +77,10 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
                 android:layout_height="0dip"
-                android:layout_marginBottom="15dp"
                 android:layout_weight="2"
                 android:drawableBottom="@drawable/routeit"
                 android:onClick="acceptDestinations" />
+
         </LinearLayout>
     </LinearLayout>
 
