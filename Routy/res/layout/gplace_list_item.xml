@@ -4,15 +4,22 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <TextView 
-        android:id="@+id/textview_gplace_name" 
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-        
-    <TextView 
-        android:id="@+id/textview_gplace_address" 
+    <TextView
+        android:id="@+id/textview_gplace_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="8dp" />
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:textColor="@color/ShitGold"
+        android:textSize="20dp"
+        android:textStyle="bold|italic" />
+        
+    <TextView
+        android:id="@+id/textview_gplace_address"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:textSize="15dp" />
     
 </LinearLayout>
