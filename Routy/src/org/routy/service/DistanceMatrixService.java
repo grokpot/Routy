@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class DistanceMatrixService {
 
-	private final String TAG = "DistanceMatrixProvider";
+	private final String TAG = "DistanceMatrixService";
 	
 	public static final int PREFER_DISTANCE = 0;
 	public static final int PREFER_DURATION = 1;
@@ -103,10 +103,16 @@ public class DistanceMatrixService {
 	}
 
 
-	private List<Distance> parseJSONResponse(String jsonResp) throws JSONException {
+	private List<Distance> parseJSONResponse(String jsonResp) throws JSONException, RoutyException {
 		// Parse the JSON string into distance objects
 		List<Distance> distances = new ArrayList<Distance>();
 		JSONObject response = (JSONObject) new JSONTokener(jsonResp.toString()).nextValue();
+		
+		String status = response.getString("status");
+		if (status == null || !status.equalsIgnoreCase("ok")) {
+			Log.e(TAG, "got status=" + status + " from Google Distance Matrix API");
+			throw new RoutyException("Got a bad response from Google Distance Matrix API: status=" + status);
+		}
 
 		JSONArray rows = response.getJSONArray("rows");
 		JSONArray elements = rows.getJSONObject(0).getJSONArray("elements");		// there will only be 1 "row" because there's only 1 origin

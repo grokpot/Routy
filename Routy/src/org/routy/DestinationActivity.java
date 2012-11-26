@@ -294,6 +294,7 @@ public class DestinationActivity extends FragmentActivity {
 		
 		// Go through the list until you find one that is INVALID or NOT_VALIDATED
 		List<Address> validAddresses = new ArrayList<Address>();
+		boolean hasDestinations = false;
 		boolean hasError = false;
 		DestinationRowView row = null;
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
@@ -305,55 +306,63 @@ public class DestinationActivity extends FragmentActivity {
 					Log.v(TAG, "row id=" + row.getId() + " has valid status=" + row.getStatus());
 					break;
 				} else {
+					hasDestinations = true;
 					validAddresses.add(row.getAddress());
 				}
 			}
 		}
 		
-		// If you encountered an "error" take steps to validate it.  When it's done validating, call acceptDestinations again.
-		if (hasError && row != null) {
-			Log.v(TAG, "The destinations list has a row (id=" + row.getUUID() + ") in need of validation.");
-			// Validate "row"
-			final DestinationRowView r = row;
-			new GooglePlacesQueryTask(mContext) {
-				
-				@Override
-				public void onResult(GooglePlace place) {
-					if (place != null && place.getAddress() != null) {
-						r.setAddress(place.getAddress());
-						r.setValid();
-						
-						if ((getRowIndexById(r.getUUID()) == destLayout.getChildCount() - 1) && (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS - 1)) {
-							r.showAddButton();
+		if (hasDestinations) {
+			// If you encountered an "error" take steps to validate it.  When it's done validating, call acceptDestinations again.
+			if (hasError && row != null) {
+				Log.v(TAG, "The destinations list has a row (id=" + row.getUUID() + ") in need of validation.");
+				// Validate "row"
+				final DestinationRowView r = row;
+				new GooglePlacesQueryTask(mContext) {
+					
+					@Override
+					public void onResult(GooglePlace place) {
+						if (place != null && place.getAddress() != null) {
+							r.setAddress(place.getAddress());
+							r.setValid();
+							
+							if ((getRowIndexById(r.getUUID()) == destLayout.getChildCount() - 1) && (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS - 1)) {
+								r.showAddButton();
+							}
+							
+							acceptDestinations(v);
+						} else {
+							r.setInvalid();
 						}
-						
-						acceptDestinations(v);
-					} else {
-						r.setInvalid();
 					}
-				}
 
-				@Override
-				public void onNoSelection() {
-					// TODO Auto-generated method stub
-					// Doing nothing leaves it NOT_VALIDATED
-				}
-			}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
-		} else {
-			Log.v(TAG, "All destinations have been validated.");
-			
-			// If everything is valid, move on to the Results screen
-			new CalculateRouteTask() {
+					@Override
+					public void onNoSelection() {
+						// TODO Auto-generated method stub
+						// Doing nothing leaves it NOT_VALIDATED
+					}
+				}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+			} else {
+				Log.v(TAG, "All destinations have been validated.");
 				
-				@Override
-				public void onRouteCalculated(Route route) {
-					// Call ResultsActivity activity
-	    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-	    			resultsIntent.putExtra("addresses", route.getAddresses());
-	    			resultsIntent.putExtra("distance", route.getTotalDistance());
-	    			startActivity(resultsIntent);
-				}
-			}.execute(new RouteRequest(origin, validAddresses, false));
+				// If everything is valid, move on to the Results screen
+				new CalculateRouteTask() {
+					
+					@Override
+					public void onRouteCalculated(Route route) {
+						// Call ResultsActivity activity
+		    			Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
+		    			resultsIntent.putExtra("addresses", route.getAddresses());
+		    			resultsIntent.putExtra("distance", route.getTotalDistance());
+		    			startActivity(resultsIntent);
+					}
+				}.execute(new RouteRequest(origin, validAddresses, false));
+			}
+		} else {
+			// No destinations entered
+			sounds.play(bad, 1, 1, 1, 0, 1);
+			showErrorDialog("Please enter at least one destination to continue.");
+			
 		}
 		
 	}
