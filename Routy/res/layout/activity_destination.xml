@@ -19,7 +19,7 @@
             android:layout_marginTop="35dp"
             android:gravity="center_horizontal"
             android:text="@string/destination_origin"
-            android:textColor="#FFAE00"
+            android:textColor="@color/ShitGold"
             android:textSize="23dp"
             android:textStyle="bold|italic" />
 
@@ -41,7 +41,7 @@
             android:layout_marginTop="35dp"
             android:gravity="center_horizontal"
             android:text="@string/destination_prompt"
-            android:textColor="#FFAE00"
+            android:textColor="@color/ShitGold"
             android:textSize="22dp"
             android:textStyle="bold|italic"
             android:typeface="normal" />

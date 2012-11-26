@@ -38,7 +38,7 @@
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="@string/origin_welcome"
-        android:textColor="#FFAE00"
+        android:textColor="@color/ShitGold"
         android:textSize="20dp"
         android:textStyle="bold|italic" />
 

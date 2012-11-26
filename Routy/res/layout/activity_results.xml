@@ -12,8 +12,9 @@
         android:layout_marginTop="15dp"
         android:gravity="center_horizontal"
         android:text="@string/results_header"
-        android:textColor="@color/White"
-        android:textSize="20dp" />
+        android:textColor="@color/Lime"
+        android:textSize="20dp"
+        android:textStyle="bold|italic" />
 
     <LinearLayout
         android:id="@+id/layout_results"
