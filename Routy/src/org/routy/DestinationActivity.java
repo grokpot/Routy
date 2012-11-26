@@ -75,7 +75,6 @@ public class DestinationActivity extends FragmentActivity {
 			
 			Log.v(TAG, "Origin address: " + origin.getExtras().getString("formatted_address"));
 			TextView originText = (TextView) findViewById(R.id.textview_destinations_origin);
-//			originText.setText("Starting from: \n" + origin.getExtras().getString("formatted_address"));
 			originText.setText(origin.getExtras().getString("formatted_address"));
 
 		}
@@ -192,8 +191,12 @@ public class DestinationActivity extends FragmentActivity {
 										row.setAddress(place.getAddress());
 										row.setValid();
 										
-										if (getRowIndexById(id) == destLayout.getChildCount() - 1) {
+										if ((getRowIndexById(id) == destLayout.getChildCount() - 1) && (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS - 1)) {
+											Log.v(TAG, "place validated...showing add button");
 											row.showAddButton();
+										} else {
+											Log.v(TAG, "place validated...hiding add button");
+											row.hideAddButton();
 										}
 									} else {
 										row.setInvalid();
@@ -210,6 +213,10 @@ public class DestinationActivity extends FragmentActivity {
 					}
 				}
 			};
+			
+			if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS - 1) {
+				v.hideAddButton();
+			}
 			
 			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 			return v;
@@ -276,15 +283,14 @@ public class DestinationActivity extends FragmentActivity {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
 		sounds.play(click, 1, 1, 1, 0, 1);
 		
-		// TODO
-		
-		for (int i = 0; i < destLayout.getChildCount(); i++) {
+		// XXX This is only printing stuff out for debugging
+		/*for (int i = 0; i < destLayout.getChildCount(); i++) {
 			DestinationRowView row = (DestinationRowView) destLayout.getChildAt(i);
 			
 			if (row.getAddressString() != null && row.getAddressString().length() > 0) {
 				Log.v(TAG, "Destination " + i + ": " + (row.getStatus() == DestinationRowView.VALID));
 			}
-		}
+		}*/
 		
 		// Go through the list until you find one that is INVALID or NOT_VALIDATED
 		List<Address> validAddresses = new ArrayList<Address>();
@@ -317,7 +323,7 @@ public class DestinationActivity extends FragmentActivity {
 						r.setAddress(place.getAddress());
 						r.setValid();
 						
-						if (getRowIndexById(r.getUUID()) == destLayout.getChildCount() - 1) {
+						if ((getRowIndexById(r.getUUID()) == destLayout.getChildCount() - 1) && (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS - 1)) {
 							r.showAddButton();
 						}
 						
