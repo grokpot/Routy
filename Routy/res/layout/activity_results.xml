@@ -15,6 +15,13 @@
         android:textColor="@color/Lime"
         android:textSize="20dp"
         android:textStyle="bold|italic" />
+    
+    <com.google.android.maps.MapView 
+        android:id="@+id/mapview_results" 
+        android:layout_width="match_parent" 
+        android:layout_height="500dp" 
+        android:clickable="false" 
+        android:apiKey="@string/google_maps_api_key_debug" />
 
     <LinearLayout
         android:id="@+id/layout_results"

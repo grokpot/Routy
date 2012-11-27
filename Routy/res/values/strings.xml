@@ -6,6 +6,8 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_origin">OriginActivity</string>
     
+    <string name="google_maps_api_key_debug">0jK_s6wBtEbASDAwZGnaF3zV7uykgMiIBcI8rzw</string>
+    
     <!-- Global -->
     <string name="error_message_title">Ruh-Roh!</string>
     <string name="default_error_message">Something went wrong, but don\'t worry, it wasn\'t your fault.</string>
