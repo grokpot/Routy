@@ -112,6 +112,7 @@ public class ResultsActivity extends MapActivity {
 		mapView.setBuiltInZoomControls(false);		// Don't let the user do anything to the map, and don't display zoom buttons
 		
 		MapController controller = mapView.getController();
+		// TODO instead of doing this, calculate the span of lat and lng and call zoomToSpan
 		controller.setCenter(new GeoPoint(30390960, -97697490));
 		controller.setZoom(17);
 	}
