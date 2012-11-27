@@ -199,4 +199,8 @@ public abstract class DestinationRowView extends LinearLayout {
 	public Address getAddress() {
 		return this.address;
 	}
+	
+	public void focusOnAddressField() {
+		editText.requestFocus();
+	}
 }

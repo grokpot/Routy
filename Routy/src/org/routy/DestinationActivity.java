@@ -219,6 +219,7 @@ public class DestinationActivity extends FragmentActivity {
 			}
 			
 			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+			v.focusOnAddressField();
 			return v;
 		} else {
 		  sounds.play(bad, 1, 1, 1, 0, 1);
@@ -338,7 +339,6 @@ public class DestinationActivity extends FragmentActivity {
 
 					@Override
 					public void onNoSelection() {
-						// TODO Auto-generated method stub
 						// Doing nothing leaves it NOT_VALIDATED
 					}
 				}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
