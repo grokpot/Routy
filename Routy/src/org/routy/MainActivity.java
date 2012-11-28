@@ -1,6 +1,7 @@
 package org.routy;
 
 import org.routy.fragment.OneButtonDialog;
+import org.routy.fragment.TwoButtonDialog;
 import org.routy.model.AppProperties;
 import org.routy.service.InternetService;
 
@@ -20,7 +21,7 @@ public class MainActivity extends FragmentActivity {
 	private final String TAG = "MainActivity";
 
 	private Context mContext;
-	private OneButtonDialog noInternetErrorDialog;
+	private TwoButtonDialog noInternetErrorDialog;
 	
 	private SoundPool sounds;
 	private int bad;
@@ -77,11 +78,28 @@ public class MainActivity extends FragmentActivity {
 	
 	
 	private void initErrorDialog() {
-		noInternetErrorDialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), getResources().getString(R.string.no_internet_error), "Try Again") {
+		/*noInternetErrorDialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), getResources().getString(R.string.no_internet_error), "Try Again") {
 			@Override
 			public void onButtonClicked(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				checkForInternetAndContinue();
+			}
+		};*/
+		
+		noInternetErrorDialog = new TwoButtonDialog(getResources().getString(R.string.error_message_title), getResources().getString(R.string.no_internet_error), new String[] {"Try Again", "", "Quit"}) {
+			
+			@Override
+			public void onRightButtonClicked(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				checkForInternetAndContinue();
+			}
+			
+			@Override
+			public void onLeftButtonClicked(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				MainActivity.this.finish();
 			}
 		};
 	}
