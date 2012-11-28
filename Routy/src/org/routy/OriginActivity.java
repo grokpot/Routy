@@ -54,11 +54,15 @@ public class OriginActivity extends FragmentActivity {
 	private int bad;
 	private int speak;
 	private int click;
-
+  AudioManager audioManager;
+  float volume;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+    volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
 		speak = sounds.load(this, R.raw.routyspeak, 1);  
@@ -67,8 +71,10 @@ public class OriginActivity extends FragmentActivity {
 		click = sounds.load(this, R.raw.routyclick, 1);
 
 		setContentView(R.layout.activity_origin);
-
-		sounds.play(speak, 1, 1, 1, 0, 1);
+		
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(speak, volume, volume, 1, 0, 1);
 
 		// Initializations
 		context 			= this;
@@ -199,7 +205,9 @@ public class OriginActivity extends FragmentActivity {
 	 */
 	public void findUserLocation(View view) {
 		Log.v(TAG, "locating user");
-		sounds.play(click, 1, 1, 1, 0, 1);  
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);  
 
 		if (!locating) {
 			findUserButton.setText(R.string.stop_locating);
@@ -228,7 +236,9 @@ public class OriginActivity extends FragmentActivity {
 		// validate the origin address, store it, and move on to the destinations screen
 		Log.v(TAG, "Origin entered: " + originAddressField.getText());
 
-		sounds.play(click, 1, 1, 1, 0, 1);  
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);  
 
 		if (originAddressField.getText() == null || originAddressField.getText().length() == 0) {
 			showErrorDialog(getResources().getString(R.string.no_origin_address_error));

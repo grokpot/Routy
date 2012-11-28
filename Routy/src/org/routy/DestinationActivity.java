@@ -50,10 +50,15 @@ public class DestinationActivity extends FragmentActivity {
   private SoundPool sounds;
   private int bad;
   private int click;
+  AudioManager audioManager;
+  float volume;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+	  volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		
     sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
     
@@ -133,7 +138,9 @@ public class DestinationActivity extends FragmentActivity {
 				// The "+" button was clicked on a destination row
 				@Override
 				public void onAddClicked(UUID id) {
-				  sounds.play(click, 1, 1, 1, 0, 1);
+				  volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+				  volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+				  sounds.play(click, volume, volume, 1, 0, 1);
 					// Do validation and then display the additional row
 					final DestinationRowView row = getRowById(id);
 					if (row.getAddressString() != null && row.getAddressString().length() > 0) {
@@ -149,7 +156,9 @@ public class DestinationActivity extends FragmentActivity {
 										row.setValid();
 										addDestinationRow();
 									} else {
-									  sounds.play(bad, 1, 1, 1, 0, 1);
+									  volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+									  volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+									  sounds.play(bad, volume, volume, 1, 0, 1);
 										row.setInvalid();
 										addDestinationRow();		// TODO Show another row if the last one was invalid??
 									}
@@ -222,6 +231,8 @@ public class DestinationActivity extends FragmentActivity {
 			v.focusOnAddressField();
 			return v;
 		} else {
+		  volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		  volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		  sounds.play(bad, 1, 1, 1, 0, 1);
 			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
 			((DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1)).showAddButton();
@@ -235,7 +246,9 @@ public class DestinationActivity extends FragmentActivity {
 	 * @param id
 	 */
 	void removeDestinationRow(UUID id) {
-	  sounds.play(click, 1, 1, 1, 0, 1);
+	  volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+	  volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+	  sounds.play(click, volume, volume, 1, 0, 1);
 		if (destLayout.getChildCount() > 1) {
 			int idx = getRowIndexById(id);
 			
@@ -282,7 +295,9 @@ public class DestinationActivity extends FragmentActivity {
 	 */
 	public void acceptDestinations(final View v) {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
-		sounds.play(click, 1, 1, 1, 0, 1);
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);
 		
 		// XXX This is only printing stuff out for debugging
 		/*for (int i = 0; i < destLayout.getChildCount(); i++) {
@@ -360,7 +375,9 @@ public class DestinationActivity extends FragmentActivity {
 			}
 		} else {
 			// No destinations entered
-			sounds.play(bad, 1, 1, 1, 0, 1);
+		  volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		  volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+			sounds.play(bad, volume, volume, 1, 0, 1);
 			showErrorDialog("Please enter at least one destination to continue.");
 			
 		}
@@ -460,7 +477,9 @@ public class DestinationActivity extends FragmentActivity {
 	View.OnClickListener listenerTestDefaults = new View.OnClickListener() {
 	    @Override
       public void onClick(View v) {
-	      sounds.play(click, 1, 1, 1, 0, 1);
+	      volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+	      volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+	      sounds.play(click, volume, volume, 1, 0, 1);
 	    	if (destLayout.getChildCount() < 3) {
 	    		for (int i = destLayout.getChildCount(); i < 3; i++) {
 	    			addDestinationRow();

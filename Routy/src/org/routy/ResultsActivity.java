@@ -32,11 +32,18 @@ public class ResultsActivity extends FragmentActivity {
 	
   private SoundPool sounds;
   private int click;
+  
+  AudioManager audioManager;
+  float volume;
 
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+        volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+        
         sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
         click = sounds.load(this, R.raw.routyclick, 1);
         setContentView(R.layout.activity_results);
@@ -101,7 +108,9 @@ public class ResultsActivity extends FragmentActivity {
     View.OnClickListener map_segment_listener = new View.OnClickListener() {
 		@Override
     public void onClick(View v) {
-		  sounds.play(click, 1, 1, 1, 0, 1);
+		  volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+	    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		  sounds.play(click, volume, volume, 1, 0, 1);
 		  
 			// Get the ID assigned in buildResultsView() so we can get the respective segment
 			final int start 	= v.getId();
