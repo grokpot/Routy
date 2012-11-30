@@ -44,16 +44,22 @@ public class DestinationActivity extends FragmentActivity {
 	private FragmentActivity mContext;
 	private Address origin;
 	private LinearLayout destLayout;
+	
 	// shared prefs for destination persistence
 	private SharedPreferences destinationActivityPrefs;
 
 	private SoundPool sounds;
 	private int bad;
 	private int click;
+	AudioManager audioManager;
+	float volume;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
 
@@ -82,47 +88,47 @@ public class DestinationActivity extends FragmentActivity {
 		// Initialize shared preferences
 		destinationActivityPrefs = getSharedPreferences("destination_prefs", MODE_PRIVATE);
 		String storedAddressesJson = destinationActivityPrefs.getString(SAVED_DESTS_JSON_KEY, null);
-		
+
 		if (storedAddressesJson != null) {
 			List<Address> restoredAddresses = Util.jsonToAddressList(storedAddressesJson);
-			
+
 			for (int i = 0; i < restoredAddresses.size(); i++) {
 				Address address = restoredAddresses.get(i);
 				Bundle addressExtras = address.getExtras();
-				
+
 				if (addressExtras != null) {
 					int status = addressExtras.getInt("valid_status");
-					
+
 					DestinationRowView newRow = null;
 					if (status == DestinationRowView.VALID) {
 						// Put the new row in the list
 						newRow = addDestinationRow(address.getFeatureName());
 						newRow.setAddress(address);
 						newRow.setValid();
-						
+
 					} else if (status == DestinationRowView.INVALID || status == DestinationRowView.NOT_VALIDATED) {
 						String addressString = addressExtras.getString("address_string");
-						
+
 						newRow = addDestinationRow(addressString);
-						
+
 						if (status == DestinationRowView.INVALID) {
 							newRow.setInvalid();
 						} else {
 							newRow.clearValidationStatus();
 						}
 					}
-					
+
 					// Get rid of the "+" button if this is not the last row restored
 					if (newRow != null && i != restoredAddresses.size() - 1) {
 						newRow.hideAddButton();
 					}
-					
+
 				}
 			}
 		} else {
 			addDestinationRow();
 		}
-		
+
 		// Old way of restoring saved addresses
 		/*Set<String> storedAddresses = destinationActivityPrefs.getStringSet("saved_destination_strings", new TreeSet<String>());
 
@@ -193,7 +199,9 @@ public class DestinationActivity extends FragmentActivity {
 				// The "+" button was clicked on a destination row
 				@Override
 				public void onAddClicked(UUID id) {
-					sounds.play(click, 1, 1, 1, 0, 1);
+					volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+					volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+					sounds.play(click, volume, volume, 1, 0, 1);
 					// Do validation and then display the additional row
 					final DestinationRowView row = getRowById(id);
 					if (row.getAddressString() != null && row.getAddressString().length() > 0) {
@@ -209,7 +217,9 @@ public class DestinationActivity extends FragmentActivity {
 										row.setValid();
 										addDestinationRow();
 									} else {
-										sounds.play(bad, 1, 1, 1, 0, 1);
+										volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+										volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+										sounds.play(bad, volume, volume, 1, 0, 1);
 										row.setInvalid();
 										addDestinationRow();		// TODO Show another row if the last one was invalid??
 									}
@@ -282,6 +292,8 @@ public class DestinationActivity extends FragmentActivity {
 			v.focusOnAddressField();
 			return v;
 		} else {
+			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, 1, 1, 1, 0, 1);
 			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
 			((DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1)).showAddButton();
@@ -295,7 +307,9 @@ public class DestinationActivity extends FragmentActivity {
 	 * @param id
 	 */
 	void removeDestinationRow(UUID id) {
-		sounds.play(click, 1, 1, 1, 0, 1);
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);
 		if (destLayout.getChildCount() > 1) {
 			int idx = getRowIndexById(id);
 
@@ -319,22 +333,6 @@ public class DestinationActivity extends FragmentActivity {
 
 
 	/**
-	 * Adds a {@link DestinationRowView} row to the list if we're not maxed out.  Max number 
-	 * of rows is set in {@link AppProperties}.
-	 * @param v
-	 */
-	/*public void onClickFromDestinationAdd(View v) {
-		Log.v(TAG, "Add another destination.");
-
-		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
-			addDestinationRow();
-		} else {
-			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
-		}
-	}*/
-
-
-	/**
 	 * Called when "Route It!" is clicked.  Does any final validation and preparations before calculating 
 	 * the best route and passing route data to the results activity.
 	 * 
@@ -342,16 +340,10 @@ public class DestinationActivity extends FragmentActivity {
 	 */
 	public void acceptDestinations(final View v) {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
-		sounds.play(click, 1, 1, 1, 0, 1);
 
-		// XXX This is only printing stuff out for debugging
-		/*for (int i = 0; i < destLayout.getChildCount(); i++) {
-			DestinationRowView row = (DestinationRowView) destLayout.getChildAt(i);
-
-			if (row.getAddressString() != null && row.getAddressString().length() > 0) {
-				Log.v(TAG, "Destination " + i + ": " + (row.getStatus() == DestinationRowView.VALID));
-			}
-		}*/
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);
 
 		// Go through the list until you find one that is INVALID or NOT_VALIDATED
 		List<Address> validAddresses = new ArrayList<Address>();
@@ -420,7 +412,9 @@ public class DestinationActivity extends FragmentActivity {
 			}
 		} else {
 			// No destinations entered
-			sounds.play(bad, 1, 1, 1, 0, 1);
+			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+			sounds.play(bad, volume, volume, 1, 0, 1);
 			showErrorDialog("Please enter at least one destination to continue.");
 		}
 
@@ -462,28 +456,28 @@ public class DestinationActivity extends FragmentActivity {
 				storedAddresses.add(destView.getAddressString());
 			}
 		}*/
-		
-		
+
+
 		// TODO
 		Log.v(TAG, "building the JSON string from all the destination addresses");
 		List<Address> addressesToSave = new ArrayList<Address>();
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
 			DestinationRowView destView = (DestinationRowView) destLayout.getChildAt(i);
-			
+
 			if (destView.getAddressString() != null && destView.getAddressString().length() > 0) {
 				// TODO set the status inside each Address object's "extras" Bundle
 				Address address = null;
 				if (destView.getStatus() == DestinationRowView.VALID) {
 					// Add the address from this row to the list
 					address = destView.getAddress();
-					
+
 					// It's valid so we'll just keep track of that
 					Bundle extras = address.getExtras();
 					extras.putInt("valid_status", destView.getStatus());
 				} else if (destView.getStatus() == DestinationRowView.INVALID || destView.getStatus() == DestinationRowView.NOT_VALIDATED) {
 					// Manually create an Address object with just the EditText value and the status because it won't be there
 					address = new Address(Locale.getDefault());
-					
+
 					// Since it'll need to be validated when we come back, we need to save what was in the EditText with the status
 					Bundle extras = address.getExtras();
 					extras.putString("address_string", destView.getAddressString());
@@ -492,21 +486,21 @@ public class DestinationActivity extends FragmentActivity {
 					// bah!
 					throw new IllegalStateException("Destination row " + i + " had an invalid status value of: " + destView.getStatus());
 				}
-				
+
 				Assert.assertNotNull(address);
 				addressesToSave.add(address);
 			}
-			
+
 		}
-		
+
 		String json = Util.addressListToJSON(addressesToSave);
 		Log.v(TAG, "saved destinations json: " + json);
-		
+
 		// Put the storedAddresses into shared prefs via a set of strings
 		Log.v(TAG, "Saving destinations in shared prefs");
 		SharedPreferences.Editor ed = destinationActivityPrefs.edit();
 		ed.putString(SAVED_DESTS_JSON_KEY, json);
-//		ed.putStringSet("saved_destination_strings", storedAddresses);
+		//		ed.putStringSet("saved_destination_strings", storedAddresses);
 		ed.commit();
 	}
 
@@ -558,25 +552,27 @@ public class DestinationActivity extends FragmentActivity {
 	/**
 	 * Loads the 3 test destinations we've been using.
 	 */
-	 View.OnClickListener listenerTestDefaults = new View.OnClickListener() {
-		 @Override
-		 public void onClick(View v) {
-			 sounds.play(click, 1, 1, 1, 0, 1);
-			 if (destLayout.getChildCount() < 3) {
-				 for (int i = destLayout.getChildCount(); i < 3; i++) {
-					 addDestinationRow();
-				 }
-			 }
+	View.OnClickListener listenerTestDefaults = new View.OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+			sounds.play(click, volume, volume, 1, 0, 1);
+			if (destLayout.getChildCount() < 3) {
+				for (int i = destLayout.getChildCount(); i < 3; i++) {
+					addDestinationRow();
+				}
+			}
 
-			 DestinationRowView view = (DestinationRowView) destLayout.getChildAt(0);
-			 ((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_1));
+			DestinationRowView view = (DestinationRowView) destLayout.getChildAt(0);
+			((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_1));
 
-			 view = (DestinationRowView) destLayout.getChildAt(1);
-			 ((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_2));
+			view = (DestinationRowView) destLayout.getChildAt(1);
+			((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_2));
 
-			 view = (DestinationRowView) destLayout.getChildAt(2);
-			 ((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_3));
-		 }
-	 };
+			view = (DestinationRowView) destLayout.getChildAt(2);
+			((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_3));
+		}
+	};
 
 }
