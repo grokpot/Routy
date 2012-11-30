@@ -11,18 +11,24 @@ public class RouteRequest {
 	private Address origin;
 	private List<Address> destinations;
 	private boolean sensor;
-	private int preference;
+	private RouteOptimizePreference preference;
 	
+	/**
+	 * Request for a route calculation that finds the best route based on distance.
+	 * @param origin
+	 * @param destinations
+	 * @param sensor
+	 */
 	public RouteRequest(Address origin, List<Address> destinations, boolean sensor) {
-		this(origin, destinations, sensor, DistanceMatrixService.PREFER_DISTANCE);
+		this(origin, destinations, sensor, RouteOptimizePreference.PREFER_DISTANCE);
 	}
 	
-	public RouteRequest(Address origin, List<Address> destinations, boolean sensor, int preference) {
+	public RouteRequest(Address origin, List<Address> destinations, boolean sensor, RouteOptimizePreference optimizePreference) {
 		super();
 		this.origin = origin;
 		this.destinations = destinations;
 		this.sensor = sensor;
-		this.preference = preference;
+		this.preference = optimizePreference;
 	}
 
 	public Address getOrigin() {
@@ -53,11 +59,11 @@ public class RouteRequest {
 		this.sensor = sensor;
 	}
 
-	public int getPreference() {
+	public RouteOptimizePreference getPreference() {
 		return preference;
 	}
 
-	public void setPreference(int preference) {
+	public void setPreference(RouteOptimizePreference preference) {
 		this.preference = preference;
 	}
 	

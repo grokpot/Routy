@@ -27,7 +27,7 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 			} else {
 				RouteRequest request = requests[0];
 				
-				RouteService routeService = new RouteService(request.getOrigin(), request.getDestinations(), RouteOptimizePreference.PREFER_DISTANCE, false);
+				RouteService routeService = new RouteService(request.getOrigin(), request.getDestinations(), request.getPreference(), false);
 				Route bestRoute = routeService.getBestRoute();
 				
 				return bestRoute;

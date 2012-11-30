@@ -129,42 +129,6 @@ public class DestinationActivity extends FragmentActivity {
 			addDestinationRow();
 		}
 
-		// Old way of restoring saved addresses
-		/*Set<String> storedAddresses = destinationActivityPrefs.getStringSet("saved_destination_strings", new TreeSet<String>());
-
-		StringWriter sWriter = new StringWriter();
-
-		try {
-			JsonWriter writer = new JsonWriter(sWriter);
-			writer.beginObject();
-			writer.name("AppName");
-			writer.value("Routy");
-			writer.endObject();
-			writer.close();
-
-			String json = sWriter.toString();
-			Log.v(TAG, "encoded JSON string: " + json);
-		} catch (IOException e) {
-			Log.e(TAG, "failed miserably trying to write a JSON string.");
-		}
-
-
-		// If there were stored addresses, initialize destination views with them
-		if (storedAddresses.size() != 0){
-			Object[] addresses =  storedAddresses.toArray();
-			for (int i = 0; i < addresses.length; i++){
-				DestinationRowView newRow = addDestinationRow((String)addresses[i]);
-
-				if (newRow != null && i != addresses.length - 1) {
-					newRow.hideAddButton();
-				}
-			}
-		}
-		// Otherwise initialize the screen with one empty destination
-		else{
-			addDestinationRow();
-		}*/
-
 		// XXX temp "Test defaults"
 		Button buttonTestDefaults = (Button) findViewById(R.id.button_test_defaults);
 		buttonTestDefaults.setText("Test Default Destinations");
@@ -221,7 +185,7 @@ public class DestinationActivity extends FragmentActivity {
 										volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 										sounds.play(bad, volume, volume, 1, 0, 1);
 										row.setInvalid();
-										addDestinationRow();		// TODO Show another row if the last one was invalid??
+										addDestinationRow();
 									}
 								}
 
@@ -275,7 +239,6 @@ public class DestinationActivity extends FragmentActivity {
 
 								@Override
 								public void onNoSelection() {
-									// TODO Auto-generated method stub
 									// Doing nothing leaves it NOT_VALIDATED
 								}
 							}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
@@ -445,27 +408,12 @@ public class DestinationActivity extends FragmentActivity {
 			sounds = null; 
 		} 
 
-		// Old way of string just the destination strings from the EditText fields
-		/*// http://stackoverflow.com/questions/1463284/hashset-vs-treeset
-		Set<String> storedAddresses = new TreeSet<String>();
-		// iterate through every destinationInputView
-		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			DestinationRowView destView = (DestinationRowView) destLayout.getChildAt(i);
-			// Add the text in the EditText of the destination to storedAddresses
-			if (destView.getAddressString() != null && destView.getAddressString().length() > 0) {
-				storedAddresses.add(destView.getAddressString());
-			}
-		}*/
-
-
-		// TODO
 		Log.v(TAG, "building the JSON string from all the destination addresses");
 		List<Address> addressesToSave = new ArrayList<Address>();
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
 			DestinationRowView destView = (DestinationRowView) destLayout.getChildAt(i);
 
 			if (destView.getAddressString() != null && destView.getAddressString().length() > 0) {
-				// TODO set the status inside each Address object's "extras" Bundle
 				Address address = null;
 				if (destView.getStatus() == DestinationRowView.VALID) {
 					// Add the address from this row to the list
