@@ -69,8 +69,17 @@ public abstract class DestinationRowView extends LinearLayout {
 		this.status = DestinationRowView.NOT_VALIDATED;
 		
 		initViews(context);
+	}
+	
+	public DestinationRowView(Context context, Address address) {
+		super(context);
 		
-		Log.v(TAG, "new destination row view with id=" + this.id);
+		this.id = UUID.randomUUID();
+		this.address = address;
+		this.status = DestinationRowView.VALID;
+		this.addressString = address.getFeatureName();
+		
+		initViews(context);
 	}
 	
 	
