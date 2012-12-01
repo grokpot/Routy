@@ -1,40 +1,46 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/gradient" >
+    android:id="@+id/scrollview_results_wrapper"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/gradient"
+    android:fillViewport="true" >
 
-    <TextView
-        android:id="@+id/results_textview_header"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
-        android:gravity="center_horizontal"
-        android:text="@string/results_header"
-        android:textColor="@color/ShitGold"
-        android:textSize="23dp"
-        android:textStyle="bold|italic" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-    <LinearLayout
-        android:id="@+id/linearlayout_results"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/results_textview_header"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:orientation="vertical" >
+        <TextView
+            android:id="@+id/results_textview_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal"
+            android:text="@string/results_header"
+            android:textColor="@color/ShitGold"
+            android:textSize="23dp"
+            android:textStyle="bold|italic" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/linearlayout_results"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/results_textview_header"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:orientation="vertical" >
+        </LinearLayout>
 
-    <TextView
-        android:id="@+id/textview_total_distance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/linearlayout_results"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:gravity="center_horizontal"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <TextView
+            android:id="@+id/textview_total_distance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linearlayout_results"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </RelativeLayout>
 
-</RelativeLayout>
+</ScrollView>
