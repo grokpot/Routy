@@ -1,5 +1,10 @@
-<resources>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="AppTheme" parent="android:Theme.Holo.NoActionBar" />
+    
+    <style name="Toggle" parent="android:Theme.Holo.NoActionBar">
+        <item name ="android:textStyle">bold</item>
+        <item name ="android:textSize">18dp</item>
+    </style>
 
 </resources>
