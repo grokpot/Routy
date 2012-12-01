@@ -357,6 +357,9 @@ public class DestinationActivity extends FragmentActivity {
 	
 	public void onAddDestinationClicked(View v) {
 		Log.v(TAG, "new destination row requested by user");
+    volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+    sounds.play(click, volume, volume, 1, 0, 1);
 		
 		// If the last row is not empty, add a new row
 		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
