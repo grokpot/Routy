@@ -108,6 +108,7 @@
 
             <ImageButton
                 android:id="@+id/button_route_it"
+                android:contentDescription="@string/routeitdesc"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"

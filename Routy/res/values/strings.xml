@@ -81,4 +81,7 @@
     <string name="destination_prompt">Where are you going? (Any order)</string>
     <string name="destination_origin">Starting from:</string>
 
+    <!-- Content Descriptions -->
+    <string name="routeitdesc">The button to route it!</string>
+    <string name="biglogodesc">A big routy logo!</string>
 </resources>
