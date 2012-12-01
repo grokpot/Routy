@@ -97,8 +97,9 @@
             <ImageButton
                 android:id="@+id/button_route_it"
                 style="?android:attr/borderlessButtonStyle"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="20dp"
                 android:src="@drawable/routeitwhitewithbox"
                 android:onClick="acceptDestinations" />

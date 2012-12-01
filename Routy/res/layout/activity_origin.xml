@@ -26,6 +26,7 @@
         android:contentDescription="@string/origin_logo"
         android:minHeight="300dp"
         android:scaleType="fitCenter"
+        android:layout_above="@+id/origin_textview_welcome"
         android:src="@drawable/whitesplashhi" />
     
     <TextView
@@ -33,7 +34,7 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/origin_address_field"
-        android:layout_marginBottom="10dp"
+        
         android:gravity="center_horizontal|center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
