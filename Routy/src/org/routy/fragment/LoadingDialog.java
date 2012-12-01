@@ -6,10 +6,12 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 
 // TODO Create an abstract method to interact with the dialog's progress
 public class LoadingDialog extends DialogFragment {
 
+	private final String TAG = "LoadingDialog";
 	
 	private String title;
 	private String message;
@@ -42,6 +44,8 @@ public class LoadingDialog extends DialogFragment {
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
+		Log.v(TAG, "creating loading dialog");
+		
 		ProgressDialog dialog = new ProgressDialog(getActivity());
 		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 		dialog.setIndeterminate(true);

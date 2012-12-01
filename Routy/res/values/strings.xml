@@ -6,6 +6,22 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_origin">OriginActivity</string>
     
+    <!-- Instructions -->
+    <string name="instructions1">Welcome to Routy - the best way to find the most efficient route between
+        different destinations. Enter a starting address or click Find me! to get your current location. 
+        Once we have your origin set up we can work on entering all of your destinations. Click Next when
+        you\'re done!</string>
+    <string name="instructions2">Now that we have your origin, just enter in all of the destinations you
+        plan on visiting in any order. If you don\'t know the exact address, just type in the name of the place
+        or intersection and we\'ll see what we can find for you that\'s located near your origin. You can also
+        select to organize your trip based off of the shortest distance or the shortest travel time. When 
+        you\'re ready, click Route it! to see the results! To reset your origin just press the android back
+        button to go back to the previous screen.</string>
+    <string name="instructions3">Here\'s your trip! You can click on the button for each segment so that you
+        can see a detailed trip route between those two destinations in Google Maps. If you want to reset your
+        destinations or origin, just press the android back button to go back to any previous screen!\n
+        Happy routing!</string>
+    
     <!-- Global -->
     <string name="error_message_title">Ruh-Roh!</string>
     <string name="default_error_message">Something went wrong, but don\'t worry, it wasn\'t your fault.</string>
@@ -65,4 +81,7 @@
     <string name="destination_prompt">Where are you going? (Any order)</string>
     <string name="destination_origin">Starting from:</string>
 
+    <!-- Content Descriptions -->
+    <string name="routeitdesc">The button to route it!</string>
+    <string name="biglogodesc">A big routy logo!</string>
 </resources>
