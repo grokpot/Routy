@@ -34,7 +34,6 @@
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/origin_address_field"
-        
         android:gravity="center_horizontal|center_vertical"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
