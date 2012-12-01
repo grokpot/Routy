@@ -303,6 +303,9 @@ public class OriginActivity extends FragmentActivity {
 	 * @param message
 	 */
 	private void showErrorDialog(String message) {
+	  volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+	  volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+	  sounds.play(bad, volume, volume, 1, 0, 1);
 		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {
 			@Override
 			public void onButtonClicked(DialogInterface dialog, int which) {
