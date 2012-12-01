@@ -54,15 +54,15 @@ public class OriginActivity extends FragmentActivity {
 	private int bad;
 	private int speak;
 	private int click;
-  AudioManager audioManager;
-  float volume;
+	private AudioManager audioManager;
+	float volume;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-    volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
 		speak = sounds.load(this, R.raw.routyspeak, 1);  
@@ -71,9 +71,9 @@ public class OriginActivity extends FragmentActivity {
 		click = sounds.load(this, R.raw.routyclick, 1);
 
 		setContentView(R.layout.activity_origin);
-		
+
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(speak, volume, volume, 1, 0, 1);
 
 		// Initializations
@@ -199,14 +199,14 @@ public class OriginActivity extends FragmentActivity {
 
 
 	/**
-	 * Called when the locate button is tapped.
+	 * Called when the "Find Me" button is tapped.
 	 * 
 	 * @param view
 	 */
 	public void findUserLocation(View view) {
 		Log.v(TAG, "locating user");
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
 		if (!locating) {
@@ -237,7 +237,7 @@ public class OriginActivity extends FragmentActivity {
 		Log.v(TAG, "Origin entered: " + originAddressField.getText());
 
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
 		if (originAddressField.getText() == null || originAddressField.getText().length() == 0) {
@@ -303,9 +303,9 @@ public class OriginActivity extends FragmentActivity {
 	 * @param message
 	 */
 	private void showErrorDialog(String message) {
-	  volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-	  volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-	  sounds.play(bad, volume, volume, 1, 0, 1);
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(bad, volume, volume, 1, 0, 1);
 		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {
 			@Override
 			public void onButtonClicked(DialogInterface dialog, int which) {
