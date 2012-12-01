@@ -92,6 +92,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 				} catch (Exception e) {
 					// Display an error to the user...it was already logged
 					Log.e(TAG, "Error reverse geocoding user's location.");
+					progressDialog.dismiss();
 					listener.onFailure(e);
 					cancel(true);
 				}
@@ -106,6 +107,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 					e = new GpsNotEnabledException("GPS is not enabled.");
 				}
 				
+				progressDialog.dismiss();
 				listener.onTimeout(e);
 				cancel(true);
 			}
@@ -134,7 +136,9 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 	@Override
 	protected void onPostExecute(Address userLocation) {
 		Log.v(TAG, "got user location");
-		progressDialog.dismiss();
+		if (progressDialog.isShowing()) {
+			progressDialog.dismiss();
+		}
 		listener.onUserLocationFound(userLocation);
 	}
 	

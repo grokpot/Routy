@@ -238,6 +238,7 @@ public class OriginActivity extends FragmentActivity {
 				@Override
 				public void onTimeout(GpsNotEnabledException e) {
 					Log.v(TAG, "getting user location timed out and gps was " + (e == null ? "not enabled" : "enabled"));
+					
 					showErrorDialog(getResources().getString(R.string.locating_fail_error));
 				}
 				
