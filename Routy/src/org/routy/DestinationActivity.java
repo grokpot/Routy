@@ -12,6 +12,7 @@ import org.routy.model.AppProperties;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.model.Route;
+import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
 import org.routy.task.CalculateRouteTask;
 import org.routy.task.GooglePlacesQueryTask;
@@ -33,6 +34,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 public class DestinationActivity extends FragmentActivity {
@@ -54,10 +56,13 @@ public class DestinationActivity extends FragmentActivity {
 	private int click;
 	AudioManager audioManager;
 	float volume;
+	boolean routeOptimized;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		routeOptimized = false;
 
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
@@ -384,7 +389,8 @@ public class DestinationActivity extends FragmentActivity {
 						resultsIntent.putExtra("distance", route.getTotalDistance());
 						startActivity(resultsIntent);
 					}
-				}.execute(new RouteRequest(origin, validAddresses, false));
+				}.execute(new RouteRequest(origin, validAddresses, false, 
+				    routeOptimized ? RouteOptimizePreference.PREFER_DURATION : RouteOptimizePreference.PREFER_DISTANCE));
 			}
 		} else {
 			// No destinations entered
@@ -526,6 +532,18 @@ public class DestinationActivity extends FragmentActivity {
 
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
+	}
+	
+	public void onToggleClicked(View view) {
+	  // detect toggle selection
+	  boolean on = ((Switch) view).isChecked();
+	  
+	  if (on) {
+	    routeOptimized = false;
+	  } 
+	  else {
+	    routeOptimized = true;
+	  }
 	}
 
 	// XXX temp

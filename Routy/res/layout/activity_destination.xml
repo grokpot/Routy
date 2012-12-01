@@ -53,7 +53,6 @@
             android:layout_marginTop="5dp"
             android:layout_weight="1"
             android:orientation="vertical" >
-
         </LinearLayout>
         
         <Button 
@@ -80,15 +79,37 @@
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
 
-            <Button
+            <TextView
+                android:id="@+id/toggle_instructions"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="15dp"
+                android:gravity="center_horizontal"
+                android:text="@string/toggle_instructions"
+                android:textSize="18dp"
+                android:textColor="@color/White"
+                android:textStyle="bold"
+                android:typeface="normal" />
+
+            <Switch
+                android:id="@+id/toggleDistDur"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:onClick="onToggleClicked"
+                android:switchTextAppearance="@style/Toggle"
+                android:textOff="@string/by_dist"
+                android:textOn="@string/by_dur"/>
+
+            <ImageButton
                 android:id="@+id/button_route_it"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="match_parent"
-                android:layout_height="0dip"
-                android:layout_weight="2"
-                android:drawableBottom="@drawable/routeit"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/routeitwhitewithbox"
                 android:onClick="acceptDestinations" />
-
         </LinearLayout>
     </LinearLayout>
 

@@ -75,11 +75,17 @@ public class ResultsActivity extends FragmentActivity {
 			segmentTexts[addressIndex] = new TextView(this);
 			
 			// Dynamically set the text for the TextViews
-//			String addressText = route.getAddresses().get(addressIndex).getAddressLine(0);
+			
+			// Hacky "if" statement that displays the address if it's not a Google Place
 			String addressText = route.getAddresses().get(addressIndex).getFeatureName();
-			if (addressText == null || addressText.length() == 0) {
-				addressText = route.getAddresses().get(addressIndex).getExtras().getString("formatted_address");
+//			if (addressText == null || addressText.length() == 0) {
+//				addressText = route.getAddresses().get(addressIndex).getExtras().getString("formatted_address");
+//			}
+			if (route.getAddresses().get(addressIndex).getThoroughfare() != null) {
+				addressText = route.getAddresses().get(addressIndex).getSubThoroughfare();
+				addressText += " " + route.getAddresses().get(addressIndex).getThoroughfare();				
 			}
+			
 			segmentTexts[addressIndex].setText(addressText);
 			
 			// Dynamically position TextView on the screen

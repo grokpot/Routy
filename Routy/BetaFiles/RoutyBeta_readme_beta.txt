@@ -1,0 +1,1 @@
+Routy requires that the emulator runs Google APIs target level 16 and the device requires Android level 16.
