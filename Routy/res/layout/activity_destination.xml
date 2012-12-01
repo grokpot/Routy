@@ -78,7 +78,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginBottom="15dp"
                 android:gravity="center_horizontal"
-                android:text="Slide this to toggle between\noptimizing for distance or time:"
+                android:text="@string/toggle_instructions"
                 android:textSize="18dp"
                 android:textColor="@color/White"
                 android:textStyle="bold"
@@ -91,10 +91,8 @@
                 android:layout_gravity="center_horizontal"
                 android:onClick="onToggleClicked"
                 android:switchTextAppearance="@style/Toggle"
-                android:textOff="by Distance"
-                android:textOn="by Duration"
-                android:textStyle="bold"
-                android:typeface="normal" />
+                android:textOff="@string/by_dist"
+                android:textOn="@string/by_dur"/>
 
             <ImageButton
                 android:id="@+id/button_route_it"
