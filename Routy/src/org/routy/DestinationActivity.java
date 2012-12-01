@@ -287,8 +287,9 @@ public class DestinationActivity extends FragmentActivity {
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);
 		
+		int idx = 0;
 		if (destLayout.getChildCount() > 1) {
-			int idx = getRowIndexById(id);
+			idx = getRowIndexById(id);
 
 			if (idx >= 0) {
 				Log.v(TAG, "Remove DestinationAddView id=" + id);
@@ -302,10 +303,13 @@ public class DestinationActivity extends FragmentActivity {
 				Log.e(TAG, "attempt to remove a row that does not exist -- id=" + id);
 			}
 		} else if (destLayout.getChildCount() == 1) {
-			int idx = getRowIndexById(id);
+			idx = getRowIndexById(id);		// Should be 0 all the time
 
 			((DestinationRowView) destLayout.getChildAt(idx)).reset();
 		}
+		
+		// set focus on the row idx one less than idx
+		((DestinationRowView) destLayout.getChildAt(Math.max(0, idx - 1))).focusOnAddressField();
 		
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
 			addDestButton.setVisibility(View.VISIBLE);
@@ -411,17 +415,46 @@ public class DestinationActivity extends FragmentActivity {
 	public void onAddDestinationClicked(View v) {
 		Log.v(TAG, "new destination row requested by user");
 		
-		// TODO If the last row is not empty, add a new row
+		// If the last row is not empty, add a new row
 		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
 		if (lastRow.getAddressString() != null && lastRow.getAddressString().length() > 0) {
-			// TODO Validate the last row if it has not been validated.
-			Log.v(TAG, "adding a new destination row");
-			addDestinationRow();
+			// Validate the last row if it has not been validated.  Otherwise, it puts the new row up first, and then validates due to focusChanged.
+			Log.v(TAG, "validating last row before adding new one");
+			final DestinationRowView r = lastRow;
 			
-			// TODO If the list is full, hide the add button
-			if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
-				addDestButton.setVisibility(View.INVISIBLE);
-			}
+			// disable the onFocusLost listener just once so it doesn't try to validate twice here
+			r.disableOnFocusLostCallback(true);
+
+			// do the validation
+			new GooglePlacesQueryTask(mContext) {
+
+				@Override
+				public void onResult(GooglePlace place) {
+					if (place != null && place.getAddress() != null) {
+						r.setAddress(place.getAddress());
+						r.setValid();
+
+						if ((getRowIndexById(r.getUUID()) == destLayout.getChildCount() - 1) && (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS - 1)) {
+							r.showAddButton();
+						}
+						
+						Log.v(TAG, "adding a new destination row");
+						addDestinationRow();
+					} else {
+						r.setInvalid();
+					}
+					
+					// If the list is full, hide the add button
+					if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
+						addDestButton.setVisibility(View.INVISIBLE);
+					}
+				}
+
+				@Override
+				public void onNoSelection() {
+					// Doing nothing leaves it NOT_VALIDATED
+				}
+			}.execute(new GooglePlacesQuery(lastRow.getAddressString(), origin.getLatitude(), origin.getLongitude()));
 		}
 		
 	}
@@ -433,6 +466,7 @@ public class DestinationActivity extends FragmentActivity {
 		return true;
 	}
 
+	
 	/**
 	 * In the case that a user presses back to change an origin, or any other reason why they leave the destination screen,
 	 * we save their entered destinations to shared prefs so they don't have to re-enter the destinations again
@@ -523,6 +557,7 @@ public class DestinationActivity extends FragmentActivity {
 		int idx = getRowIndexById(id);
 		return (DestinationRowView) destLayout.getChildAt(idx);
 	}
+	
 
 	@Override
 	protected void onResume() {   
@@ -533,6 +568,7 @@ public class DestinationActivity extends FragmentActivity {
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
 	}
+	
 	
 	public void onToggleClicked(View view) {
 	  // detect toggle selection
@@ -545,6 +581,7 @@ public class DestinationActivity extends FragmentActivity {
 	    routeOptimized = true;
 	  }
 	}
+	
 
 	// XXX temp
 	/**

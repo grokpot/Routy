@@ -129,12 +129,11 @@ public class Util {
 			}
 			jReader.endObject();
 			
-			return addresses;
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage() + "-- IOException reading JSON address list");
 		}
 		
-		return null;
+		return addresses;
 	}
 	
 
