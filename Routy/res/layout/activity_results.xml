@@ -17,8 +17,8 @@
         android:textStyle="bold|italic" />
 
     <LinearLayout
-        android:id="@+id/layout_results"
-        android:layout_width="wrap_content"
+        android:id="@+id/linearlayout_results"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/results_textview_header"
         android:layout_centerHorizontal="true"
@@ -31,7 +31,7 @@
         android:id="@+id/textview_total_distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_results"
+        android:layout_below="@id/linearlayout_results"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
         android:gravity="center_horizontal"
