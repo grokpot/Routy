@@ -12,8 +12,8 @@
         android:layout_marginTop="15dp"
         android:gravity="center_horizontal"
         android:text="@string/results_header"
-        android:textColor="@color/Lime"
-        android:textSize="20dp"
+        android:textColor="@color/ShitGold"
+        android:textSize="23dp"
         android:textStyle="bold|italic" />
 
     <LinearLayout
@@ -34,6 +34,7 @@
         android:layout_below="@id/layout_results"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="25dp"
+        android:gravity="center_horizontal"
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
 </RelativeLayout>

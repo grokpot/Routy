@@ -46,6 +46,7 @@ public class DestinationActivity extends FragmentActivity {
 	private FragmentActivity mContext;
 	private Address origin;
 	private LinearLayout destLayout;
+	private Button addDestButton;
 	
 	// shared prefs for destination persistence
 	private SharedPreferences destinationActivityPrefs;
@@ -75,6 +76,8 @@ public class DestinationActivity extends FragmentActivity {
 
 		mContext = this;
 
+		addDestButton = (Button) findViewById(R.id.button_destination_add_new);
+		
 		// Get the layout containing the list of destination
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
 
@@ -94,7 +97,7 @@ public class DestinationActivity extends FragmentActivity {
 		destinationActivityPrefs = getSharedPreferences("destination_prefs", MODE_PRIVATE);
 		String storedAddressesJson = destinationActivityPrefs.getString(SAVED_DESTS_JSON_KEY, null);
 
-		if (storedAddressesJson != null) {
+		if (storedAddressesJson != null && storedAddressesJson.length() > 0) {
 			List<Address> restoredAddresses = Util.jsonToAddressList(storedAddressesJson);
 
 			for (int i = 0; i < restoredAddresses.size(); i++) {
@@ -251,13 +254,18 @@ public class DestinationActivity extends FragmentActivity {
 					}
 				}
 			};
-
+			
 			if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS - 1) {
 				v.hideAddButton();
 			}
 
 			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 			v.focusOnAddressField();
+			
+			if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
+				addDestButton.setVisibility(View.INVISIBLE);
+			}
+			
 			return v;
 		} else {
 			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
@@ -278,6 +286,7 @@ public class DestinationActivity extends FragmentActivity {
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);
+		
 		if (destLayout.getChildCount() > 1) {
 			int idx = getRowIndexById(id);
 
@@ -296,6 +305,10 @@ public class DestinationActivity extends FragmentActivity {
 			int idx = getRowIndexById(id);
 
 			((DestinationRowView) destLayout.getChildAt(idx)).reset();
+		}
+		
+		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
+			addDestButton.setVisibility(View.VISIBLE);
 		}
 	}
 
@@ -392,6 +405,25 @@ public class DestinationActivity extends FragmentActivity {
 
 	public void changeOrigin(View v) {
 		finish();
+	}
+	
+	
+	public void onAddDestinationClicked(View v) {
+		Log.v(TAG, "new destination row requested by user");
+		
+		// TODO If the last row is not empty, add a new row
+		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
+		if (lastRow.getAddressString() != null && lastRow.getAddressString().length() > 0) {
+			// TODO Validate the last row if it has not been validated.
+			Log.v(TAG, "adding a new destination row");
+			addDestinationRow();
+			
+			// TODO If the list is full, hide the add button
+			if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
+				addDestButton.setVisibility(View.INVISIBLE);
+			}
+		}
+		
 	}
 
 
