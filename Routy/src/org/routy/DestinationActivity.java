@@ -54,7 +54,7 @@ public class DestinationActivity extends FragmentActivity {
 	private SoundPool sounds;
 	private int bad;
 	private int click;
-	AudioManager audioManager;
+	private AudioManager audioManager;
 	float volume;
 	boolean routeOptimized;
 
@@ -113,7 +113,9 @@ public class DestinationActivity extends FragmentActivity {
 						newRow = addDestinationRow(address.getFeatureName());
 						newRow.setAddress(address);
 						newRow.setValid();
-
+						
+						Log.v(TAG, "restored: " + newRow.getAddress().getFeatureName() + " [status=" + newRow.getStatus() + "]");
+						
 					} else if (status == DestinationRowView.INVALID || status == DestinationRowView.NOT_VALIDATED) {
 						String addressString = addressExtras.getString("address_string");
 
@@ -124,13 +126,10 @@ public class DestinationActivity extends FragmentActivity {
 						} else {
 							newRow.clearValidationStatus();
 						}
+						
+						Log.v(TAG, "restored: " + newRow.getAddressString() + " [status=" + newRow.getStatus() + "]");
 					}
-
-					// Get rid of the "+" button if this is not the last row restored
-					if (newRow != null && i != restoredAddresses.size() - 1) {
-						newRow.hideAddButton();
-					}
-
+					
 				}
 			}
 		} else {
@@ -168,52 +167,6 @@ public class DestinationActivity extends FragmentActivity {
 					removeDestinationRow(id);
 				}
 
-				// The "+" button was clicked on a destination row
-				@Override
-				public void onAddClicked(UUID id) {
-					volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-					volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-					sounds.play(click, volume, volume, 1, 0, 1);
-					// Do validation and then display the additional row
-					final DestinationRowView row = getRowById(id);
-					if (row.getAddressString() != null && row.getAddressString().length() > 0) {
-
-						// If this row was invalid or hasn't been validated, do validation.
-						if (row.getStatus() == DestinationRowView.INVALID || row.getStatus() == DestinationRowView.NOT_VALIDATED) {
-							new GooglePlacesQueryTask(mContext) {
-
-								@Override
-								public void onResult(GooglePlace place) {
-									if (place != null && place.getAddress() != null) {
-										row.setAddress(place.getAddress());
-										row.setValid();
-										addDestinationRow();
-									} else {
-										volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-										volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-										sounds.play(bad, volume, volume, 1, 0, 1);
-										row.setInvalid();
-										addDestinationRow();
-									}
-								}
-
-								@Override
-								public void onNoSelection() {
-									// The user dismissed the place picker dialog without making a selection (e.g. tapped outside the dialog box)
-									Log.v(TAG, "no selection made");
-									row.clearValidationStatus();
-									row.showAddButton();
-								}
-							}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
-						} else {
-							addDestinationRow();
-						}
-					} else {
-						Log.v(TAG, "attempted to add an empty row...ignoring that request");
-						row.reset();
-					}
-				}
-
 				// The user tapped on a different row and this row lost focus
 				@Override
 				public void onFocusLost(final UUID id) {
@@ -235,10 +188,10 @@ public class DestinationActivity extends FragmentActivity {
 
 										if ((getRowIndexById(id) == destLayout.getChildCount() - 1) && (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS - 1)) {
 											Log.v(TAG, "place validated...showing add button");
-											row.showAddButton();
+											showAddButton();
 										} else {
 											Log.v(TAG, "place validated...hiding add button");
-											row.hideAddButton();
+											hideAddButton();
 										}
 									} else {
 										row.setInvalid();
@@ -254,10 +207,6 @@ public class DestinationActivity extends FragmentActivity {
 					}
 				}
 			};
-			
-			if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS - 1) {
-				v.hideAddButton();
-			}
 
 			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 			v.focusOnAddressField();
@@ -271,8 +220,9 @@ public class DestinationActivity extends FragmentActivity {
 			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, 1, 1, 1, 0, 1);
+			
 			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
-			((DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1)).showAddButton();
+
 			return null;
 		}
 	}
@@ -294,11 +244,6 @@ public class DestinationActivity extends FragmentActivity {
 			if (idx >= 0) {
 				Log.v(TAG, "Remove DestinationAddView id=" + id);
 				destLayout.removeViewAt(idx);
-
-				// If we removed the last row, re-enable the "+" button on the NEW last row
-				if (idx >= destLayout.getChildCount()) {
-					((DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1)).showAddButton();
-				}
 			} else {
 				Log.e(TAG, "attempt to remove a row that does not exist -- id=" + id);
 			}
@@ -364,13 +309,11 @@ public class DestinationActivity extends FragmentActivity {
 							r.setAddress(place.getAddress());
 							r.setValid();
 
-							if ((getRowIndexById(r.getUUID()) == destLayout.getChildCount() - 1) && (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS - 1)) {
-								r.showAddButton();
-							}
-
 							acceptDestinations(v);
 						} else {
 							r.setInvalid();
+							
+							// TODO Show an error message: couldn't match the query string to a place or address
 						}
 					}
 
@@ -418,43 +361,44 @@ public class DestinationActivity extends FragmentActivity {
 		// If the last row is not empty, add a new row
 		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
 		if (lastRow.getAddressString() != null && lastRow.getAddressString().length() > 0) {
-			// Validate the last row if it has not been validated.  Otherwise, it puts the new row up first, and then validates due to focusChanged.
-			Log.v(TAG, "validating last row before adding new one");
-			final DestinationRowView r = lastRow;
-			
-			// disable the onFocusLost listener just once so it doesn't try to validate twice here
-			r.disableOnFocusLostCallback(true);
+			if (lastRow.needsValidation()) {
+				// Validate the last row if it has not been validated.  Otherwise, it puts the new row up first, and then validates due to focusChanged.
+				Log.v(TAG, "validating last row before adding new one");
+				final DestinationRowView r = lastRow;
+				
+				// disable the onFocusLost listener just once so it doesn't try to validate twice here
+				r.disableOnFocusLostCallback(true);
 
-			// do the validation
-			new GooglePlacesQueryTask(mContext) {
+				// do the validation
+				new GooglePlacesQueryTask(mContext) {
 
-				@Override
-				public void onResult(GooglePlace place) {
-					if (place != null && place.getAddress() != null) {
-						r.setAddress(place.getAddress());
-						r.setValid();
-
-						if ((getRowIndexById(r.getUUID()) == destLayout.getChildCount() - 1) && (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS - 1)) {
-							r.showAddButton();
+					@Override
+					public void onResult(GooglePlace place) {
+						if (place != null && place.getAddress() != null) {
+							r.setAddress(place.getAddress());
+							r.setValid();
+							
+							Log.v(TAG, "adding a new destination row");
+							addDestinationRow();
+						} else {
+							r.setInvalid();
 						}
 						
-						Log.v(TAG, "adding a new destination row");
-						addDestinationRow();
-					} else {
-						r.setInvalid();
+						// If the list is full, hide the add button
+						if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
+							addDestButton.setVisibility(View.INVISIBLE);
+						}
 					}
-					
-					// If the list is full, hide the add button
-					if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
-						addDestButton.setVisibility(View.INVISIBLE);
-					}
-				}
 
-				@Override
-				public void onNoSelection() {
-					// Doing nothing leaves it NOT_VALIDATED
-				}
-			}.execute(new GooglePlacesQuery(lastRow.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+					@Override
+					public void onNoSelection() {
+						// Doing nothing leaves it NOT_VALIDATED
+					}
+				}.execute(new GooglePlacesQuery(lastRow.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+			} else {
+				Log.v(TAG, "adding a new destination row");
+				addDestinationRow();
+			}
 		}
 		
 	}
@@ -580,6 +524,15 @@ public class DestinationActivity extends FragmentActivity {
 	  else {
 	    routeOptimized = true;
 	  }
+	}
+	
+	
+	public void showAddButton() {
+		addDestButton.setVisibility(View.VISIBLE);
+	}
+	
+	public void hideAddButton() {
+		addDestButton.setVisibility(View.INVISIBLE);
 	}
 	
 

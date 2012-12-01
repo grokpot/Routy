@@ -13,12 +13,12 @@
         android:singleLine="true" 
         android:ellipsize="end" />
     
-    <Button 
+    <!-- <Button 
         android:id="@+id/button_destination_add" 
         android:layout_width="40dp" 
         android:layout_height="40dp" 
         android:background="@drawable/pos"
-        style="?android:attr/borderlessButtonStyle"/>
+        style="?android:attr/borderlessButtonStyle"/> -->
     
     <Button 
         android:id="@+id/button_destination_remove" 

@@ -30,7 +30,7 @@ public abstract class DestinationRowView extends LinearLayout {
 	private String addressString;
 	private Address address;
 	private EditText editText;
-	private Button addButton;
+//	private Button addButton;
 	private Button removeButton;
 	private boolean ignoreOnFocusLostCallback;
 	private boolean ignoreOnFocusLostCallbackTemp;
@@ -42,7 +42,7 @@ public abstract class DestinationRowView extends LinearLayout {
 	 */
 	public abstract void onRemoveClicked(UUID id);
 	
-	public abstract void onAddClicked(UUID id);
+//	public abstract void onAddClicked(UUID id);
 	
 	public abstract void onFocusLost(UUID id);
 	
@@ -130,17 +130,6 @@ public abstract class DestinationRowView extends LinearLayout {
 			}
 		});
 		
-		addButton = (Button) findViewById(R.id.button_destination_add);
-		addButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Log.v(TAG, "onAddClicked from row with id=" + id);
-				addButton.setVisibility(INVISIBLE);
-				onAddClicked(id);
-			}
-		});
-		
 		removeButton = (Button) findViewById(R.id.button_destination_remove);
 		removeButton.setOnClickListener(new OnClickListener() {
 			
@@ -167,7 +156,6 @@ public abstract class DestinationRowView extends LinearLayout {
 	public void setValid() {
 		editText.setTextColor(getResources().getColor(R.color.White));
 		status = DestinationRowView.VALID;
-		addButton.setVisibility(INVISIBLE);
 	}
 	
 	
@@ -183,7 +171,6 @@ public abstract class DestinationRowView extends LinearLayout {
 	 */
 	public void reset() {
 		editText.setText("");
-		addButton.setVisibility(VISIBLE);
 		status = DestinationRowView.NOT_VALIDATED;
 	}
 	
@@ -195,14 +182,6 @@ public abstract class DestinationRowView extends LinearLayout {
 	
 	public int getStatus() {
 		return status;
-	}
-
-	public void showAddButton() {
-		addButton.setVisibility(VISIBLE);
-	}
-	
-	public void hideAddButton() {
-		addButton.setVisibility(INVISIBLE);
 	}
 
 	public void setAddress(Address address) {
@@ -235,5 +214,9 @@ public abstract class DestinationRowView extends LinearLayout {
 	
 	public void enableOnFocusLostCallback() {
 		ignoreOnFocusLostCallback = false;
+	}
+
+	public boolean needsValidation() {
+		return getStatus() == DestinationRowView.INVALID || getStatus() == DestinationRowView.NOT_VALIDATED;
 	}
 }
