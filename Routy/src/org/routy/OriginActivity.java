@@ -1,30 +1,24 @@
 package org.routy;
 
 import java.io.IOException;
-import java.util.Date;
 import java.util.Locale;
 
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.exception.RoutyException;
-import org.routy.fragment.LoadingDialog;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.fragment.TwoButtonDialog;
 import org.routy.listener.FindUserLocationListener;
-import org.routy.model.AppProperties;
 import org.routy.service.AddressService;
-import org.routy.service.LocationService;
 import org.routy.task.FindUserLocationTask;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Geocoder;
-import android.location.Location;
 import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -43,13 +37,13 @@ public class OriginActivity extends FragmentActivity {
 
 	private FragmentActivity context;
 
-	private LocationService locationService;
 	private AddressService addressService;
 
 	private LocationManager locationManager;
 	private EditText originAddressField;
 	private Button findUserButton;
 	private boolean locating;
+	private boolean originLocated;		// true if the origin was obtained using geolocation (not user entry)
 
 	// shared prefs for origin persistence
 	private SharedPreferences originActivityPrefs;
@@ -59,7 +53,7 @@ public class OriginActivity extends FragmentActivity {
 	private int speak;
 	private int click;
 	private AudioManager audioManager;
-	float volume;
+	private float volume;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -87,7 +81,6 @@ public class OriginActivity extends FragmentActivity {
 		resetLocateButton();
 		locationManager 	= (LocationManager) getSystemService(LOCATION_SERVICE);
 		addressService 		= new AddressService(new Geocoder(this, Locale.getDefault()), false);		// TODO make getting sensor true/false dynamic
-		locationService 	= initLocationService();
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
 
 		// Get persisted origin from shared prefs
@@ -103,87 +96,11 @@ public class OriginActivity extends FragmentActivity {
 	}
 
 
-	/**
-	 * Initializes an instance of {@link LocationService} that can be used to obtain the user's current location.
-	 * @return
-	 */
-	LocationService initLocationService() {
-		return new LocationService(locationManager, AppProperties.LOCATION_ACCURACY_THRESHOLD_M) {
-
-			@Override
-			public void onLocationResult(Location location) {
-				// Reverse geocode the location into an address and populate the TextEdit
-				Date locationUpdated = new Date();
-				locationUpdated.setTime(location.getTime());
-				Log.v(TAG, "Location: " + 
-						"\nLat: " + location.getLatitude() + 
-						"\nLong: " + location.getLongitude() + 
-						"\nProvider: " + location.getProvider() + 
-						"\nAccuracy: " + location.getAccuracy() +
-						"\nTime: " + locationUpdated);
-
-				Address address = null;
-
-				try {
-					address = addressService.getAddressForLocation(location);
-				} catch (AmbiguousAddressException e) {
-					if (e.getAddresses().size() > 0) {
-						address = e.getFirstAddress();
-					}
-				} catch (RoutyException e) {
-					// Display an error to the user...it was already logged
-					Log.e(TAG, "Error reverse geocoding user's location.");
-					showErrorDialog(getResources().getString(R.string.default_error_message));
-				} catch (IOException e) {
-					// TODO Check if they have internet service.  If they don't, tell them.  If they do, show default error message.
-					showErrorDialog("TEMPORARY MSG: Either you don't have and internet connection, or something internally went wrong.");
-				}
-
-				if (address != null) {
-					StringBuilder addressStr = new StringBuilder();
-
-					for (int i = 0; i < address.getMaxAddressLineIndex(); i++) {
-						addressStr.append(address.getAddressLine(i));
-						addressStr.append(", ");
-					}
-					addressStr.append(address.getAddressLine(address.getMaxAddressLineIndex()));
-
-					Log.v(TAG, "Address: " + addressStr.toString());
-					originAddressField.setText(addressStr.toString());		// Sets the current location (obtained from sensors) in the EditText so we can validate when "Done" is clicked
-				} else {
-					Log.e(TAG, "Couldn't reverse geocode the address.");
-					showErrorDialog(getString(R.string.locating_fail_error));
-				}
-				resetLocateButton();
-			}
-
-
-			@Override
-			public void onLocationSearchTimeout() {
-				Log.e(TAG, "Getting user location timed out.");
-				if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-					showErrorDialog(getResources().getString(R.string.locating_fail_error));
-					resetLocateButton();
-				} else {
-					Log.e(TAG, "GPS was not enabled...going to ask the user if they want to enable it.");
-					showEnableGpsDialog(getResources().getString(R.string.enable_gps_prompt));
-				}
-
-			}
-		};
-	}
-
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
 		case ENABLE_GPS_REQUEST:
-			try {
-				locationService.getCurrentLocation();
-			} catch (NoLocationProviderException e) {
-				showErrorDialog(getResources().getString(R.string.no_location_provider_error));
-				resetLocateButton();
-			}
+			locate();
 			break;
 		}
 	}
@@ -213,46 +130,56 @@ public class OriginActivity extends FragmentActivity {
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
-		if (!locating) {
-			new FindUserLocationTask(this, new FindUserLocationListener() {
+		locate();
+	}
+	
+	
+	/**
+	 * Kicks off a {@link FindUserLocationTask} to try and obtain the user's location.
+	 */
+	void locate() {
+		new FindUserLocationTask(this, new FindUserLocationListener() {
+			
+			@Override
+			public void onUserLocationFound(Address userLocation) {
+				Log.v(TAG, "got user location: " + userLocation.getAddressLine(0));
 				
-				@Override
-				public void onUserLocationFound(Address userLocation) {
-					Log.v(TAG, "got user location: " + userLocation.getAddressLine(0));
-					
-					if (userLocation != null) {
-						StringBuilder addressStr = new StringBuilder();
+				if (userLocation != null) {
+					StringBuilder addressStr = new StringBuilder();
 
-						for (int i = 0; i < userLocation.getMaxAddressLineIndex(); i++) {
-							addressStr.append(userLocation.getAddressLine(i));
-							addressStr.append(", ");
-						}
-						addressStr.append(userLocation.getAddressLine(userLocation.getMaxAddressLineIndex()));
-
-						Log.v(TAG, "Address: " + addressStr.toString());
-						originAddressField.setText(addressStr.toString());		// Sets the current location (obtained from sensors) in the EditText so we can validate when "Done" is clicked
+					for (int i = 0; i < userLocation.getMaxAddressLineIndex(); i++) {
+						addressStr.append(userLocation.getAddressLine(i));
+						addressStr.append(", ");
 					}
-					resetLocateButton();
+					addressStr.append(userLocation.getAddressLine(userLocation.getMaxAddressLineIndex()));
+
+					Log.v(TAG, "Address: " + addressStr.toString());
+					originAddressField.setText(addressStr.toString());		// Sets the current location (obtained from sensors) in the EditText so we can validate when "Done" is clicked
 				}
+//				resetLocateButton();
+			}
+			
+			@Override
+			public void onTimeout(GpsNotEnabledException e) {
+				Log.v(TAG, "getting user location timed out and gps was " + (e == null ? "not enabled" : "enabled"));
 				
-				@Override
-				public void onTimeout(GpsNotEnabledException e) {
-					Log.v(TAG, "getting user location timed out and gps was " + (e == null ? "not enabled" : "enabled"));
-					
+				showErrorDialog(getResources().getString(R.string.locating_fail_error));
+			}
+			
+			@Override
+			public void onFailure(Throwable t) {
+				Log.v(TAG, "failed getting user location");
+				try {
+					throw t;
+				} catch (NoLocationProviderException e) {
+					Log.e(TAG, "GPS was disabled, going to ask the user to enable it and then try again");
+					showEnableGpsDialog();
+				} catch (Throwable e) {
+					Log.e(TAG, "don't know why we couldn't obtain a location...");
 					showErrorDialog(getResources().getString(R.string.locating_fail_error));
 				}
-				
-				@Override
-				public void onFailure(Throwable t) {
-					// TODO record this error better
-					Log.v(TAG, "failed getting user location");
-					showErrorDialog(getResources().getString(R.string.locating_fail_error));
-				}
-			}).execute(0);
-		} else {
-			locationService.stop();
-			resetLocateButton();
-		}
+			}
+		}).execute(0);
 	}
 
 
@@ -306,6 +233,7 @@ public class OriginActivity extends FragmentActivity {
 		}
 	}
 
+	
 	/**
 	 *  Saves the validated origin in shared preferences, saves user time when using Routy next.
 	 */
@@ -313,19 +241,6 @@ public class OriginActivity extends FragmentActivity {
 		SharedPreferences.Editor ed = originActivityPrefs.edit();
 		ed.putString("saved_origin_string", originAddressField.getText().toString());
 		ed.commit();	
-	}
-
-
-	/**
-	 * Displays a {@link LoadingDialog}.  Use this to entertain the user while we find their location.
-	 * 
-	 */
-	private LoadingDialog showLoadingDialog() {
-		Log.v(TAG, "showing loading dialog");
-		LoadingDialog dialog = new LoadingDialog(getResources().getString(R.string.default_loading_message));
-		dialog.show(context.getSupportFragmentManager(), TAG);
-		
-		return dialog;
 	}
 
 
@@ -354,8 +269,8 @@ public class OriginActivity extends FragmentActivity {
 	 * 
 	 * @param message
 	 */
-	private void showEnableGpsDialog(String message) {
-		TwoButtonDialog dialog = new TwoButtonDialog(getResources().getString(R.string.error_message_title), message) {
+	private void showEnableGpsDialog() {
+		TwoButtonDialog dialog = new TwoButtonDialog(getResources().getString(R.string.error_message_title), getResources().getString(R.string.enable_gps_prompt)) {
 
 			@Override
 			public void onRightButtonClicked(DialogInterface dialog, int which) {
@@ -371,6 +286,7 @@ public class OriginActivity extends FragmentActivity {
 			@Override
 			public void onLeftButtonClicked(DialogInterface dialog, int which) {
 				dialog.dismiss();
+				showErrorDialog(getResources().getString(R.string.locating_fail_error));
 			}
 		};
 		dialog.show(context.getSupportFragmentManager(), TAG);
@@ -398,6 +314,6 @@ public class OriginActivity extends FragmentActivity {
 			sounds = null; 
 		} 
 
-		locationService.stop();
+//		locationService.stop();
 	}
 }

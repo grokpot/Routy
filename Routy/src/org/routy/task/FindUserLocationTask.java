@@ -148,6 +148,8 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 		super.onCancelled();
 		
 		Log.v(TAG, "cancelled");
+		
+		progressDialog.dismiss();
 		locService.stop();
 	}
 	
