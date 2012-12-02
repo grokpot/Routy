@@ -24,6 +24,8 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -43,7 +45,7 @@ public class OriginActivity extends FragmentActivity {
 	private EditText originAddressField;
 	private Button findUserButton;
 	private boolean locating;
-	private boolean originLocated;		// true if the origin was obtained using geolocation (not user entry)
+	private boolean originIsValid;		// true if the origin was obtained using geolocation (not user entry)
 
 	// shared prefs for origin persistence
 	private SharedPreferences originActivityPrefs;
@@ -82,6 +84,7 @@ public class OriginActivity extends FragmentActivity {
 		locationManager 	= (LocationManager) getSystemService(LOCATION_SERVICE);
 		addressService 		= new AddressService(new Geocoder(this, Locale.getDefault()), false);		// TODO make getting sensor true/false dynamic
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
+		originIsValid		= false;
 
 		// Get persisted origin from shared prefs
 		String storedOrigin = originActivityPrefs.getString("saved_origin_string", null);
@@ -92,6 +95,23 @@ public class OriginActivity extends FragmentActivity {
 		} else {
 			originAddressField.setText(storedOrigin);
 		}
+		originAddressField.addTextChangedListener(new TextWatcher() {
+			
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				originIsValid = false;
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+				// nothing
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				// nothing
+			}
+		});
 		
 		// TODO: for testing purposes. Remove before prod.
 		showNoobDialog();
@@ -99,7 +119,7 @@ public class OriginActivity extends FragmentActivity {
 		boolean noobCookie = originActivityPrefs.getBoolean("noob_cookie", false);
 		if (!noobCookie){
 			showNoobDialog();
-			userAintANoob();
+			userAintANoobNomore();
 		}
 
 	}
@@ -123,7 +143,7 @@ public class OriginActivity extends FragmentActivity {
 	/**
 	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
 	 */
-	private void userAintANoob() {
+	private void userAintANoobNomore() {
 		SharedPreferences.Editor ed = originActivityPrefs.edit();
 		ed.putBoolean("noob_cookie", true);
 		ed.commit();	
@@ -187,22 +207,23 @@ public class OriginActivity extends FragmentActivity {
 					}
 					addressStr.append(userLocation.getAddressLine(userLocation.getMaxAddressLineIndex()));
 
+					originIsValid = true;
+					
 					Log.v(TAG, "Address: " + addressStr.toString());
 					originAddressField.setText(addressStr.toString());		// Sets the current location (obtained from sensors) in the EditText so we can validate when "Done" is clicked
 				}
-//				resetLocateButton();
 			}
 			
 			@Override
 			public void onTimeout(GpsNotEnabledException e) {
-				Log.v(TAG, "getting user location timed out and gps was " + (e == null ? "not enabled" : "enabled"));
+				Log.e(TAG, "getting user location timed out and gps was " + (e == null ? "not enabled" : "enabled"));
 				
 				showErrorDialog(getResources().getString(R.string.locating_fail_error));
 			}
 			
 			@Override
 			public void onFailure(Throwable t) {
-				Log.v(TAG, "failed getting user location");
+				Log.e(TAG, "failed getting user location");
 				try {
 					throw t;
 				} catch (NoLocationProviderException e) {
@@ -234,35 +255,37 @@ public class OriginActivity extends FragmentActivity {
 		if (originAddressField.getText() == null || originAddressField.getText().length() == 0) {
 			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
 		} else {
-			// Validate the given address string
-			Address originAddress = null;
-			try {
-				originAddress = addressService.getAddressForLocationString(originAddressField.getText().toString());
-			} catch (AmbiguousAddressException e) {
-				Log.d(TAG, "Got more than one result for the given origin address.  We'll use the first one.");
-				originAddress = e.getFirstAddress();
-			} catch (RoutyException e) {
-				// Display an error to the user...it was already logged
-				Log.e(TAG, "Error getting an Address object for origin address.");
-				showErrorDialog(getResources().getString(R.string.default_error_message));
-			} catch (IOException e) {
-				// TODO Check if they have internet service.  If they don't, tell them.  If they do, show default error message.
+			if (!originIsValid) {
+				// Validate the given address string
+				Address originAddress = null;
+				try {
+					originAddress = addressService.getAddressForLocationString(originAddressField.getText().toString());
+				} catch (AmbiguousAddressException e) {
+					Log.d(TAG, "Got more than one result for the given origin address.  We'll use the first one.");
+					originAddress = e.getFirstAddress();
+				} catch (RoutyException e) {
+					// Display an error to the user...it was already logged
+					Log.e(TAG, "Error getting an Address object for origin address.");
+					showErrorDialog(getResources().getString(R.string.default_error_message));
+				} catch (IOException e) {
+					// TODO Check if they have internet service.  If they don't, tell them.  If they do, show default error message.
 
-				showErrorDialog("TEMPORARY MSG: Either you don't have and internet connection, or something internally went wrong.");
-			}
+					showErrorDialog("TEMPORARY MSG: Either you don't have and internet connection, or something internally went wrong.");
+				}
 
-			if (originAddress != null) {
-				Log.v(TAG, "Validated origin address: " + originAddress.getFeatureName());
+				if (originAddress != null) {
+					Log.v(TAG, "Validated origin address: " + originAddress.getFeatureName());
 
-				saveOriginInSharedPrefs();
+					saveOriginInSharedPrefs();
 
-				// Origin address is good...move on to Destinations
-				Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
-				destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
-				startActivity(destinationIntent);
-			} else {
-				//    			Toast.makeText(this, getString(R.string.origin_failed_validate), Toast.LENGTH_LONG).show();	// XXX temp
-				showErrorDialog(getResources().getString(R.string.bad_origin_address_error));
+					// Origin address is good...move on to Destinations
+					Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
+					destinationIntent.putExtra("origin", originAddress);	// Android Address is Parcelable, so no need for Bundle
+					startActivity(destinationIntent);
+				} else {
+					//    			Toast.makeText(this, getString(R.string.origin_failed_validate), Toast.LENGTH_LONG).show();	// XXX temp
+					showErrorDialog(getResources().getString(R.string.bad_origin_address_error));
+				}
 			}
 		}
 	}
