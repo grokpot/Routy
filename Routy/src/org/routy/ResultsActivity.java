@@ -94,7 +94,7 @@ public class ResultsActivity extends FragmentActivity {
 	 * @param message
 	 */
 	private void showNoobDialog() {
-		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.origin_noob_title), getResources().getString(R.string.origin_noob_instructions)) {
+		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.results_noob_title), getResources().getString(R.string.results_noob_instructions)) {
 			@Override
 			public void onButtonClicked(DialogInterface dialog, int which) {
 				dialog.dismiss();
