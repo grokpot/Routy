@@ -4,12 +4,16 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 
+import org.routy.fragment.OneButtonDialog;
 import org.routy.model.Route;
 import org.routy.view.DestinationRowView;
 import org.routy.view.ResultsSegmentView;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Address;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -26,8 +30,12 @@ import android.widget.TextView;
 
 public class ResultsActivity extends FragmentActivity {
 
+	// TODO: consolidate these? I don't know the difference here - Ryan
+	private FragmentActivity context;
 	Context mContext;
 
+	private SharedPreferences resultsActivityPrefs;
+	
 	// The Route sent by DestinationActivity
 	Route route;
 
@@ -37,7 +45,6 @@ public class ResultsActivity extends FragmentActivity {
 
 	private SoundPool sounds;
 	private int click;
-
 	AudioManager audioManager;
 	float volume;
 
@@ -45,6 +52,7 @@ public class ResultsActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		context  = this;
 		mContext = this;
 
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -67,6 +75,41 @@ public class ResultsActivity extends FragmentActivity {
 		}
 
 		buildResultsView();
+		
+		resultsActivityPrefs = getSharedPreferences("results_prefs", MODE_PRIVATE);
+		// TODO: for testing purposes. Remove before prod.
+		showNoobDialog();
+		// First-time user dialog cookie
+		boolean noobCookie = resultsActivityPrefs.getBoolean("noob_cookie", false);
+		if (!noobCookie){
+			showNoobDialog();
+			userAintANoob();
+		}
+	}
+	
+	
+	/**
+	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.
+	 * 
+	 * @param message
+	 */
+	private void showNoobDialog() {
+		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.origin_noob_title), getResources().getString(R.string.origin_noob_instructions)) {
+			@Override
+			public void onButtonClicked(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		};
+		dialog.show(context.getSupportFragmentManager(), TAG);
+	}
+	
+	/**
+	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
+	 */
+	private void userAintANoob() {
+		SharedPreferences.Editor ed = resultsActivityPrefs.edit();
+		ed.putBoolean("noob_cookie", true);
+		ed.commit();	
 	}
 
 	// Dynamically build the results screen by building a ResultsRowView, which inflates view_result_segment

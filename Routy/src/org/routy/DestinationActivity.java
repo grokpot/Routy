@@ -140,6 +140,42 @@ public class DestinationActivity extends FragmentActivity {
 		Button buttonTestDefaults = (Button) findViewById(R.id.button_test_defaults);
 		buttonTestDefaults.setText("Test Default Destinations");
 		buttonTestDefaults.setOnClickListener(listenerTestDefaults);
+		
+		
+		// TODO: for testing purposes. Remove before prod.
+		showNoobDialog();
+		// First-time user dialog cookie
+		boolean noobCookie = destinationActivityPrefs.getBoolean("noob_cookie", false);
+		if (!noobCookie){
+			showNoobDialog();
+			userAintANoob();
+		}
+		
+	}
+	
+	
+	/**
+	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.
+	 * 
+	 * @param message
+	 */
+	private void showNoobDialog() {
+		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.destination_noob_title), getResources().getString(R.string.destination_noob_instructions)) {
+			@Override
+			public void onButtonClicked(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		};
+		dialog.show(mContext.getSupportFragmentManager(), TAG);
+	}
+	
+	/**
+	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
+	 */
+	private void userAintANoob() {
+		SharedPreferences.Editor ed = destinationActivityPrefs.edit();
+		ed.putBoolean("noob_cookie", true);
+		ed.commit();	
 	}
 
 
