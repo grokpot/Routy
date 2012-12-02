@@ -59,17 +59,17 @@ public class OriginActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		// Audio stuff
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
 		speak = sounds.load(this, R.raw.routyspeak, 1);  
-
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
 
 		setContentView(R.layout.activity_origin);
 
+		// More audio stuff. 
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(speak, volume, volume, 1, 0, 1);
@@ -85,7 +85,6 @@ public class OriginActivity extends FragmentActivity {
 
 		// Get persisted origin from shared prefs
 		String storedOrigin = originActivityPrefs.getString("saved_origin_string", null);
-
 		// If there wasn't a stored origin, set the hint text
 		if (null == storedOrigin){
 			originAddressField.setHint(R.string.origin_hint);
@@ -93,6 +92,41 @@ public class OriginActivity extends FragmentActivity {
 		} else {
 			originAddressField.setText(storedOrigin);
 		}
+		
+		// TODO: for testing purposes. Remove before prod.
+		showNoobDialog();
+		// First-time user dialog cookie
+		boolean noobCookie = originActivityPrefs.getBoolean("noob_cookie", false);
+		if (!noobCookie){
+			showNoobDialog();
+			userAintANoob();
+		}
+
+	}
+	
+	
+	/**
+	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.
+	 * 
+	 * @param message
+	 */
+	private void showNoobDialog() {
+		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.origin_noob_title), getResources().getString(R.string.origin_noob_instructions)) {
+			@Override
+			public void onButtonClicked(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		};
+		dialog.show(context.getSupportFragmentManager(), TAG);
+	}
+	
+	/**
+	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
+	 */
+	private void userAintANoob() {
+		SharedPreferences.Editor ed = originActivityPrefs.edit();
+		ed.putBoolean("noob_cookie", true);
+		ed.commit();	
 	}
 
 
