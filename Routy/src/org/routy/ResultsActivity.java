@@ -1,5 +1,6 @@
 package org.routy;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.UUID;
 
@@ -118,7 +119,14 @@ public class ResultsActivity extends FragmentActivity {
 		}
 
 		TextView text_total_distance = (TextView) findViewById(R.id.textview_total_distance);
-		text_total_distance.setText(getString(R.string.total_distance) + ((double) route.getTotalDistance()) / 1000 + "km");
+		String truncatedDistanceInMiles = convertMetersToMiles(route.getTotalDistance());
+		text_total_distance.setText(getString(R.string.total_distance) + truncatedDistanceInMiles + " miles");
+	}
+
+	private String convertMetersToMiles(int distanceInMeters) {
+		final double MILE_RATIO 	= 0.000621371;
+		double distanceInMiles 		= distanceInMeters * MILE_RATIO; 
+		return new DecimalFormat("#.##").format(distanceInMiles);
 	}
 
 	@Override
