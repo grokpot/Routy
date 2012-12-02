@@ -1,14 +1,11 @@
 package org.routy.task;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
 
-import org.routy.R;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
-import org.routy.exception.RoutyException;
 import org.routy.listener.FindUserLocationListener;
 import org.routy.model.AppProperties;
 import org.routy.service.AddressService;
@@ -17,7 +14,6 @@ import org.routy.service.LocationService;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -58,6 +54,8 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 	protected void onPreExecute() {
 //		progressDialog = ProgressDialog.show(context, "Routy", "Hang tight!", true, true, onCancelListener);
 
+		Log.v(TAG, "preExecute -- address is " + (address==null?"null":"not null"));
+		
 		progressDialog = new ProgressDialog(context);
 		progressDialog.setTitle("Routy");
 		progressDialog.setMessage("Hang tight!");
@@ -67,6 +65,9 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				progressDialog.cancel();
+				
+				Log.v(TAG, "progress dialog cancelled");
+				FindUserLocationTask.this.cancel(true);
 			}
 		});
 		progressDialog.setIndeterminate(true);
@@ -79,12 +80,14 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 
 			@Override
 			public void onLocationResult(Location location) {
+				Log.v(TAG, "got a location result...trying to reverse geocode it");
 				// Reverse geocode the location into an address and populate the TextEdit
 				Date locationUpdated = new Date();
 				locationUpdated.setTime(location.getTime());
 
 				try {
 					address = addressService.getAddressForLocation(location);
+					
 				} catch (AmbiguousAddressException e) {
 					if (e.getAddresses().size() > 0) {
 						address = e.getFirstAddress();
@@ -92,7 +95,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 				} catch (Exception e) {
 					// Display an error to the user...it was already logged
 					Log.e(TAG, "Error reverse geocoding user's location.");
-					progressDialog.dismiss();
+					progressDialog.cancel();
 					listener.onFailure(e);
 					cancel(true);
 				}
@@ -101,13 +104,14 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 
 			@Override
 			public void onLocationSearchTimeout() {
+				Log.v(TAG, "onLocationSearchTimeout");
 				GpsNotEnabledException e = null;
 				
 				if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
 					e = new GpsNotEnabledException("GPS is not enabled.");
 				}
 				
-				progressDialog.dismiss();
+				progressDialog.cancel();
 				listener.onTimeout(e);
 				cancel(true);
 			}
@@ -117,15 +121,19 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 			locService.getCurrentLocation();
 		} catch (NoLocationProviderException e) {
 			listener.onFailure(e);
-			cancel(true);
+			super.cancel(true);
 		}
 	}
 	
 
 	@Override
 	protected Address doInBackground(Integer... params) {
+		Log.v(TAG, "doInBackground()");
+		
 		while (address == null) {
-			
+			if (isCancelled()) {
+				break;
+			}
 		}
 		
 		Log.v(TAG, "out of the loop");
@@ -134,27 +142,36 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 	
 	
 	@Override
+	protected void onCancelled(Address address) {
+		Log.v(TAG, "onCancelled called");
+		
+		progressDialog.cancel();
+		locService.stop();
+	}
+	
+	
+	@Override
 	protected void onPostExecute(Address userLocation) {
-		Log.v(TAG, "got user location");
+		Log.v(TAG, "postExecute() -- got user location");
 		if (progressDialog.isShowing()) {
-			progressDialog.dismiss();
+			progressDialog.cancel();
 		}
 		listener.onUserLocationFound(userLocation);
 	}
 	
 	
-	@Override
+	/*@Override
 	protected void onCancelled() {
 		super.onCancelled();
 		
 		Log.v(TAG, "cancelled");
 		
-		progressDialog.dismiss();
+		progressDialog.cancel();
 		locService.stop();
-	}
+	}*/
 	
 	
-	private OnCancelListener onCancelListener = new OnCancelListener() {
+	/*private OnCancelListener onCancelListener = new OnCancelListener() {
 		
 		@Override
 		public void onCancel(DialogInterface dialog) {
@@ -162,6 +179,6 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 			
 			FindUserLocationTask.this.cancel(true);
 		}
-	};
+	};*/
 
 }

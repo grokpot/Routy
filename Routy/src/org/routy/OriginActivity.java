@@ -44,6 +44,7 @@ public class OriginActivity extends FragmentActivity {
 	private LocationManager locationManager;
 	private EditText originAddressField;
 	private Button findUserButton;
+	private Address origin;
 	private boolean locating;
 	private boolean originIsValid;		// true if the origin was obtained using geolocation (not user entry)
 
@@ -78,23 +79,8 @@ public class OriginActivity extends FragmentActivity {
 
 		// Initializations
 		context 			= this;
+		
 		originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
-		findUserButton 		= (Button) findViewById(R.id.find_user_button);
-		resetLocateButton();
-		locationManager 	= (LocationManager) getSystemService(LOCATION_SERVICE);
-		addressService 		= new AddressService(new Geocoder(this, Locale.getDefault()), false);		// TODO make getting sensor true/false dynamic
-		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
-		originIsValid		= false;
-
-		// Get persisted origin from shared prefs
-		String storedOrigin = originActivityPrefs.getString("saved_origin_string", null);
-		// If there wasn't a stored origin, set the hint text
-		if (null == storedOrigin){
-			originAddressField.setHint(R.string.origin_hint);
-			// Else set the EditText
-		} else {
-			originAddressField.setText(storedOrigin);
-		}
 		originAddressField.addTextChangedListener(new TextWatcher() {
 			
 			@Override
@@ -112,7 +98,24 @@ public class OriginActivity extends FragmentActivity {
 				// nothing
 			}
 		});
+
+		findUserButton 		= (Button) findViewById(R.id.find_user_button);
+//		resetLocateButton();
+		locationManager 	= (LocationManager) getSystemService(LOCATION_SERVICE);
+		addressService 		= new AddressService(new Geocoder(this, Locale.getDefault()), false);		// TODO make getting sensor true/false dynamic
 		
+		origin				= null;
+		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
+		originIsValid		= false;
+
+		restoreSavedOrigin(savedInstanceState);
+		
+		showInstructions();
+
+	}
+
+
+	private void showInstructions() {
 		// TODO: for testing purposes. Remove before prod.
 		showNoobDialog();
 		// First-time user dialog cookie
@@ -121,7 +124,29 @@ public class OriginActivity extends FragmentActivity {
 			showNoobDialog();
 			userAintANoobNomore();
 		}
+	}
 
+
+	private void restoreSavedOrigin(Bundle savedInstanceState) {
+		if (savedInstanceState != null) {
+			// Get the origin as an Address object
+			origin = (Address) savedInstanceState.get("origin_address");
+			if (origin != null) {
+				Log.v(TAG, "got the restored origin address");
+			}
+		}
+		
+		// TODO remove this when origin is saved in Bundle
+		/*// Get persisted origin from shared prefs
+		String storedOrigin = originActivityPrefs.getString("saved_origin_string", null);
+		// If there wasn't a stored origin, set the hint text
+		if (null == storedOrigin){
+			originAddressField.setHint(R.string.origin_hint);
+			// Else set the EditText
+		} else {
+			originAddressField.setText(storedOrigin);
+		}*/
+		
 	}
 	
 	
@@ -167,10 +192,10 @@ public class OriginActivity extends FragmentActivity {
 	}
 
 
-	private void resetLocateButton() {
+	/*private void resetLocateButton() {
 		findUserButton.setText(R.string.find_user_prompt);
 		locating = false;
-	}
+	}*/
 
 
 	/**
@@ -199,7 +224,23 @@ public class OriginActivity extends FragmentActivity {
 				Log.v(TAG, "got user location: " + userLocation.getAddressLine(0));
 				
 				if (userLocation != null) {
-					StringBuilder addressStr = new StringBuilder();
+					origin = userLocation;
+					originIsValid = true;
+					
+					String street = origin.getMaxAddressLineIndex() > 0 ? (origin.getAddressLine(0)) : "";
+					String city = origin.getLocality();
+					String state = origin.getAdminArea();
+					
+					String addressStr = String.format("%s %s %s", street, city, state);
+					
+					Bundle extras = new Bundle();
+					extras.putString("formatted_address", addressStr);
+					origin.setExtras(extras);
+					
+					originAddressField.setText(addressStr);
+					
+					// TODO remove this when origin validation is handle correctly
+					/*StringBuffer addressStr = new StringBuffer();
 
 					for (int i = 0; i < userLocation.getMaxAddressLineIndex(); i++) {
 						addressStr.append(userLocation.getAddressLine(i));
@@ -207,10 +248,8 @@ public class OriginActivity extends FragmentActivity {
 					}
 					addressStr.append(userLocation.getAddressLine(userLocation.getMaxAddressLineIndex()));
 
-					originIsValid = true;
-					
 					Log.v(TAG, "Address: " + addressStr.toString());
-					originAddressField.setText(addressStr.toString());		// Sets the current location (obtained from sensors) in the EditText so we can validate when "Done" is clicked
+					originAddressField.setText(addressStr.toString());*/		// Sets the current location (obtained from sensors) in the EditText so we can validate when "Done" is clicked
 				}
 			}
 			
@@ -247,16 +286,38 @@ public class OriginActivity extends FragmentActivity {
 	public void goToDestinationsScreen(View view) {
 		// validate the origin address, store it, and move on to the destinations screen
 		Log.v(TAG, "Origin entered: " + originAddressField.getText());
+		
+		// TODO debugging...remove for prod
+		if (origin == null) {
+			Log.d(TAG, "origin object is null");
+		} else {
+			Log.d(TAG, "got an origin object");
+			
+			if (origin.getExtras() == null) {
+				Log.d(TAG, "origin extras is null");
+			} else {
+				Log.d(TAG, "origin has extras");
+			}
+		}
+		
 
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
-		if (originAddressField.getText() == null || originAddressField.getText().length() == 0) {
+		if (!originIsValid) {
+			Log.d(TAG, "origin needs to be validated");
+		}
+		
+		if (!originIsValid && (originAddressField.getText() == null || originAddressField.getText().length() == 0)) {
 			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
 		} else {
 			if (!originIsValid) {
+				// TODO use GooglePlacesQueryTask to do this...
+				
+				
 				// Validate the given address string
+				Log.v(TAG, "validating the origin address before going to destinations screen");
 				Address originAddress = null;
 				try {
 					originAddress = addressService.getAddressForLocationString(originAddressField.getText().toString());
@@ -296,6 +357,7 @@ public class OriginActivity extends FragmentActivity {
 	 */
 	private void saveOriginInSharedPrefs() {
 		SharedPreferences.Editor ed = originActivityPrefs.edit();
+		ed.putString("saved_origin_address", "");
 		ed.putString("saved_origin_string", originAddressField.getText().toString());
 		ed.commit();	
 	}
@@ -354,11 +416,17 @@ public class OriginActivity extends FragmentActivity {
 		super.onResume(); 
 
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
-
 		speak = sounds.load(this, R.raw.routyspeak, 1);  
-
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
+		
+		/*//Restore the origin address text to the EditText field
+		if (origin != null && origin.getExtras() != null) {
+			String addressStr = origin.getExtras().getString("formatted_address");
+			if (addressStr != null) {
+				originAddressField.setText(addressStr);
+			}
+		}*/
 	}
 
 
@@ -370,7 +438,14 @@ public class OriginActivity extends FragmentActivity {
 			sounds.release(); 
 			sounds = null; 
 		} 
-
-//		locationService.stop();
+	}
+	
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		super.onSaveInstanceState(outState);
+		
+		outState.putParcelable("origin_address", origin);
+		Log.v(TAG, "saved the origin object");
 	}
 }

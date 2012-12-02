@@ -10,7 +10,7 @@ package org.routy.model;
 public class AppProperties {
 
 	/** The minimum accuracy required to achieve a "good" location fix in meters. */
-	public static final double LOCATION_ACCURACY_THRESHOLD_M = 50;
+	public static final double LOCATION_ACCURACY_THRESHOLD_M = 10;//50;
 	
 	/** The amount of time before the last known location provided by Android is deemed "stale" */
 	public static final double LOCATION_EXPIRE_TIME_MS = 0;//300000;

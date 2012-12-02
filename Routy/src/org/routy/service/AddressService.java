@@ -91,6 +91,7 @@ public class AddressService {
 	 * @throws RoutyException 
 	 */
 	public Address getAddressForLocation(Location location) throws RoutyException, IOException, AmbiguousAddressException {
+		Log.v(TAG, "getting address for a location");
 		return getAddressForCoordinates(location.getLatitude(), location.getLongitude());
 	}
 	
