@@ -59,13 +59,14 @@
         <Button
             android:id="@+id/button_destination_add_new"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="40dp"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginRight="2dp"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/pos"
-            android:onClick="onAddDestinationClicked" />
+            android:drawableLeft="@drawable/pos"
+            android:drawablePadding="15dp"
+            android:onClick="onAddDestinationClicked"
+            android:text="Add a destination"
+            android:textStyle="bold" />
 
         <LinearLayout
             android:id="@+id/LinearLayout_destinations_buttons"
@@ -92,9 +93,9 @@
                 android:layout_marginTop="15dp"
                 android:gravity="center_horizontal"
                 android:text="@string/toggle_instructions"
-                android:textColor="@color/White"
+                android:textColor="@color/ShitGold"
                 android:textSize="18dp"
-                android:textStyle="bold"
+                android:textStyle="bold|italic"
                 android:typeface="normal" />
 
             <Switch
