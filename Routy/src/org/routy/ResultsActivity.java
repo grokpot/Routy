@@ -24,6 +24,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -46,7 +47,6 @@ public class ResultsActivity extends MapActivity {
 	private MapView					mapView;
 	private MapController			mapController;
 	private ArrayList<GeoPoint> 	geoPoints;
-	private RoutyItemizedOverlay 	itemizedoverlay;
 	private List<Overlay> 			mapOverlays;
 	
 	private SharedPreferences resultsActivityPrefs;
@@ -135,8 +135,7 @@ public class ResultsActivity extends MapActivity {
 		mapView.setBuiltInZoomControls(true);		// Don't let the user do anything to the map, and don't display zoom buttons
 		mapController 		= mapView.getController();
 		mapOverlays 		= mapView.getOverlays();
-		Drawable drawable 	= this.getResources().getDrawable(R.drawable.bluemark1);
-		itemizedoverlay 	= new RoutyItemizedOverlay(drawable);
+		Drawable drawable 	= this.getResources().getDrawable(R.drawable.pin1);
 		geoPoints 			= new ArrayList<GeoPoint>();
 	}
 	
@@ -190,14 +189,15 @@ public class ResultsActivity extends MapActivity {
 			GeoPoint geopoint = new GeoPoint((int) (address.getLatitude() * 1E6), (int) (address.getLongitude() * 1E6));
 			geoPoints.add(geopoint);
 			OverlayItem overlayitem = new OverlayItem(geopoint, address.getFeatureName(), "Location #" + addressIndex);
-			itemizedoverlay.addOverlay(overlayitem);
+			RoutyItemizedOverlay itemizedOverlay = new RoutyItemizedOverlay(Util.getItemizedPin(addressIndex, mContext));
+			itemizedOverlay.addOverlay(overlayitem);
 			
-			// Draw route
-			if (!isLastAddress){
-				Address nextAddress		= route.getAddresses().get(addressIndex + 1);
-				GeoPoint nextGeopoint 	= new GeoPoint((int) (nextAddress.getLatitude() * 1E6), (int) (nextAddress.getLongitude() * 1E6));
-				drawPath(geopoint, nextGeopoint);
-			}
+//			// Draw route
+//			if (!isLastAddress){
+//				Address nextAddress		= route.getAddresses().get(addressIndex + 1);
+//				GeoPoint nextGeopoint 	= new GeoPoint((int) (nextAddress.getLatitude() * 1E6), (int) (nextAddress.getLongitude() * 1E6));
+//				drawPath(geopoint, nextGeopoint);
+//			}
 
 			
 			v = new ResultsSegmentView(mContext, address, addressIndex, isLastAddress) {
@@ -208,7 +208,7 @@ public class ResultsActivity extends MapActivity {
 						volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 						volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 						sounds.play(click, volume, volume, 1, 0, 1);
-	
+							
 						// Get start and end Addresses from route[] - the index is the id in ResultsSegmentView
 						Address startAddress	= route.getAddresses().get(id);
 						Address endAddress 		= route.getAddresses().get(id + 1);
@@ -234,10 +234,10 @@ public class ResultsActivity extends MapActivity {
 			};
 
 			resultsLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+			mapOverlays.add(itemizedOverlay);
 		}
 		
 		zoomToOverlays(geoPoints);
-		mapOverlays.add(itemizedoverlay);
 
 		TextView text_total_distance = (TextView) findViewById(R.id.textview_total_distance);
 		String truncatedDistanceInMiles = convertMetersToMiles(route.getTotalDistance());

@@ -5,8 +5,9 @@
 
     <TextView
         android:id="@+id/textview_results_segment"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="fill_parent"
+        android:drawablePadding="20dp"
         android:ellipsize="end"
         android:gravity="center_horizontal|center_vertical"
         android:singleLine="true"
@@ -20,6 +21,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="20dp"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="20dp"
+        android:textStyle="bold" />
 
 </LinearLayout>

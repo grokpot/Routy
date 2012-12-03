@@ -15,6 +15,7 @@ import com.google.android.maps.Projection;
 
 public class RoutyItemizedOverlay extends ItemizedOverlay{
 	
+	int color;	
 
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
 	
@@ -35,6 +36,6 @@ public class RoutyItemizedOverlay extends ItemizedOverlay{
 	@Override
 	public int size() {
 	  return mOverlays.size();
-	}
+	}  
 
 }

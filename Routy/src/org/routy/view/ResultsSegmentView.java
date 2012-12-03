@@ -3,11 +3,13 @@ package org.routy.view;
 import java.util.UUID;
 
 import org.routy.R;
+import org.routy.Util;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -60,6 +62,8 @@ public abstract class ResultsSegmentView extends LinearLayout{
 		
 		segmentText		= (TextView) findViewById(R.id.textview_results_segment);
 		segmentText.setText(addressText);
+		// Set respective pin as drawable-left for above TextView 
+		segmentText.setCompoundDrawablesWithIntrinsicBounds(Util.getItemizedTag(id, context), null, null, null);
 		
 		segmentButton	= (Button) findViewById(R.id.button_results_segment);
 		segmentButton.setText(context.getString(R.string.view_segment));
@@ -74,7 +78,6 @@ public abstract class ResultsSegmentView extends LinearLayout{
 				onSegmentClicked(id, isLastAddress);
 			}
 		});
-
 	}
 	
 }

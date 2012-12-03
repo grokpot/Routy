@@ -9,6 +9,8 @@ import java.util.Locale;
 
 import org.routy.view.DestinationRowView;
 
+import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.os.Bundle;
 import android.util.JsonReader;
@@ -176,7 +178,47 @@ public class Util {
 		} catch (IOException e) {
 			Log.e(TAG, e.getMessage() + "-- IOException reading JSON address");
 		}
-		
 		return null;
 	}
+	
+	
+	public static Drawable getItemizedPin(int index, Context context){
+		Drawable drawable = null;
+		switch(index){
+			case 0: 	drawable = context.getResources().getDrawable(R.drawable.pinhome2);
+					break;
+			case 1: 	drawable = context.getResources().getDrawable(R.drawable.pin1);
+					break;
+			case 2: 	drawable = context.getResources().getDrawable(R.drawable.pin2);
+					break;
+			case 3: 	drawable = context.getResources().getDrawable(R.drawable.pin3);
+					break;
+			case 4: 	drawable = context.getResources().getDrawable(R.drawable.pin4);
+					break;
+			case 5: 	drawable = context.getResources().getDrawable(R.drawable.pin5);
+					break;
+		}
+		return drawable;
+	}
+	
+	
+	public static Drawable getItemizedTag(int index, Context context){
+		Drawable drawable = null;
+		switch(index){
+			case 0: 	drawable = context.getResources().getDrawable(R.drawable.taghome2);
+					break;
+			case 1: 	drawable = context.getResources().getDrawable(R.drawable.tag1);
+					break;
+			case 2: 	drawable = context.getResources().getDrawable(R.drawable.tag2);
+					break;
+			case 3: 	drawable = context.getResources().getDrawable(R.drawable.tag3);
+					break;
+			case 4: 	drawable = context.getResources().getDrawable(R.drawable.tag4);
+					break;
+			case 5: 	drawable = context.getResources().getDrawable(R.drawable.tag5);
+					break;
+		}
+		return drawable;
+	}
+	
 }
