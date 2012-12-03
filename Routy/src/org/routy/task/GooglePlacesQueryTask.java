@@ -9,6 +9,8 @@ import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.service.GooglePlacesService;
 
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -18,6 +20,7 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 	private final String TAG = "GooglePlacesQueryTask";
 	
 	private FragmentActivity fragmentActivity;
+	private ProgressDialog progressDialog;
 	
 	public abstract void onResult(GooglePlace place);
 	public abstract void onNoSelection();
@@ -27,6 +30,20 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 		
 		this.fragmentActivity = fragmentActivity;
 	}
+	
+	
+	@Override
+	protected void onPreExecute() {
+		progressDialog = new ProgressDialog(fragmentActivity);
+		progressDialog.setTitle("Hang Tight!");
+		progressDialog.setMessage("Checking that address or place name...");
+		progressDialog.setCancelable(false);
+		progressDialog.setCanceledOnTouchOutside(false);
+		progressDialog.setIndeterminate(true);
+		progressDialog.setCancelable(false);
+		progressDialog.show();
+	}
+	
 	
 	@Override
 	protected List<GooglePlace> doInBackground(GooglePlacesQuery... params) {
@@ -51,12 +68,24 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 	
 	@Override
 	protected void onPostExecute(List<GooglePlace> results) {
+		if (progressDialog.isShowing()) {
+			progressDialog.cancel();
+		}
+		
 		if (results == null || results.size() < 1) {
 			onResult(null);
 		} else if (results.size() == 1) {
 			onResult(results.get(0));
 		} else if (results.size() > 1) {
 			showMultiResultsPickerDialog(results);
+		}
+	}
+	
+	
+	@Override
+	protected void onCancelled(List<GooglePlace> results) {
+		if (progressDialog.isShowing()) {
+			progressDialog.cancel();
 		}
 	}
 	
