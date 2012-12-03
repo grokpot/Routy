@@ -54,7 +54,7 @@ public class MapRoute {
 	        szUrl += "&destination=" + (endPoint.getLatitudeE6()/1e6) + "," + (endPoint.getLongitudeE6()/1e6);
 	        szUrl += "&sensor=true";
 
-	        HttpClient oHttp = HttpClient.getInstance();
+	        /*HttpClient oHttp = HttpClient.getInstance();
 	        String szXml = oHttp.doGet(szUrl,"");
 
 	        try{
@@ -105,7 +105,7 @@ public class MapRoute {
 	        catch(Exception e){
 	            e.printStackTrace();
 	            haRoute.post(ruFetchError);
-	        }
+	        }*/
 
 
 	        if(geoPoints.size() == 0)
