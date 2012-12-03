@@ -2,8 +2,6 @@ package org.routy.model;
 
 import java.util.List;
 
-import org.routy.service.DistanceMatrixService;
-
 import android.location.Address;
 
 public class RouteRequest {

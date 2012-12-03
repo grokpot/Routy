@@ -14,6 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.routy.Util;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.GeocoderAPIException;
 import org.routy.exception.NoInternetConnectionException;
@@ -176,25 +177,50 @@ public class AddressService {
 		if (results != null && results.size() > 0) {
 			if (results.size() == 1) {
 				Address result = results.get(0);
-				
-				Bundle extras = new Bundle();
-				StringBuffer formattedAddress = new StringBuffer();
-				for (int i = 0; i < result.getMaxAddressLineIndex(); i++) {
-					formattedAddress.append(result.getAddressLine(i));
-					formattedAddress.append(", ");
-				}
-				formattedAddress.append(result.getAddressLine(result.getMaxAddressLineIndex()));
-				extras.putString("formatted_address", formattedAddress.toString());
-				result.setExtras(extras);
-				
+				Util.formatAddress(result);
 				return result;
 			} else {
+				for (Address a : results) {
+					Util.formatAddress(a);
+				}
 				throw new AmbiguousAddressException(results);
 			}
 		}
 		
 		return null;
 	}
+
+
+	/*private void formatAddress(Address result) {
+		Bundle extras = new Bundle();
+		StringBuffer formattedAddress = new StringBuffer();
+		for (int i = 0; i < result.getMaxAddressLineIndex(); i++) {
+			formattedAddress.append(result.getAddressLine(i));
+			formattedAddress.append(", ");
+		}
+		
+		formattedAddress.append(result.getAddressLine(result.getMaxAddressLineIndex()));
+		
+		if (result.getMaxAddressLineIndex() > -1) {
+			formattedAddress.append(result.getAddressLine(0));
+		}
+		
+		formattedAddress.append(result.getLocality() == null ? "" : result.getLocality());
+		formattedAddress.append(result.getAdminArea() == null ? "" : result.getAdminArea());
+		
+		if (formattedAddress.length() == 0) {
+			formattedAddress.append(result.getLatitude());
+			formattedAddress.append(", ");
+			formattedAddress.append(result.getLongitude());
+		}
+		
+		extras.putString("formatted_address", formattedAddress.toString());
+		result.setExtras(extras);
+		
+		if (result.getExtras() == null) {
+			Log.e(TAG, "result extras is null");
+		}
+	}*/
 	
 	
 	/**
@@ -262,7 +288,7 @@ public class AddressService {
 				String xmlResponse = InternetService.getStringResponse(url);
 				if (xmlResponse != null && xmlResponse.length() > 0) {
 					Address result = parseXMLResponse(xmlResponse);
-					
+					Util.formatAddress(result);
 					return result;
 				}
 				

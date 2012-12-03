@@ -160,6 +160,7 @@ public abstract class DestinationRowView extends LinearLayout {
 	
 	
 	public void clearValidationStatus() {
+		Log.v(TAG, "clearing validation status");
 		editText.setTextColor(getResources().getColor(R.color.White));
 		status = DestinationRowView.NOT_VALIDATED;
 	}

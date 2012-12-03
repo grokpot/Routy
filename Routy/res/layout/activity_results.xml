@@ -15,7 +15,7 @@
 		    android:layout_width="match_parent"
 		    android:layout_height="300dp"
 		    android:layout_margin="10dp"
-		    android:apiKey="@string/google_maps_api_key_debug_ryan"
+		    android:apiKey="@string/google_maps_api_key_debug_jeff"
 		    android:clickable="false" />
 
         <TextView
@@ -45,6 +45,17 @@
 
         <TextView
             android:id="@+id/textview_total_distance"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linearlayout_results"
+            android:layout_marginTop="25dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/ShitGold"
+            android:textStyle="bold|italic" />
+        
+        <TextView
+            android:id="@+id/textview_total_duration"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/linearlayout_results"

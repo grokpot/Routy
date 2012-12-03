@@ -62,6 +62,7 @@
     <!-- Route Screen Stuff -->
     <string name="view_segment">Get directions</string>
     <string name="total_distance">Total distance is:\n </string>
+    <string name="total_duration">Total duration is:\n </string>
     
     <!-- Button Labels -->
     <string name="ok">OK</string>

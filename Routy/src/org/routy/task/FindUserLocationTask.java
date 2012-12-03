@@ -57,8 +57,8 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 		Log.v(TAG, "preExecute -- address is " + (address==null?"null":"not null"));
 		
 		progressDialog = new ProgressDialog(context);
-		progressDialog.setTitle("Routy");
-		progressDialog.setMessage("Hang tight!");
+		progressDialog.setTitle("Hang Tight!");
+		progressDialog.setMessage("Looking for you...");
 		progressDialog.setCanceledOnTouchOutside(false);
 		progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, "Stop", new DialogInterface.OnClickListener() {
 			
@@ -89,6 +89,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 					address = addressService.getAddressForLocation(location);
 					
 				} catch (AmbiguousAddressException e) {
+					Log.v(TAG, "more than reverse-geocoded address...using the first one");
 					if (e.getAddresses().size() > 0) {
 						address = e.getFirstAddress();
 					}
@@ -155,6 +156,9 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 		Log.v(TAG, "postExecute() -- got user location");
 		if (progressDialog.isShowing()) {
 			progressDialog.cancel();
+		}
+		if (userLocation.getExtras() == null) {
+			Log.e(TAG, "userLocation address extras is null");
 		}
 		listener.onUserLocationFound(userLocation);
 	}
