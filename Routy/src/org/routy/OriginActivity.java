@@ -46,7 +46,7 @@ public class OriginActivity extends FragmentActivity {
 	private Button findUserButton;
 	private Address origin;
 	private boolean locating;
-	private boolean originFromGeoLoc;		// true if the origin was obtained using geolocation (not user entry)
+	private boolean originIsValid;		// true if the origin was obtained using geolocation (not user entry)
 
 	// shared prefs for origin persistence
 	private SharedPreferences originActivityPrefs;
@@ -85,7 +85,7 @@ public class OriginActivity extends FragmentActivity {
 			
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				originFromGeoLoc = false;
+				originIsValid = false;
 			}
 			
 			@Override
@@ -106,7 +106,7 @@ public class OriginActivity extends FragmentActivity {
 		
 		origin				= null;
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
-		originFromGeoLoc		= false;
+		originIsValid		= false;
 
 		restoreSavedOrigin(savedInstanceState);
 		
@@ -221,10 +221,11 @@ public class OriginActivity extends FragmentActivity {
 			
 			@Override
 			public void onUserLocationFound(Address userLocation) {
+				Log.v(TAG, "got user location: " + userLocation.getAddressLine(0));
+				
 				if (userLocation != null) {
-					Log.v(TAG, "got user location: " + userLocation.getAddressLine(0));
-					
 					origin = userLocation;
+					originIsValid = true;
 					
 					String street = origin.getMaxAddressLineIndex() > 0 ? (origin.getAddressLine(0)) : "";
 					String city = origin.getLocality();
@@ -237,7 +238,6 @@ public class OriginActivity extends FragmentActivity {
 					origin.setExtras(extras);
 					
 					originAddressField.setText(addressStr);
-					originFromGeoLoc = true;
 					
 					// TODO remove this when origin validation is handle correctly
 					/*StringBuffer addressStr = new StringBuffer();
@@ -305,14 +305,14 @@ public class OriginActivity extends FragmentActivity {
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
-		if (!originFromGeoLoc) {
+		if (!originIsValid) {
 			Log.d(TAG, "origin needs to be validated");
 		}
 		
-		if (!originFromGeoLoc && (originAddressField.getText() == null || originAddressField.getText().length() == 0)) {
+		if (!originIsValid && (originAddressField.getText() == null || originAddressField.getText().length() == 0)) {
 			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
 		} else {
-			if (!originFromGeoLoc) {
+			if (!originIsValid) {
 				// TODO use GooglePlacesQueryTask to do this...
 				
 				
@@ -347,11 +347,6 @@ public class OriginActivity extends FragmentActivity {
 					//    			Toast.makeText(this, getString(R.string.origin_failed_validate), Toast.LENGTH_LONG).show();	// XXX temp
 					showErrorDialog(getResources().getString(R.string.bad_origin_address_error));
 				}
-			} else {
-				// Origin address is good...move on to Destinations
-				Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
-				destinationIntent.putExtra("origin", origin);	// Android Address is Parcelable, so no need for Bundle
-				startActivity(destinationIntent);
 			}
 		}
 	}
@@ -361,8 +356,6 @@ public class OriginActivity extends FragmentActivity {
 	 *  Saves the validated origin in shared preferences, saves user time when using Routy next.
 	 */
 	private void saveOriginInSharedPrefs() {
-		// TODO onDestroy needs to save the origin address OBJECT in sharedprefs
-		
 		SharedPreferences.Editor ed = originActivityPrefs.edit();
 		ed.putString("saved_origin_address", "");
 		ed.putString("saved_origin_string", originAddressField.getText().toString());
