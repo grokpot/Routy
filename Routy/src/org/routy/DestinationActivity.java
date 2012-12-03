@@ -212,7 +212,6 @@ public class DestinationActivity extends FragmentActivity {
 				// The user tapped on a different row and this row lost focus
 				@Override
 				public void onFocusLost(final UUID id) {
-					// TODO Do validation and SHOW A LOADING SPINNER while working
 					final DestinationRowView row = getRowById(id);
 
 					Log.v(TAG, "FOCUS LOST row id=" + row.getUUID() + ": " + row.getAddressString() + " valid status=" + row.getStatus());
@@ -258,17 +257,17 @@ public class DestinationActivity extends FragmentActivity {
 			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 			v.focusOnAddressField();
 
-			if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
+			/*if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
 				addDestButton.setVisibility(View.INVISIBLE);
-			}
+			}*/
 
 			return v;
 		} else {
-			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			/*volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, 1, 1, 1, 0, 1);
 
-			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
+			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");*/
 
 			return null;
 		}
@@ -442,9 +441,9 @@ public class DestinationActivity extends FragmentActivity {
 						}
 
 						// If the list is full, hide the add button
-						if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
+						/*if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
 							addDestButton.setVisibility(View.INVISIBLE);
-						}
+						}*/
 					}
 					
 					@Override
@@ -458,8 +457,16 @@ public class DestinationActivity extends FragmentActivity {
 					}
 				}.execute(new GooglePlacesQuery(lastRow.getAddressString(), origin.getLatitude(), origin.getLongitude()));
 			} else {
-				Log.v(TAG, "adding a new destination row");
-				addDestinationRow();
+				if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
+					Log.v(TAG, "adding a new destination row");
+					addDestinationRow();
+				} else {
+					volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+					volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+					sounds.play(bad, 1, 1, 1, 0, 1);
+
+					showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
+				}
 			}
 		}
 
