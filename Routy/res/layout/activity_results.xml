@@ -49,6 +49,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/linearlayout_results"
             android:layout_marginTop="25dp"
+            android:layout_magin="25dip"
             android:gravity="center_horizontal"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/ShitGold"
