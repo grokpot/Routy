@@ -112,6 +112,7 @@ public class MapRoute {
 	            haRoute.post(ruFetchError);
 	        else
 	            haRoute.post(ruFetchOk);
+
 	    }
 	};
 }
