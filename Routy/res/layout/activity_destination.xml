@@ -103,7 +103,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:onClick="onToggleClicked"
                 android:switchTextAppearance="@style/Toggle"
                 android:textOff="@string/by_dist"
                 android:textOn="@string/by_dur" />

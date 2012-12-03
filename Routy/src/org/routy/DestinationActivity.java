@@ -32,6 +32,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -47,7 +49,8 @@ public class DestinationActivity extends FragmentActivity {
 	private Address origin;
 	private LinearLayout destLayout;
 	private Button addDestButton;
-	
+	private Switch preferenceSwitch;
+
 	// shared prefs for destination persistence
 	private SharedPreferences destinationActivityPrefs;
 
@@ -56,13 +59,11 @@ public class DestinationActivity extends FragmentActivity {
 	private int click;
 	private AudioManager audioManager;
 	float volume;
-	boolean routeOptimized;
+	RouteOptimizePreference routeOptimized;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
-		routeOptimized = false;
 
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
@@ -77,9 +78,20 @@ public class DestinationActivity extends FragmentActivity {
 		mContext = this;
 
 		addDestButton = (Button) findViewById(R.id.button_destination_add_new);
-		
+
 		// Get the layout containing the list of destination
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
+
+		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
+		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
+		preferenceSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				onToggleClicked(isChecked);
+			}
+		});
+
 
 		// Get the origin address passed from OriginActivity
 		Bundle extras = getIntent().getExtras();
@@ -113,9 +125,9 @@ public class DestinationActivity extends FragmentActivity {
 						newRow = addDestinationRow(address.getFeatureName());
 						newRow.setAddress(address);
 						newRow.setValid();
-						
+
 						Log.v(TAG, "restored: " + newRow.getAddress().getFeatureName() + " [status=" + newRow.getStatus() + "]");
-						
+
 					} else if (status == DestinationRowView.INVALID || status == DestinationRowView.NOT_VALIDATED) {
 						String addressString = addressExtras.getString("address_string");
 
@@ -126,10 +138,10 @@ public class DestinationActivity extends FragmentActivity {
 						} else {
 							newRow.clearValidationStatus();
 						}
-						
+
 						Log.v(TAG, "restored: " + newRow.getAddressString() + " [status=" + newRow.getStatus() + "]");
 					}
-					
+
 				}
 			}
 		} else {
@@ -140,8 +152,8 @@ public class DestinationActivity extends FragmentActivity {
 		Button buttonTestDefaults = (Button) findViewById(R.id.button_test_defaults);
 		buttonTestDefaults.setText("Test Default Destinations");
 		buttonTestDefaults.setOnClickListener(listenerTestDefaults);
-		
-		
+
+
 		// TODO: for testing purposes. Remove before prod.
 		showNoobDialog();
 		// First-time user dialog cookie
@@ -150,10 +162,10 @@ public class DestinationActivity extends FragmentActivity {
 			showNoobDialog();
 			userAintANoob();
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.
 	 * 
@@ -168,7 +180,7 @@ public class DestinationActivity extends FragmentActivity {
 		};
 		dialog.show(mContext.getSupportFragmentManager(), TAG);
 	}
-	
+
 	/**
 	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
 	 */
@@ -246,17 +258,17 @@ public class DestinationActivity extends FragmentActivity {
 
 			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 			v.focusOnAddressField();
-			
+
 			if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
 				addDestButton.setVisibility(View.INVISIBLE);
 			}
-			
+
 			return v;
 		} else {
 			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, 1, 1, 1, 0, 1);
-			
+
 			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
 
 			return null;
@@ -272,7 +284,7 @@ public class DestinationActivity extends FragmentActivity {
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);
-		
+
 		int idx = 0;
 		if (destLayout.getChildCount() > 1) {
 			idx = getRowIndexById(id);
@@ -288,10 +300,10 @@ public class DestinationActivity extends FragmentActivity {
 
 			((DestinationRowView) destLayout.getChildAt(idx)).reset();
 		}
-		
+
 		// set focus on the row idx one less than idx
 		((DestinationRowView) destLayout.getChildAt(Math.max(0, idx - 1))).focusOnAddressField();
-		
+
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
 			addDestButton.setVisibility(View.VISIBLE);
 		}
@@ -348,7 +360,7 @@ public class DestinationActivity extends FragmentActivity {
 							acceptDestinations(v);
 						} else {
 							r.setInvalid();
-							
+
 							// TODO Show an error message: couldn't match the query string to a place or address
 						}
 					}
@@ -370,10 +382,11 @@ public class DestinationActivity extends FragmentActivity {
 						Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
 						resultsIntent.putExtra("addresses", route.getAddresses());
 						resultsIntent.putExtra("distance", route.getTotalDistance());
+						resultsIntent.putExtra("optimize_for", routeOptimized);
 						startActivity(resultsIntent);
 					}
 				}.execute(new RouteRequest(origin, validAddresses, false, 
-				    routeOptimized ? RouteOptimizePreference.PREFER_DURATION : RouteOptimizePreference.PREFER_DISTANCE));
+						routeOptimized/* ? RouteOptimizePreference.PREFER_DISTANCE : RouteOptimizePreference.PREFER_DURATION*/));
 			}
 		} else {
 			// No destinations entered
@@ -389,14 +402,14 @@ public class DestinationActivity extends FragmentActivity {
 	public void changeOrigin(View v) {
 		finish();
 	}
-	
-	
+
+
 	public void onAddDestinationClicked(View v) {
 		Log.v(TAG, "new destination row requested by user");
-    volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-    sounds.play(click, volume, volume, 1, 0, 1);
-		
+		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);
+
 		// If the last row is not empty, add a new row
 		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
 		if (lastRow.getAddressString() != null && lastRow.getAddressString().length() > 0) {
@@ -404,7 +417,7 @@ public class DestinationActivity extends FragmentActivity {
 				// Validate the last row if it has not been validated.  Otherwise, it puts the new row up first, and then validates due to focusChanged.
 				Log.v(TAG, "validating last row before adding new one");
 				final DestinationRowView r = lastRow;
-				
+
 				// disable the onFocusLost listener just once so it doesn't try to validate twice here
 				r.disableOnFocusLostCallback(true);
 
@@ -416,13 +429,13 @@ public class DestinationActivity extends FragmentActivity {
 						if (place != null && place.getAddress() != null) {
 							r.setAddress(place.getAddress());
 							r.setValid();
-							
+
 							Log.v(TAG, "adding a new destination row");
 							addDestinationRow();
 						} else {
 							r.setInvalid();
 						}
-						
+
 						// If the list is full, hide the add button
 						if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
 							addDestButton.setVisibility(View.INVISIBLE);
@@ -439,7 +452,7 @@ public class DestinationActivity extends FragmentActivity {
 				addDestinationRow();
 			}
 		}
-		
+
 	}
 
 
@@ -449,7 +462,7 @@ public class DestinationActivity extends FragmentActivity {
 		return true;
 	}
 
-	
+
 	/**
 	 * In the case that a user presses back to change an origin, or any other reason why they leave the destination screen,
 	 * we save their entered destinations to shared prefs so they don't have to re-enter the destinations again
@@ -540,7 +553,7 @@ public class DestinationActivity extends FragmentActivity {
 		int idx = getRowIndexById(id);
 		return (DestinationRowView) destLayout.getChildAt(idx);
 	}
-	
+
 
 	@Override
 	protected void onResume() {   
@@ -551,29 +564,27 @@ public class DestinationActivity extends FragmentActivity {
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
 	}
-	
-	
-	public void onToggleClicked(View view) {
-	  // detect toggle selection
-	  boolean on = ((Switch) view).isChecked();
-	  
-	  if (on) {
-	    routeOptimized = false;
-	  } 
-	  else {
-	    routeOptimized = true;
-	  }
+
+
+	public void onToggleClicked(boolean on) {
+		Log.v(TAG, "route optimize preference changed!");
+		if (on) {
+			routeOptimized = RouteOptimizePreference.PREFER_DURATION;
+		} 
+		else {
+			routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
+		}
 	}
-	
-	
+
+
 	public void showAddButton() {
 		addDestButton.setVisibility(View.VISIBLE);
 	}
-	
+
 	public void hideAddButton() {
 		addDestButton.setVisibility(View.INVISIBLE);
 	}
-	
+
 
 	// XXX temp
 	/**
