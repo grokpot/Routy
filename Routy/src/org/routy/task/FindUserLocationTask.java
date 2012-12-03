@@ -57,8 +57,8 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 		Log.v(TAG, "preExecute -- address is " + (address==null?"null":"not null"));
 		
 		progressDialog = new ProgressDialog(context);
-		progressDialog.setTitle("Routy");
-		progressDialog.setMessage("Hang tight!");
+		progressDialog.setTitle("Hang Tight!");
+		progressDialog.setMessage("Looking for you...");
 		progressDialog.setCanceledOnTouchOutside(false);
 		progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, "Stop", new DialogInterface.OnClickListener() {
 			

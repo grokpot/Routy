@@ -362,7 +362,7 @@ public class DestinationActivity extends FragmentActivity {
 				Log.v(TAG, "All destinations have been validated.");
 
 				// If everything is valid, move on to the Results screen
-				new CalculateRouteTask() {
+				new CalculateRouteTask(this) {
 
 					@Override
 					public void onRouteCalculated(Route route) {
