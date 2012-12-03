@@ -28,12 +28,20 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class ResultsActivity extends FragmentActivity {
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
+import com.google.android.maps.MapView;
+
+//public class ResultsActivity extends FragmentActivity {
+public class ResultsActivity extends MapActivity {
 
 	// TODO: consolidate these? I don't know the difference here - Ryan
 	private FragmentActivity context;
 	Context mContext;
 
+	private MapView mapView;
+	
 	private SharedPreferences resultsActivityPrefs;
 	
 	// The Route sent by DestinationActivity
@@ -52,7 +60,7 @@ public class ResultsActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		context  = this;
+//		context  = this;
 		mContext = this;
 
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -76,41 +84,55 @@ public class ResultsActivity extends FragmentActivity {
 
 		buildResultsView();
 		
-		resultsActivityPrefs = getSharedPreferences("results_prefs", MODE_PRIVATE);
-		// TODO: for testing purposes. Remove before prod.
-		showNoobDialog();
-		// First-time user dialog cookie
-		boolean noobCookie = resultsActivityPrefs.getBoolean("noob_cookie", false);
-		if (!noobCookie){
-			showNoobDialog();
-			userAintANoob();
-		}
+		initMapView();
+		
+//		resultsActivityPrefs = getSharedPreferences("results_prefs", MODE_PRIVATE);
+//		// TODO: for testing purposes. Remove before prod.
+//		showNoobDialog();
+//		// First-time user dialog cookie
+//		boolean noobCookie = resultsActivityPrefs.getBoolean("noob_cookie", false);
+//		if (!noobCookie){
+//			showNoobDialog();
+//			userAintANoob();
+//		}
 	}
 	
 	
-	/**
-	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.
-	 * 
-	 * @param message
-	 */
-	private void showNoobDialog() {
-		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.results_noob_title), getResources().getString(R.string.results_noob_instructions)) {
-			@Override
-			public void onButtonClicked(DialogInterface dialog, int which) {
-				dialog.dismiss();
-			}
-		};
-		dialog.show(context.getSupportFragmentManager(), TAG);
+//	/**
+//	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.
+//	 * 
+//	 * @param message
+//	 */
+//	private void showNoobDialog() {
+//		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.results_noob_title), getResources().getString(R.string.results_noob_instructions)) {
+//			@Override
+//			public void onButtonClicked(DialogInterface dialog, int which) {
+//				dialog.dismiss();
+//			}
+//		};
+//		dialog.show(getSupportFragmentManager(), TAG);
+//	}
+//	
+//	/**
+//	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
+//	 */
+//	private void userAintANoob() {
+//		SharedPreferences.Editor ed = resultsActivityPrefs.edit();
+//		ed.putBoolean("noob_cookie", true);
+//		ed.commit();	
+//	}
+	
+	
+	void initMapView() {
+		mapView = (MapView) findViewById(R.id.mapview_results);
+		mapView.setBuiltInZoomControls(false);		// Don't let the user do anything to the map, and don't display zoom buttons
+		
+		MapController controller = mapView.getController();
+		// TODO instead of doing this, calculate the span of lat and lng and call zoomToSpan
+		controller.setCenter(new GeoPoint(30390960, -97697490));
+		controller.setZoom(17);
 	}
 	
-	/**
-	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
-	 */
-	private void userAintANoob() {
-		SharedPreferences.Editor ed = resultsActivityPrefs.edit();
-		ed.putBoolean("noob_cookie", true);
-		ed.commit();	
-	}
 
 	// Dynamically build the results screen by building a ResultsRowView, which inflates view_result_segment
 	private void buildResultsView() {
@@ -172,6 +194,7 @@ public class ResultsActivity extends FragmentActivity {
 		return new DecimalFormat("#.##").format(distanceInMiles);
 	}
 
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_results, menu);
@@ -192,5 +215,10 @@ public class ResultsActivity extends FragmentActivity {
 			sounds.release();
 			sounds = null;
 		}
+	}
+
+	@Override
+	protected boolean isRouteDisplayed() {
+		return false;
 	}
 }

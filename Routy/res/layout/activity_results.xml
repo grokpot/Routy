@@ -10,6 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
 
+        <com.google.android.maps.MapView
+            android:id="@+id/mapview_results"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:apiKey="@string/google_maps_api_key_debug"
+            android:clickable="false" />
+
         <TextView
             android:id="@+id/results_textview_header"
             android:layout_width="wrap_content"
@@ -42,7 +49,6 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/ShitGold"
             android:textStyle="bold|italic" />
-
     </RelativeLayout>
 
 </ScrollView>
