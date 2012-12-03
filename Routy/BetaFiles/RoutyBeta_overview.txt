@@ -24,8 +24,7 @@ For these many reasons, we opted to not include a settings/preferences menu.
 
 - Google Places API and generating testing addresses
 
-We went on ahead and stil included the original three testing addresses for your use, but these are not going to be included in the final version of Routy. It's worth noting that entering in addresses is now easier than ever since we've integrated Routy with the Google Places API. You can go on ahead and just type in H-E-B and get results that match it near your origin! Please give it a shot!
-
+We removed our test data since we now have the Google Places API working. You can type in the name of a business - try HEB or Trudy's - and we'll automatically find that location for you. We thought this was easy enough to replace the test data (and we really want you to use the Google Places feature!).
 
 
 -----------------------------
@@ -37,7 +36,7 @@ Use Cases:
 1.) A user can load the app, and be prompted to fix his current connection situation (the app detects if there is no connection to a network (wifi or cellular)) and gives the user an error to try again or quit.
 
 2 a.) If the user has a connection to a network, we load the origin screen (after our sweet opening sound!) and provide the user with multiple ways to start. Pressing our find me button uses the device's GPS or the network to identify the location of the user. If GPS is off or the location cannot be determined, an error is thrown making the user aware. The user can also enter an address for the origin and proceed to the next screen.
-2 b.) Once the user is on the destination screen (the next screen) they can enter in a series of destinations to figure out a route between. You can type approximate names of your destinations and our app will look up the nearest locations named similarly. For exmaple, try typing in H-E-B and notice that we pull up the nearest H-E-B to the origin address and allow you to select from a list of H-E-Bs near you! We also validate entered addresses and show you improperly labeled ones by underlining them in red. Where possible, we'll correct improper addresses as well. Once you're done, click to go to the next screen.
+2 b.) Once the user is on the destination screen (the next screen) they can enter in a series of destinations to figure out a route between. You can type approximate names of your destinations and our app will look up the nearest locations named similarly. For exmaple, try typing in H-E-B and notice that we pull up the nearest H-E-B to the origin address and allow you to select from a list of H-E-Bs! We also validate entered addresses and show you improperly labeled ones by underlining them in red. Where possible, we'll correct improper addresses as well. Once you're done, click to go to the next screen.
 2 c.) Now you're at the result screen
 XXX: FINISH!
 XXX
@@ -85,6 +84,8 @@ Features:
 
 3.) Making a more detailed view of each leg of the route - totally unnecessary since Google Maps handles this much better than we ever could.
 
+4.) Forcing multiple destinations to maintain a certain order - this defeats the purpose of the app; you give us destinations, we find the best route.
+
 XXX - fill in with whatever we don't finish.
 
 
@@ -97,6 +98,8 @@ XXX - fill in with whatever we don't finish.
 2.) Gradients / better styling for UI.
 
 3.) Google Places API - being able to just type in the name of a place.
+
+4.) Map view / custom pins and tags.
 
 
 ----------------------------------------------

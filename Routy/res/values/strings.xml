@@ -12,7 +12,7 @@
         Once we have your origin set up we can work on entering all of your destinations. Click Next when
         you\'re done!</string> -->
     <string name="origin_noob_instructions">Welcome to Routy - the best way to find the most efficient route between different destinations. Use it for road trips, running errands, or just for fun!\nEnter a starting address or click \&quot;Find me!\&quot; to get your current location, then click Next when you\'re done!</string>
-    <string name="destination_noob_instructions">Now that we know where you\'re starting, just enter in the destinations you plan on visiting in any order. If you don\'t know the exact address, just type in the name of the place or intersection and we\'ll see what we can find. You can also select to optimize your route based on the shortest distance or the shortest travel time.\nWhen you\'re ready, click \"Route it!\" to see the results! To reset your origin just press the back button on your device.</string>
+    <string name="destination_noob_instructions">Now enter in the destinations you plan on visiting in any order. If you don\'t know the exact address, type in the name of the place or intersection and we\'ll see what we can find. You can also select to optimize your route based on the shortest distance or the shortest travel time.\nWhen you\'re ready, click \"Route it!\" to see the results! To reset your origin press the back button on your device.</string>
     <string name="results_noob_instructions">Here\'s your trip! You can click on the button for each segment and view a detailed route between those two destinations in Google Maps.\nIf you want to change any part of your trip, just press back!\nHappy routing!</string>
     
     <!-- Global -->
@@ -58,7 +58,7 @@
     <string name="by_dist">By Distance</string>
     
     <!-- Route Screen Stuff -->
-    <string name="view_segment">View\nSegment\n</string>
+    <string name="view_segment">Get Directions</string>
     <string name="total_distance">Total distance is:\n </string>
     
     <!-- Button Labels -->
