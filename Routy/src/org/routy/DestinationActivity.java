@@ -333,8 +333,9 @@ public class DestinationActivity extends FragmentActivity {
 
 			if (row.getAddressString() != null && row.getAddressString().length() > 0) {
 				if (row.getStatus() == DestinationRowView.INVALID || row.getStatus() == DestinationRowView.NOT_VALIDATED) {
+					hasDestinations = true;
 					hasError = true;
-					Log.v(TAG, "row id=" + row.getId() + " has valid status=" + row.getStatus());
+					Log.v(TAG, "row id=" + row.getUUID() + " has valid status=" + row.getStatus());
 					break;
 				} else {
 					hasDestinations = true;
