@@ -9,7 +9,6 @@ import org.routy.fragment.TwoButtonDialog;
 import org.routy.listener.FindUserLocationListener;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
-import org.routy.service.AddressService;
 import org.routy.task.FindUserLocationTask;
 import org.routy.task.GooglePlacesQueryTask;
 import org.routy.view.DestinationRowView;
@@ -19,8 +18,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
-import android.location.Geocoder;
-import android.location.LocationManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -30,7 +27,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 
 public class OriginActivity extends FragmentActivity {
@@ -40,13 +36,8 @@ public class OriginActivity extends FragmentActivity {
 
 	private FragmentActivity context;
 
-//	private AddressService addressService;
-
-//	private LocationManager locationManager;
 	private EditText originAddressField;
-//	private Button findUserButton;
 	private Address origin;
-//	private boolean locating;
 	private boolean originValidated;		// true if the origin was obtained using geolocation (not user entry)
 
 	// shared prefs for origin persistence
@@ -99,10 +90,6 @@ public class OriginActivity extends FragmentActivity {
 				// nothing
 			}
 		});
-
-//		findUserButton 		= (Button) findViewById(R.id.find_user_button);
-//		locationManager 	= (LocationManager) getSystemService(LOCATION_SERVICE);
-//		addressService 		= new AddressService(new Geocoder(this, Locale.getDefault()), false);		// TODO make getting sensor true/false dynamic
 		
 		origin				= null;
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);

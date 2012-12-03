@@ -1,7 +1,6 @@
 package org.routy.task;
 
 import org.routy.model.Route;
-import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
 import org.routy.service.RouteService;
 

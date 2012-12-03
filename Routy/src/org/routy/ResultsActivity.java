@@ -2,11 +2,9 @@ package org.routy;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.UUID;
 
 import org.routy.fragment.OneButtonDialog;
 import org.routy.model.Route;
-import org.routy.view.DestinationRowView;
 import org.routy.view.ResultsSegmentView;
 
 import android.app.AlertDialog;
@@ -22,9 +20,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 

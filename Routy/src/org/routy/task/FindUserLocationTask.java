@@ -3,7 +3,6 @@ package org.routy.task;
 import java.util.Date;
 import java.util.Locale;
 
-import org.routy.Util;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
