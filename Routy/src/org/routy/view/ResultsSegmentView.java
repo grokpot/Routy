@@ -9,11 +9,11 @@ import android.location.Address;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.google.android.maps.MapView;
 
 public abstract class ResultsSegmentView extends LinearLayout{
 	
@@ -22,6 +22,7 @@ public abstract class ResultsSegmentView extends LinearLayout{
 	private boolean	isLastAddress;
 	private TextView 	segmentText;
 	private Button		segmentButton;
+	private MapView		segmentMap;
 	private int		id;
 	
 	
@@ -63,7 +64,6 @@ public abstract class ResultsSegmentView extends LinearLayout{
 		if (isLastAddress){
 			segmentButton.setVisibility(GONE);
 		}
-		
 		segmentButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -72,8 +72,8 @@ public abstract class ResultsSegmentView extends LinearLayout{
 				onSegmentClicked(id, isLastAddress);
 			}
 		});
-
-		
+		segmentMap = (MapView) findViewById(R.id.mapview_results);
+		segmentMap.scrollTo(100, 100); 	// test
 
 	}
 	
