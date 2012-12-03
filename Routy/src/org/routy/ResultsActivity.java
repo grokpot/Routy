@@ -10,6 +10,7 @@ import org.routy.mapview.MapRoute.RouteListener;
 import org.routy.mapview.MapRouteOverlay;
 import org.routy.mapview.RoutyItemizedOverlay;
 import org.routy.model.Route;
+import org.routy.model.RouteOptimizePreference;
 import org.routy.view.ResultsSegmentView;
 
 import android.app.AlertDialog;
@@ -28,6 +29,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -62,6 +64,7 @@ public class ResultsActivity extends MapActivity {
 
 	private SoundPool sounds;
 	private int click;
+	private RouteOptimizePreference routeOptimizePreference;
 	AudioManager audioManager;
 	float volume;
 
@@ -89,6 +92,7 @@ public class ResultsActivity extends MapActivity {
 			ArrayList<Address> addresses = (ArrayList<Address>) extras.get("addresses");
 			Log.v(TAG, "Results: " + addresses.size() + " addresses");
 			route = new Route(addresses, distance);
+			routeOptimizePreference = (RouteOptimizePreference) extras.get("optimize_for");
 		}
 		
 		initMapView();
@@ -255,14 +259,31 @@ public class ResultsActivity extends MapActivity {
 		zoomToOverlays(geoPoints);
 
 		TextView text_total_distance = (TextView) findViewById(R.id.textview_total_distance);
-		String truncatedDistanceInMiles = convertMetersToMiles(route.getTotalDistance());
-		text_total_distance.setText(getString(R.string.total_distance) + truncatedDistanceInMiles + " miles");
+		TextView text_total_duration = (TextView) findViewById(R.id.textview_total_duration);
+		
+		if (routeOptimizePreference.equals(RouteOptimizePreference.PREFER_DISTANCE)) {
+			text_total_duration.setVisibility(View.INVISIBLE);
+			String truncatedDistanceInMiles = convertMetersToMiles(route.getTotalDistance());
+			text_total_distance.setText(getString(R.string.total_distance) + truncatedDistanceInMiles + " miles");
+		} else if (routeOptimizePreference.equals(RouteOptimizePreference.PREFER_DURATION)) {
+			text_total_distance.setVisibility(View.INVISIBLE);
+			String durationInMinutes = convertSecondsToMinutes(route.getTotalDistance());
+			text_total_duration.setText(getString(R.string.total_duration) + durationInMinutes + " minutes");
+		}
+		
+		
 	}
 
 	private String convertMetersToMiles(int distanceInMeters) {
 		final double MILE_RATIO 	= 0.000621371;
 		double distanceInMiles 		= distanceInMeters * MILE_RATIO; 
 		return new DecimalFormat("#.##").format(distanceInMiles);
+	}
+	
+	private String convertSecondsToMinutes(int durationInSeconds) {
+		final double RATIO = 60;
+		double durationInMinutes = durationInSeconds / RATIO;
+		return Long.valueOf(Math.round(durationInMinutes)).toString();
 	}
 
 	

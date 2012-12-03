@@ -53,6 +53,17 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/ShitGold"
             android:textStyle="bold|italic" />
+        
+        <TextView
+            android:id="@+id/textview_total_duration"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linearlayout_results"
+            android:layout_marginTop="25dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/ShitGold"
+            android:textStyle="bold|italic" />
 
     </RelativeLayout>
 
