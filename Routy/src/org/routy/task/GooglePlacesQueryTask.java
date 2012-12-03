@@ -23,6 +23,7 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 	private ProgressDialog progressDialog;
 	
 	public abstract void onResult(GooglePlace place);
+	public abstract void onFailure(Throwable t);
 	public abstract void onNoSelection();
 	
 	public GooglePlacesQueryTask(FragmentActivity fragmentActivity) {
@@ -58,6 +59,8 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 				return results;
 			} catch (RoutyException e) {
 				Log.e(TAG, "RoutyException trying to get Google Places results");
+				onFailure(e);
+				GooglePlacesQueryTask.this.cancel(true);
 			}
 			
 		}

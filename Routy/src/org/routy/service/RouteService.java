@@ -127,6 +127,7 @@ public class RouteService {
 	
 	
 	/**
+	 * Loads the look-up table of distances to use during route calculation.
 	 * 
 	 * @throws RoutyException	if there was a problem with the Distance Matrix API URL or parsing the JSON response
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
@@ -142,9 +143,12 @@ public class RouteService {
 		Log.v(TAG, "Getting distance from origin to destinations");
 		List<Distance> distsFromOrigin = distanceService.getDistanceMatrix(origin, destinations, sensor);
 		for (int i = 0; i < distsFromOrigin.size(); i++) {
+			Log.v(TAG, "distance from origin: duration=" + distsFromOrigin.get(i).getDuration() + " distance=" + distsFromOrigin.get(i).getDistance());
 			if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
+				Log.v(TAG, "preferring duration -- duration=" + distsFromOrigin.get(i).getDuration());
 				distances[0][i] = distsFromOrigin.get(i).getDuration();
 			} else {
+				Log.v(TAG, "preferring distance -- distance=" + distsFromOrigin.get(i).getDistance());
 				distances[0][i] = distsFromOrigin.get(i).getDistance();
 			}
 		}
@@ -165,6 +169,7 @@ public class RouteService {
 				
 				while (entered < distsFromDest.size()) {
 					if (i != idx) {
+						Log.v(TAG, "distance matrix entry: duration=" + distsFromOrigin.get(i).getDuration() + " distance=" + distsFromOrigin.get(i).getDistance());
 						if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
 							distances[i+1][idx] = distsFromDest.get(entered).getDuration();
 						} else {

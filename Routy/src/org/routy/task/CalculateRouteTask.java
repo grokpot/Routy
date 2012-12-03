@@ -1,6 +1,7 @@
 package org.routy.task;
 
 import org.routy.model.Route;
+import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
 import org.routy.service.RouteService;
 
@@ -46,6 +47,7 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 			} else {
 				RouteRequest request = requests[0];
 				
+				Log.v(TAG, "user prefers: " + (request.getPreference().equals(RouteOptimizePreference.PREFER_DISTANCE)?"distance":"") + (request.getPreference().equals(RouteOptimizePreference.PREFER_DURATION)?"duration":""));
 				RouteService routeService = new RouteService(request.getOrigin(), request.getDestinations(), request.getPreference(), false);
 				Route bestRoute = routeService.getBestRoute();
 				
