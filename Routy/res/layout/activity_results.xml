@@ -14,7 +14,7 @@
 		    android:id="@+id/mapview_results"
 		    android:layout_width="match_parent"
 		    android:layout_height="300dp"
-		    android:layout_margin="20dp"
+		    android:layout_margin="10dp"
 		    android:apiKey="@string/google_maps_api_key_debug_ryan"
 		    android:clickable="false" />
 

@@ -2,18 +2,16 @@ package org.routy;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.UUID;
+import java.util.List;
 
-import org.routy.fragment.OneButtonDialog;
+import org.routy.mapview.RoutyItemizedOverlay;
 import org.routy.model.Route;
-import org.routy.view.DestinationRowView;
 import org.routy.view.ResultsSegmentView;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -22,9 +20,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -32,6 +28,8 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
+import com.google.android.maps.OverlayItem;
 
 //public class ResultsActivity extends FragmentActivity {
 public class ResultsActivity extends MapActivity {
@@ -39,8 +37,13 @@ public class ResultsActivity extends MapActivity {
 	// TODO: consolidate these? I don't know the difference here - Ryan
 	private FragmentActivity context;
 	Context mContext;
-
-//	private MapView mapView;
+	
+	// MapView stuff
+	private MapView					mapView;
+	private MapController			mapController;
+	private ArrayList<GeoPoint> 	geoPoints;
+	private RoutyItemizedOverlay 	itemizedoverlay;
+	private List<Overlay> 			mapOverlays;
 	
 	private SharedPreferences resultsActivityPrefs;
 	
@@ -81,10 +84,9 @@ public class ResultsActivity extends MapActivity {
 			Log.v(TAG, "Results: " + addresses.size() + " addresses");
 			route = new Route(addresses, distance);
 		}
-
-		buildResultsView();
 		
 		initMapView();
+		buildResultsView();
 		
 //		resultsActivityPrefs = getSharedPreferences("results_prefs", MODE_PRIVATE);
 //		// TODO: for testing purposes. Remove before prod.
@@ -110,6 +112,7 @@ public class ResultsActivity extends MapActivity {
 //				dialog.dismiss();
 //			}
 //		};
+	//try just dialog.show()
 //		dialog.show(getSupportFragmentManager(), TAG);
 //	}
 //	
@@ -124,12 +127,41 @@ public class ResultsActivity extends MapActivity {
 	
 	
 	void initMapView() {		
-		MapView mapView = (MapView) findViewById(R.id.mapview_results);
-		mapView.setBuiltInZoomControls(false);		// Don't let the user do anything to the map, and don't display zoom buttons
-		MapController controller = mapView.getController();
-		// TODO instead of doing this, calculate the span of lat and lng and call zoomToSpan
-		controller.setCenter(new GeoPoint(30390960, -97697490));
-		controller.setZoom(17);
+		mapView = (MapView) findViewById(R.id.mapview_results);
+		mapView.setBuiltInZoomControls(true);		// Don't let the user do anything to the map, and don't display zoom buttons
+		mapController 		= mapView.getController();
+		mapOverlays 		= mapView.getOverlays();
+		Drawable drawable 	= this.getResources().getDrawable(R.drawable.bluemark1);
+		itemizedoverlay 	= new RoutyItemizedOverlay(drawable);
+		geoPoints 			= new ArrayList<GeoPoint>();
+	}
+	
+	
+	private void zoomToOverlays(List<GeoPoint> geoPoints){
+		//http://stackoverflow.com/questions/5241487/android-mapview-setting-zoom-automatically-until-all-itemizedoverlays-are-visi
+		
+		int minLat = Integer.MAX_VALUE;
+		int maxLat = Integer.MIN_VALUE;
+		int minLon = Integer.MAX_VALUE;
+		int maxLon = Integer.MIN_VALUE;
+
+		for (GeoPoint item : geoPoints) 
+		{ 
+
+		      int lat = item.getLatitudeE6();
+		      int lon = item.getLongitudeE6();
+
+		      maxLat = Math.max(lat, maxLat);
+		      minLat = Math.min(lat, minLat);
+		      maxLon = Math.max(lon, maxLon);
+		      minLon = Math.min(lon, minLon);
+		 }
+
+		double fitFactor = 2.3;
+		mapController.setCenter(new GeoPoint( (maxLat + minLat)/2, (maxLon + minLon)/2 ));
+//		mapController.setZoom(17);
+		mapController.zoomToSpan((int) (Math.abs(maxLat - minLat) * fitFactor), (int)(Math.abs(maxLon - minLon) * fitFactor));
+		mapController.animateTo(new GeoPoint( (maxLat + minLat)/2, (maxLon + minLon)/2 )); 
 	}
 	
 
@@ -141,14 +173,22 @@ public class ResultsActivity extends MapActivity {
 		// TODO: do we need lastAddress?
 		boolean isLastAddress = false;
 		ResultsSegmentView v;
+
 		for (int addressIndex = 0; addressIndex < addressesSize; addressIndex++) {
 			address = route.getAddresses().get(addressIndex);
 			// special case if it's the last segment
 			if (addressIndex == addressesSize - 1) {
 				isLastAddress = true;
 			}
+			
+			// Put point on MapView
+			//http://stackoverflow.com/questions/3577866/android-geopoint-with-lat-long-values
+			GeoPoint geopoint = new GeoPoint((int) (address.getLatitude() * 1E6), (int) (address.getLongitude() * 1E6));
+			geoPoints.add(geopoint);
+			OverlayItem overlayitem = new OverlayItem(geopoint, address.getFeatureName(), "Location #" + addressIndex);
+			itemizedoverlay.addOverlay(overlayitem);
 
-			// TODO: do we need to send addressIndex?
+			
 			v = new ResultsSegmentView(mContext, address, addressIndex, isLastAddress) {
 
 				@Override
@@ -167,6 +207,8 @@ public class ResultsActivity extends MapActivity {
 						double startAddressLong = startAddress.getLongitude();
 						double endAddressLat = endAddress.getLatitude();
 						double endAddressLong = endAddress.getLongitude();
+
+						// Button segment GMaps call
 						String mapsCall = "http://maps.google.com/maps?saddr="
 								+ startAddressLat + "," + startAddressLong
 								+ "&daddr=" + endAddressLat + ","
@@ -182,6 +224,9 @@ public class ResultsActivity extends MapActivity {
 
 			resultsLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		}
+		
+		zoomToOverlays(geoPoints);
+		mapOverlays.add(itemizedoverlay);
 
 		TextView text_total_distance = (TextView) findViewById(R.id.textview_total_distance);
 		String truncatedDistanceInMiles = convertMetersToMiles(route.getTotalDistance());
