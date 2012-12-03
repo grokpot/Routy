@@ -53,6 +53,7 @@
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="@color/ShitGold"
             android:textStyle="bold|italic" />
+
     </RelativeLayout>
 
 </ScrollView>
