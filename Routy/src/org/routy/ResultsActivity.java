@@ -191,6 +191,13 @@ public class ResultsActivity extends MapActivity {
 			geoPoints.add(geopoint);
 			OverlayItem overlayitem = new OverlayItem(geopoint, address.getFeatureName(), "Location #" + addressIndex);
 			itemizedoverlay.addOverlay(overlayitem);
+			
+			// Draw route
+			if (!isLastAddress){
+				Address nextAddress		= route.getAddresses().get(addressIndex + 1);
+				GeoPoint nextGeopoint 	= new GeoPoint((int) (nextAddress.getLatitude() * 1E6), (int) (nextAddress.getLongitude() * 1E6));
+				drawPath(geopoint, nextGeopoint);
+			}
 
 			
 			v = new ResultsSegmentView(mContext, address, addressIndex, isLastAddress) {
@@ -244,32 +251,32 @@ public class ResultsActivity extends MapActivity {
 	}
 
 	
-	private void doDrawPath(GeoPoint gpSrc,GeoPoint gpDest){		
-	    MapRoute oRoute = new MapRoute(gpSrc,gpDest);
+	private void drawPath(GeoPoint startPoint,GeoPoint endPoint){		
+	    MapRoute oRoute = new MapRoute(startPoint,endPoint);
 	    oRoute.getPoints(new RouteListener(){
+	    	
 	        @Override
-	        public void onDetermined(ArrayList<GeoPoint> alPoint){
+	        public void onDetermined(ArrayList<GeoPoint> geoPoints){
 	            GeoPoint oPointA = null;
 	            GeoPoint oPointB = null;
 
-	            mapView.getOverlays().clear();
+//	            mapView.getOverlays().clear();
 
-	            for(int i=1; i<alPoint.size()-1; i++){
-	                oPointA = alPoint.get(i-1);
-	                oPointB =  alPoint.get(i);
-
-	                mapView.getOverlays().add(new MapRouteOverlay(oPointA,oPointB,2,Color.RED));
+	            for(int i=1; i<geoPoints.size()-1; i++){
+	                oPointA = geoPoints.get(i-1);
+	                oPointB = geoPoints.get(i);
+	                mapOverlays.add(new MapRouteOverlay(oPointA,oPointB,2,Color.RED));
 	            }
-	            mapOverlays.add(new MapRoutePinOverlay(alPoint.get(0),dPin));
-	            mapOverlays.add(new MapRoutePinOverlay(alPoint.get(alPoint.size()-1),dPin));
+//	            mapOverlays.add(new MapRoutePinOverlay(geoPoints.get(0),dPin));
+//	            mapOverlays.add(new MapRoutePinOverlay(geoPoints.get(geoPoints.size()-1),dPin));
 
 	            mapView.invalidate();
 	        }
 	        
 	        @Override
-	        public void onError() 
-	        {
+	        public void onError(){
 	        }           
+	        
 	    });
 	}
 	
