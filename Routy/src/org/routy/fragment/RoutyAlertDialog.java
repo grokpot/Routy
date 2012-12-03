@@ -12,11 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-// Backwards compatible in case they're on pre-API11
-
 public abstract class RoutyAlertDialog extends DialogFragment {
 
-	private String mErrorMessage;
+	private String mTitle;
+	private String mMessage;
 	private TextView mTextView;
 	private String[] mButtonLabels;
 	
@@ -30,7 +29,7 @@ public abstract class RoutyAlertDialog extends DialogFragment {
 	
 	public RoutyAlertDialog() {
 		super();
-		mErrorMessage = getResources().getString(R.string.default_error_message);
+		mMessage = getResources().getString(R.string.default_error_message);
 		
 		setDefaultButtonLabels();
 		
@@ -43,7 +42,8 @@ public abstract class RoutyAlertDialog extends DialogFragment {
 	public RoutyAlertDialog(String title, String message, String[] buttonLabels, boolean showPositive, boolean showNeutral, boolean showNegative) {
 		super();
 		
-		mErrorMessage = message;
+		mTitle		= title;
+		mMessage	= message;
 		
 		if (buttonLabels != null && buttonLabels.length != 3) {
 			throw new IllegalArgumentException("buttonLabels passed into RoutyDialog (or a subclass) needs to be a String[] of length 3.");
@@ -51,9 +51,9 @@ public abstract class RoutyAlertDialog extends DialogFragment {
 			mButtonLabels = buttonLabels;
 		}
 		
-		this.showPositive = showPositive;
-		this.showNeutral = showNeutral;
-		this.showNegative = showNegative;
+		this.showPositive 	= showPositive;
+		this.showNeutral 	= showNeutral;
+		this.showNegative 	= showNegative;
 	}
 	
 	
@@ -87,8 +87,12 @@ public abstract class RoutyAlertDialog extends DialogFragment {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		if (mErrorMessage == null) {
-			mErrorMessage = getResources().getString(R.string.default_error_message);
+		if (mTitle == null) {
+			mTitle = getResources().getString(R.string.error_message_title);
+		}
+		
+		if (mMessage == null) {
+			mMessage = getResources().getString(R.string.default_error_message);
 		}
 		
 		if (mButtonLabels == null) {
@@ -101,15 +105,9 @@ public abstract class RoutyAlertDialog extends DialogFragment {
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		LayoutInflater inflater = LayoutInflater.from(getActivity());
-		
-		final View view = inflater.inflate(R.layout.fragment_error_notification, null);
-		mTextView = (TextView) view.findViewById(R.id.message_dialog_error);
-		mTextView.setText(mErrorMessage);
-		
 		AlertDialog.Builder builder =  new AlertDialog.Builder(getActivity());
-		builder.setTitle(getResources().getString(R.string.error_message_title));
-		builder.setView(view);
+		builder.setTitle(mTitle);
+		builder.setMessage(mMessage);
 		builder.setCancelable(true);
 		
 		if (showPositive) {

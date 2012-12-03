@@ -1,10 +1,12 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/gradient" >
+    android:id="@+id/scrollview_results_wrapper"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="@drawable/gradient"
+    android:fillViewport="true" >
 
-    <TextView
+    <!-- <TextView
         android:id="@+id/results_textview_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -21,26 +23,45 @@
         android:layout_width="match_parent" 
         android:layout_height="300dp" 
         android:clickable="false" 
-        android:apiKey="@string/google_maps_api_key_debug" />
+        android:apiKey="@string/google_maps_api_key_debug" /> -->
 
-    <LinearLayout
-        android:id="@+id/layout_results"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/results_textview_header"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:orientation="vertical" >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
 
-    </LinearLayout>
+        <TextView
+            android:id="@+id/results_textview_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="15dp"
+            android:gravity="center_horizontal"
+            android:text="@string/results_header"
+            android:textColor="@color/ShitGold"
+            android:textSize="23dp"
+            android:textStyle="bold|italic" />
 
-    <TextView
-        android:id="@+id/textview_total_distance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/layout_results"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        <LinearLayout
+            android:id="@+id/linearlayout_results"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/results_textview_header"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="25dp"
+            android:orientation="vertical" >
+        </LinearLayout>
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/textview_total_distance"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/linearlayout_results"
+            android:layout_marginTop="25dp"
+            android:gravity="center_horizontal"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="@color/ShitGold"
+            android:textStyle="bold|italic" />
+
+    </RelativeLayout>
+
+</ScrollView>

@@ -30,8 +30,10 @@ public abstract class DestinationRowView extends LinearLayout {
 	private String addressString;
 	private Address address;
 	private EditText editText;
-	private Button addButton;
+//	private Button addButton;
 	private Button removeButton;
+	private boolean ignoreOnFocusLostCallback;
+	private boolean ignoreOnFocusLostCallbackTemp;
 	
 	
 	/**
@@ -40,7 +42,7 @@ public abstract class DestinationRowView extends LinearLayout {
 	 */
 	public abstract void onRemoveClicked(UUID id);
 	
-	public abstract void onAddClicked(UUID id);
+//	public abstract void onAddClicked(UUID id);
 	
 	public abstract void onFocusLost(UUID id);
 	
@@ -56,6 +58,7 @@ public abstract class DestinationRowView extends LinearLayout {
 		this.addressString = "";
 		this.address = null;
 		this.status = DestinationRowView.NOT_VALIDATED;
+		this.ignoreOnFocusLostCallback = false;
 		
 		initViews(context);
 	}
@@ -67,17 +70,28 @@ public abstract class DestinationRowView extends LinearLayout {
 		this.addressString = addressString;
 		this.address = null;
 		this.status = DestinationRowView.NOT_VALIDATED;
+		this.ignoreOnFocusLostCallback = false;
 		
 		initViews(context);
+	}
+	
+	public DestinationRowView(Context context, Address address) {
+		super(context);
 		
-		Log.v(TAG, "new destination row view with id=" + this.id);
+		this.id = UUID.randomUUID();
+		this.address = address;
+		this.status = DestinationRowView.VALID;
+		this.addressString = address.getFeatureName();
+		this.ignoreOnFocusLostCallback = false;
+		
+		initViews(context);
 	}
 	
 	
 	private void initViews(Context context) {
 		// Inflate the view for an "add destination" text field and remove button
 		LayoutInflater inflater = LayoutInflater.from(context);
-		inflater.inflate(R.layout.view_destination_add, this);
+		inflater.inflate(R.layout.view_destination_row, this);
 		
 		editText = (EditText) findViewById(R.id.edittext_destination_add);
 		editText.setText(addressString);
@@ -91,36 +105,28 @@ public abstract class DestinationRowView extends LinearLayout {
 			
 			@Override
 			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				// TODO Auto-generated method stub
-				
+				// this space intentionally left blank
 			}
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				// TODO Auto-generated method stub
-				
+				// this space intentionally left blank
 			}
 		});
 		editText.setOnFocusChangeListener(new OnFocusChangeListener() {
 			
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				// TODO Auto-generated method stub
 				if (!hasFocus) {
 					Log.v(TAG, "onFocusChange (lost focus) from row with id=" + id);
-					onFocusLost(id);
+					if (!ignoreOnFocusLostCallback) {
+						onFocusLost(id);
+					} else {
+						if (ignoreOnFocusLostCallbackTemp) {
+							ignoreOnFocusLostCallback = false;
+						}
+					}
 				}
-			}
-		});
-		
-		addButton = (Button) findViewById(R.id.button_destination_add);
-		addButton.setOnClickListener(new OnClickListener() {
-			
-			@Override
-			public void onClick(View v) {
-				Log.v(TAG, "onAddClicked from row with id=" + id);
-				addButton.setVisibility(INVISIBLE);
-				onAddClicked(id);
 			}
 		});
 		
@@ -150,7 +156,6 @@ public abstract class DestinationRowView extends LinearLayout {
 	public void setValid() {
 		editText.setTextColor(getResources().getColor(R.color.White));
 		status = DestinationRowView.VALID;
-		addButton.setVisibility(INVISIBLE);
 	}
 	
 	
@@ -166,7 +171,6 @@ public abstract class DestinationRowView extends LinearLayout {
 	 */
 	public void reset() {
 		editText.setText("");
-		addButton.setVisibility(VISIBLE);
 		status = DestinationRowView.NOT_VALIDATED;
 	}
 	
@@ -178,14 +182,6 @@ public abstract class DestinationRowView extends LinearLayout {
 	
 	public int getStatus() {
 		return status;
-	}
-
-	public void showAddButton() {
-		addButton.setVisibility(VISIBLE);
-	}
-	
-	public void hideAddButton() {
-		addButton.setVisibility(INVISIBLE);
 	}
 
 	public void setAddress(Address address) {
@@ -202,5 +198,25 @@ public abstract class DestinationRowView extends LinearLayout {
 	
 	public void focusOnAddressField() {
 		editText.requestFocus();
+	}
+	
+	
+	/**
+	 * Tell this row to ignore the onFocusLost callback.
+	 * 
+	 * @param temporary		true will restore normal behavior after onFocusLost is called once, 
+	 * 						false will leave it off until manually turned back on
+	 */
+	public void disableOnFocusLostCallback(boolean temporary) {
+		ignoreOnFocusLostCallback = true;
+		ignoreOnFocusLostCallbackTemp = temporary;
+	}
+	
+	public void enableOnFocusLostCallback() {
+		ignoreOnFocusLostCallback = false;
+	}
+
+	public boolean needsValidation() {
+		return getStatus() == DestinationRowView.INVALID || getStatus() == DestinationRowView.NOT_VALIDATED;
 	}
 }

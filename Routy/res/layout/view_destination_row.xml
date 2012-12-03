@@ -8,17 +8,11 @@
         android:layout_width="0dp" 
         android:layout_height="wrap_content"
         android:layout_weight="1" 
+       	android:layout_marginRight="5dp"
         android:hint="@string/prompt_destination"
         android:scrollHorizontally="true" 
         android:singleLine="true" 
         android:ellipsize="end" />
-    
-    <Button 
-        android:id="@+id/button_destination_add" 
-        android:layout_width="40dp" 
-        android:layout_height="40dp" 
-        android:background="@drawable/pos"
-        style="?android:attr/borderlessButtonStyle"/>
     
     <Button 
         android:id="@+id/button_destination_remove" 

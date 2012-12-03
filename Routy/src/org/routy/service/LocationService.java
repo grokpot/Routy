@@ -84,7 +84,7 @@ public abstract class LocationService {
 		        	manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
 		        }
 			} else {
-				Log.e(TAG, "No network providers.");
+				Log.e(TAG, "No network or gps provider.");
 				throw new NoLocationProviderException("No location providers enabled.");
 			}
 		}

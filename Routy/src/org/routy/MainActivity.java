@@ -1,6 +1,6 @@
 package org.routy;
 
-import org.routy.fragment.OneButtonDialog;
+import org.routy.fragment.TwoButtonDialog;
 import org.routy.model.AppProperties;
 import org.routy.service.InternetService;
 
@@ -20,14 +20,20 @@ public class MainActivity extends FragmentActivity {
 	private final String TAG = "MainActivity";
 
 	private Context mContext;
-	private OneButtonDialog noInternetErrorDialog;
+	private TwoButtonDialog noInternetErrorDialog;
 	
 	private SoundPool sounds;
 	private int bad;
+	
+  AudioManager audioManager;
+  float volume;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+    volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
 		setContentView(R.layout.activity_main);
 
@@ -54,7 +60,9 @@ public class MainActivity extends FragmentActivity {
 		
 		if (!InternetService.deviceHasInternetConnection(mContext)) {
 			Log.v(TAG, "No internet connection.");
-			sounds.play(bad, 1, 1, 1, 0, 1);
+			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+      volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+			sounds.play(bad, volume, volume, 1, 0, 1);
 			initErrorDialog();
 			noInternetErrorDialog.show(MainActivity.this.getSupportFragmentManager(), TAG);
 		} else {
@@ -77,11 +85,20 @@ public class MainActivity extends FragmentActivity {
 	
 	
 	private void initErrorDialog() {
-		noInternetErrorDialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), getResources().getString(R.string.no_internet_error), "Try Again") {
+		noInternetErrorDialog = new TwoButtonDialog(getResources().getString(R.string.error_message_title), getResources().getString(R.string.no_internet_error), new String[] {"Try Again", "", "Quit"}) {
+			
 			@Override
-			public void onButtonClicked(DialogInterface dialog, int which) {
+			public void onRightButtonClicked(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
 				dialog.dismiss();
 				checkForInternetAndContinue();
+			}
+			
+			@Override
+			public void onLeftButtonClicked(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				dialog.dismiss();
+				MainActivity.this.finish();
 			}
 		};
 	}
