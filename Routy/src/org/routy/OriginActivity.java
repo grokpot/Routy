@@ -280,7 +280,7 @@ public class OriginActivity extends FragmentActivity {
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
-		String locationQuery = originAddressField.getText().toString();
+		final String locationQuery = originAddressField.getText().toString();
 		
 		if (!originValidated && (locationQuery == null || locationQuery.length() == 0)) {
 			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
@@ -308,6 +308,11 @@ public class OriginActivity extends FragmentActivity {
 						originValidated = true;
 						
 						startDestinationActivity();
+					}
+					
+					@Override
+					public void onFailure(Throwable t) {
+						showErrorDialog("Routy couldn't understand \"" + locationQuery + "\".  Please try something a little different.");		// TODO extract to strings.xml
 					}
 					
 					@Override

@@ -96,8 +96,19 @@ public class Util {
 			
 			jWriter.beginObject();
 			jWriter.name("feature_name").value(address.getFeatureName());
-			jWriter.name("latitude").value(address.getLatitude());
-			jWriter.name("longitude").value(address.getLongitude());
+			try {
+				jWriter.name("latitude");
+				jWriter.value(address.getLatitude());
+			} catch (IllegalStateException e) {
+				jWriter.nullValue();
+			}
+			
+			try {
+				jWriter.name("longitude");
+				jWriter.value(address.getLongitude());
+			} catch (IllegalStateException e) {
+				jWriter.nullValue();
+			}
 			
 			Bundle extras = address.getExtras();
 			if (extras != null) {

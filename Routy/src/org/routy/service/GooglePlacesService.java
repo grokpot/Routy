@@ -119,6 +119,7 @@ public class GooglePlacesService {
 				
 			} else {
 				Log.e(TAG, "BAD Google Places response status=" + status);
+				throw new RoutyException("Google Places API status=" + status);
 			}
 			
 		} catch (XPathExpressionException e) {

@@ -148,12 +148,6 @@ public class DestinationActivity extends FragmentActivity {
 			addDestinationRow();
 		}
 
-		// XXX temp "Test defaults"
-		Button buttonTestDefaults = (Button) findViewById(R.id.button_test_defaults);
-		buttonTestDefaults.setText("Test Default Destinations");
-		buttonTestDefaults.setOnClickListener(listenerTestDefaults);
-
-
 		// TODO: for testing purposes. Remove before prod.
 		showNoobDialog();
 		// First-time user dialog cookie
@@ -244,6 +238,11 @@ public class DestinationActivity extends FragmentActivity {
 									} else {
 										row.setInvalid();
 									}
+								}
+								
+								@Override
+								public void onFailure(Throwable t) {
+									showErrorDialog("Routy couldn't understand \"" + row.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
 								}
 
 								@Override
@@ -365,6 +364,11 @@ public class DestinationActivity extends FragmentActivity {
 							// TODO Show an error message: couldn't match the query string to a place or address
 						}
 					}
+					
+					@Override
+					public void onFailure(Throwable t) {
+						showErrorDialog("Routy couldn't understand \"" + r.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
+					}
 
 					@Override
 					public void onNoSelection() {
@@ -442,6 +446,11 @@ public class DestinationActivity extends FragmentActivity {
 							addDestButton.setVisibility(View.INVISIBLE);
 						}
 					}
+					
+					@Override
+					public void onFailure(Throwable t) {
+						showErrorDialog("Routy couldn't understand \"" + r.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
+					}
 
 					@Override
 					public void onNoSelection() {
@@ -496,9 +505,10 @@ public class DestinationActivity extends FragmentActivity {
 					address = new Address(Locale.getDefault());
 
 					// Since it'll need to be validated when we come back, we need to save what was in the EditText with the status
-					Bundle extras = address.getExtras();
+					Bundle extras = new Bundle();
 					extras.putString("address_string", destView.getAddressString());
 					extras.putInt("valid_status", destView.getStatus());
+					address.setExtras(extras);
 				} else {
 					// bah!
 					throw new IllegalStateException("Destination row " + i + " had an invalid status value of: " + destView.getStatus());
@@ -585,33 +595,5 @@ public class DestinationActivity extends FragmentActivity {
 	public void hideAddButton() {
 		addDestButton.setVisibility(View.INVISIBLE);
 	}
-
-
-	// XXX temp
-	/**
-	 * Loads the 3 test destinations we've been using.
-	 */
-	View.OnClickListener listenerTestDefaults = new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			sounds.play(click, volume, volume, 1, 0, 1);
-			if (destLayout.getChildCount() < 3) {
-				for (int i = destLayout.getChildCount(); i < 3; i++) {
-					addDestinationRow();
-				}
-			}
-
-			DestinationRowView view = (DestinationRowView) destLayout.getChildAt(0);
-			((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_1));
-
-			view = (DestinationRowView) destLayout.getChildAt(1);
-			((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_2));
-
-			view = (DestinationRowView) destLayout.getChildAt(2);
-			((EditText) view.findViewById(R.id.edittext_destination_add)).setText(getResources().getString(R.string.test_destination_3));
-		}
-	};
 
 }
