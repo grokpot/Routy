@@ -12,8 +12,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
 
-// Backwards compatible in case they're on pre-API11
-
 public abstract class RoutyAlertDialog extends DialogFragment {
 
 	private String mTitle;
