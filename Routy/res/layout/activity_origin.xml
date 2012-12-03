@@ -3,7 +3,8 @@
     android:id="@+id/origin_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:background="@drawable/gradient" >
+    android:background="@drawable/gradient"
+    android:padding="10dp" >
 
     <!--
          <TextView
@@ -17,17 +18,27 @@
 
     <ImageView
         android:id="@+id/origin_routy_logo"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="15dp"
         android:adjustViewBounds="true"
         android:contentDescription="@string/origin_logo"
-        android:minHeight="300dp"
-        android:scaleType="fitCenter"
-        android:layout_above="@+id/origin_textview_welcome"
+        android:minHeight="200dp"
+        android:scaleType="centerInside"
         android:src="@drawable/whitesplashhi" />
+
+    <TextView
+        android:id="@+id/textview_origin_purpose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/origin_routy_logo"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="20dp"
+        android:gravity="center_horizontal"
+        android:text="..the right route for many places."
+        android:textColor="@color/White"
+        android:textSize="20dp"
+        android:textStyle="bold|italic" />
     
     <TextView
         android:id="@+id/origin_textview_welcome"
@@ -39,20 +50,21 @@
         android:paddingRight="10dp"
         android:text="@string/origin_welcome"
         android:textColor="@color/ShitGold"
-        android:textSize="20dp"
-        android:textStyle="bold|italic" />
+        android:textSize="19dp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/origin_address_field"
         android:layout_width="fill_parent"
         android:layout_height="50dp"
         android:layout_above="@+id/enter_destinations_button"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="40dp"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:hint="@string/origin_hint"
         android:scrollHorizontally="true"
-        android:singleLine="true" />
+        android:singleLine="true"
+        android:textColor="@color/White" />
     
     <Button
         android:id="@+id/enter_destinations_button"
