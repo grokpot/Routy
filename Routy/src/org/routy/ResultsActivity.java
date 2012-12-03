@@ -4,6 +4,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.routy.mapview.MapRoute;
+import org.routy.mapview.MapRoute.RouteListener;
+import org.routy.mapview.MapRouteOverlay;
 import org.routy.mapview.RoutyItemizedOverlay;
 import org.routy.model.Route;
 import org.routy.view.ResultsSegmentView;
@@ -11,6 +14,7 @@ import org.routy.view.ResultsSegmentView;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.media.AudioManager;
@@ -239,6 +243,36 @@ public class ResultsActivity extends MapActivity {
 		return new DecimalFormat("#.##").format(distanceInMiles);
 	}
 
+	
+	private void doDrawPath(GeoPoint gpSrc,GeoPoint gpDest){		
+	    MapRoute oRoute = new MapRoute(gpSrc,gpDest);
+	    oRoute.getPoints(new RouteListener(){
+	        @Override
+	        public void onDetermined(ArrayList<GeoPoint> alPoint){
+	            GeoPoint oPointA = null;
+	            GeoPoint oPointB = null;
+
+	            mapView.getOverlays().clear();
+
+	            for(int i=1; i<alPoint.size()-1; i++){
+	                oPointA = alPoint.get(i-1);
+	                oPointB =  alPoint.get(i);
+
+	                mapView.getOverlays().add(new MapRouteOverlay(oPointA,oPointB,2,Color.RED));
+	            }
+	            mapOverlays.add(new MapRoutePinOverlay(alPoint.get(0),dPin));
+	            mapOverlays.add(new MapRoutePinOverlay(alPoint.get(alPoint.size()-1),dPin));
+
+	            mapView.invalidate();
+	        }
+	        
+	        @Override
+	        public void onError() 
+	        {
+	        }           
+	    });
+	}
+	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
