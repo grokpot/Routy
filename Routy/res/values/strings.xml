@@ -58,7 +58,7 @@
     <string name="by_dist">By Distance</string>
     
     <!-- Route Screen Stuff -->
-    <string name="view_segment">Click to view segment</string>
+    <string name="view_segment">View\nSegment\n</string>
     <string name="total_distance">Total distance is:\n </string>
     
     <!-- Button Labels -->
