@@ -26,6 +26,9 @@ public class AppProperties {
 	
 	/** The base URL for accessing the <a href="">Google Places Web API</a> */
 	public static final String G_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place/textsearch/xml?";
+	
+	/** The base URL for accessing the <a href="">Google Directions Web API</a> */
+	public static final String G_DIRECTIONS_API_URL = "https://maps.googleapis.com/maps/api/directions/xml?";
 
 	public static final int G_PLACES_MAX_RESULTS = 5;
 	
