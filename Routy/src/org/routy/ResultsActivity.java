@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.routy.fragment.OneButtonDialog;
 import org.routy.mapview.MapRoute;
 import org.routy.mapview.MapRoute.RouteListener;
 import org.routy.mapview.MapRouteOverlay;
@@ -11,7 +12,10 @@ import org.routy.mapview.RoutyItemizedOverlay;
 import org.routy.model.Route;
 import org.routy.view.ResultsSegmentView;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -38,9 +42,8 @@ import com.google.android.maps.OverlayItem;
 
 //public class ResultsActivity extends FragmentActivity {
 public class ResultsActivity extends MapActivity {
-
-	// TODO: consolidate these? I don't know the difference here - Ryan
-	private FragmentActivity context;
+	
+	private static final int INSTRUCTIONS_DIALOG = 1;
 	Context mContext;
 	
 	// MapView stuff
@@ -92,42 +95,55 @@ public class ResultsActivity extends MapActivity {
 		initMapView();
 		buildResultsView();
 		
-//		resultsActivityPrefs = getSharedPreferences("results_prefs", MODE_PRIVATE);
-//		// TODO: for testing purposes. Remove before prod.
-//		showNoobDialog();
-//		// First-time user dialog cookie
-//		boolean noobCookie = resultsActivityPrefs.getBoolean("noob_cookie", false);
-//		if (!noobCookie){
-//			showNoobDialog();
-//			userAintANoob();
-//		}
+		resultsActivityPrefs = getSharedPreferences("results_prefs", MODE_PRIVATE);
+		// TODO: for testing purposes. Remove before prod.
+		showNoobDialog();
+		// First-time user dialog cookie
+		boolean noobCookie = resultsActivityPrefs.getBoolean("noob_cookie", false);
+		if (!noobCookie){
+			showNoobDialog();
+			userAintANoob();
+		}
+	}
+	
+
+	/**
+	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.
+	 * 
+	 * @param message
+	 */
+	@SuppressWarnings("deprecation")
+	private void showNoobDialog() {
+		// Yes, this is deprecated, but there's a conflict with RA.java extending FragmentActivity and MapActivity
+		showDialog(INSTRUCTIONS_DIALOG);
+	}
+	
+	/**
+	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
+	 */
+	private void userAintANoob() {
+		SharedPreferences.Editor ed = resultsActivityPrefs.edit();
+		ed.putBoolean("noob_cookie", true);
+		ed.commit();	
 	}
 	
 	
-//	/**
-//	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.
-//	 * 
-//	 * @param message
-//	 */
-//	private void showNoobDialog() {
-//		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.results_noob_title), getResources().getString(R.string.results_noob_instructions)) {
-//			@Override
-//			public void onButtonClicked(DialogInterface dialog, int which) {
-//				dialog.dismiss();
-//			}
-//		};
-	//try just dialog.show()
-//		dialog.show(getSupportFragmentManager(), TAG);
-//	}
-//	
-//	/**
-//	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
-//	 */
-//	private void userAintANoob() {
-//		SharedPreferences.Editor ed = resultsActivityPrefs.edit();
-//		ed.putBoolean("noob_cookie", true);
-//		ed.commit();	
-//	}
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		switch(id){
+			case INSTRUCTIONS_DIALOG:
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		        builder.setTitle(R.string.results_noob_title);
+		        builder.setMessage(R.string.results_noob_instructions);
+				builder.setPositiveButton(android.R.string.ok, 
+						new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) {
+		                      return;
+		                } });
+		        return builder.create();
+			}
+		return null;
+	}
 	
 	
 	void initMapView() {		
