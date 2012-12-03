@@ -10,8 +10,11 @@ import org.routy.exception.RoutyException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.fragment.TwoButtonDialog;
 import org.routy.listener.FindUserLocationListener;
+import org.routy.model.GooglePlace;
+import org.routy.model.GooglePlacesQuery;
 import org.routy.service.AddressService;
 import org.routy.task.FindUserLocationTask;
+import org.routy.task.GooglePlacesQueryTask;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -100,7 +103,6 @@ public class OriginActivity extends FragmentActivity {
 		});
 
 		findUserButton 		= (Button) findViewById(R.id.find_user_button);
-//		resetLocateButton();
 		locationManager 	= (LocationManager) getSystemService(LOCATION_SERVICE);
 		addressService 		= new AddressService(new Geocoder(this, Locale.getDefault()), false);		// TODO make getting sensor true/false dynamic
 		
@@ -118,6 +120,7 @@ public class OriginActivity extends FragmentActivity {
 	private void showInstructions() {
 		// TODO: for testing purposes. Remove before prod.
 		showNoobDialog();
+		
 		// First-time user dialog cookie
 		boolean noobCookie = originActivityPrefs.getBoolean("noob_cookie", false);
 		if (!noobCookie){
@@ -285,38 +288,44 @@ public class OriginActivity extends FragmentActivity {
 	 */
 	public void goToDestinationsScreen(View view) {
 		// validate the origin address, store it, and move on to the destinations screen
-		Log.v(TAG, "Origin entered: " + originAddressField.getText());
-		
-		// TODO debugging...remove for prod
-		if (origin == null) {
-			Log.d(TAG, "origin object is null");
-		} else {
-			Log.d(TAG, "got an origin object");
-			
-			if (origin.getExtras() == null) {
-				Log.d(TAG, "origin extras is null");
-			} else {
-				Log.d(TAG, "origin has extras");
-			}
-		}
-		
-
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
-		if (!originFromGeoLoc) {
-			Log.d(TAG, "origin needs to be validated");
-		}
+		String locationQuery = originAddressField.getText().toString();
 		
-		if (!originFromGeoLoc && (originAddressField.getText() == null || originAddressField.getText().length() == 0)) {
+		if (!originFromGeoLoc && (locationQuery == null || locationQuery.length() == 0)) {
 			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
 		} else {
 			if (!originFromGeoLoc) {
-				// TODO use GooglePlacesQueryTask to do this...
+				Log.v(TAG, "origin was user-entered and needs to be validated");
 				
+				// use GooglePlacesQueryTask to do this...
+				new GooglePlacesQueryTask(this) {
+					
+					@Override
+					public void onResult(GooglePlace place) {
+						// make an Address out of the Google place and start the DestinationActivity
+						origin = new Address(Locale.getDefault());
+						origin.setFeatureName(place.getName());
+						origin.setLatitude(place.getLatitude());
+						origin.setLongitude(place.getLongitude());
+						
+						Bundle extras = new Bundle();
+						extras.putString("formatted_address", place.getFormattedAddress());
+						origin.setExtras(extras);
+						
+						startDestinationActivity();
+					}
+					
+					@Override
+					public void onNoSelection() {
+						// TODO do nothing?
+						
+					}
+				}.execute(new GooglePlacesQuery(locationQuery, null, null));
 				
-				// Validate the given address string
+				/*// Validate the given address string
 				Log.v(TAG, "validating the origin address before going to destinations screen");
 				Address originAddress = null;
 				try {
@@ -346,13 +355,20 @@ public class OriginActivity extends FragmentActivity {
 				} else {
 					//    			Toast.makeText(this, getString(R.string.origin_failed_validate), Toast.LENGTH_LONG).show();	// XXX temp
 					showErrorDialog(getResources().getString(R.string.bad_origin_address_error));
-				}
+				}*/
 			} else {
-				// Origin address is good...move on to Destinations
-				Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
-				destinationIntent.putExtra("origin", origin);	// Android Address is Parcelable, so no need for Bundle
-				startActivity(destinationIntent);
+				startDestinationActivity();
 			}
+		}
+	}
+
+
+	private void startDestinationActivity() {
+		if (origin != null) {
+			// Origin address is good...move on to Destinations
+			Intent destinationIntent = new Intent(getBaseContext(), DestinationActivity.class);
+			destinationIntent.putExtra("origin", origin);	// Android Address is Parcelable, so no need for Bundle
+			startActivity(destinationIntent);
 		}
 	}
 
