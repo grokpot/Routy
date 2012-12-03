@@ -14,13 +14,6 @@
         android:textSize="22dp"
         android:textStyle="bold" />
 
-    <com.google.android.maps.MapView
-        android:id="@+id/mapview_results"
-        android:layout_width="match_parent"
-        android:layout_height="300dp"
-        android:apiKey="@string/google_maps_api_key_debug"
-        android:clickable="false" />
-
     <Button
         android:id="@+id/button_results_segment"
         android:layout_width="wrap_content"

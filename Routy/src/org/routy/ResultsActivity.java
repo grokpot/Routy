@@ -40,7 +40,7 @@ public class ResultsActivity extends MapActivity {
 	private FragmentActivity context;
 	Context mContext;
 
-	private MapView mapView;
+//	private MapView mapView;
 	
 	private SharedPreferences resultsActivityPrefs;
 	
@@ -123,10 +123,9 @@ public class ResultsActivity extends MapActivity {
 //	}
 	
 	
-	void initMapView() {
-		mapView = (MapView) findViewById(R.id.mapview_results);
+	void initMapView() {		
+		MapView mapView = (MapView) findViewById(R.id.mapview_results);
 		mapView.setBuiltInZoomControls(false);		// Don't let the user do anything to the map, and don't display zoom buttons
-		
 		MapController controller = mapView.getController();
 		// TODO instead of doing this, calculate the span of lat and lng and call zoomToSpan
 		controller.setCenter(new GeoPoint(30390960, -97697490));
@@ -141,6 +140,7 @@ public class ResultsActivity extends MapActivity {
 		Address address = null;
 		// TODO: do we need lastAddress?
 		boolean isLastAddress = false;
+		ResultsSegmentView v;
 		for (int addressIndex = 0; addressIndex < addressesSize; addressIndex++) {
 			address = route.getAddresses().get(addressIndex);
 			// special case if it's the last segment
@@ -149,7 +149,7 @@ public class ResultsActivity extends MapActivity {
 			}
 
 			// TODO: do we need to send addressIndex?
-			ResultsSegmentView v = new ResultsSegmentView(mContext, address, addressIndex, isLastAddress) {
+			v = new ResultsSegmentView(mContext, address, addressIndex, isLastAddress) {
 
 				@Override
 				public void onSegmentClicked(int id, boolean isLastAddress) {

@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.routy.R;
 
+import com.google.android.maps.GeoPoint;
+import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 
 import android.content.Context;
@@ -24,7 +26,6 @@ public abstract class ResultsSegmentView extends LinearLayout{
 	private boolean	isLastAddress;
 	private TextView 	segmentText;
 	private Button		segmentButton;
-	private MapView		segmentMap;
 	private int		id;
 	
 	
@@ -73,12 +74,7 @@ public abstract class ResultsSegmentView extends LinearLayout{
 				Log.v(TAG, "onSegmentClicked from row with id=" + id);
 				onSegmentClicked(id, isLastAddress);
 			}
-		});
-		
-		segmentMap = (MapView) findViewById(R.id.mapview_results);
-		segmentMap.scrollTo(100, 100); 	// test
-
-		
+		});		
 
 	}
 	
