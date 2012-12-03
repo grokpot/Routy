@@ -36,7 +36,7 @@
     <string name="origin_failed_validate">Bad origin address.</string>
     
     <!-- Origin Screen Stuff -->
-    <string name="origin_hint">e.g. 1 University Station, Austin, TX</string>
+    <string name="origin_hint">e.g. 1 University Station, Draught House</string>
     <string name="origin_prompt">Origin</string>
     <string name="find_user_prompt"> Find Me</string>
     <string name="clear_screen">Clear</string>

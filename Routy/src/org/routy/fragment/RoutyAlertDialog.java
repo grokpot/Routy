@@ -8,8 +8,6 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.TextView;
 
 public abstract class RoutyAlertDialog extends DialogFragment {

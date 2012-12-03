@@ -62,6 +62,25 @@ public class Util {
 		
 		return null;
 	}
+	
+	
+	public static String writeAddressToJson(Address address) {
+		StringWriter sWriter = new StringWriter();
+		JsonWriter jWriter = new JsonWriter(sWriter);
+		
+		writeAddress(jWriter, address);
+		
+		String output = sWriter.toString();
+		
+		try {
+			jWriter.close();
+			sWriter.close();
+		} catch (IOException e) {
+			Log.e(TAG, "IOException closing writer(s)");
+		}
+		
+		return output;
+	}
 
 	
 	/**
@@ -110,7 +129,6 @@ public class Util {
 	 * @return
 	 */
 	public static List<Address> jsonToAddressList(String json) {
-		// TODO
 		List<Address> addresses = new ArrayList<Address>();
 		
 		try {
@@ -138,9 +156,16 @@ public class Util {
 		return addresses;
 	}
 	
+	
+	public static Address readAddressFromJson(String json) {
+		StringReader sReader = new StringReader(json);
+		JsonReader jReader = new JsonReader(sReader);
+		
+		return readAddress(jReader);
+	}
+	
 
 	static Address readAddress(JsonReader jReader) {
-		// TODO
 		if (jReader == null) {
 			return null;
 		}
@@ -221,4 +246,28 @@ public class Util {
 		return drawable;
 	}
 	
+	public static void formatAddress(Address result) {
+		Bundle extras = new Bundle();
+		StringBuffer formattedAddress = new StringBuffer();
+		
+		if (result.getMaxAddressLineIndex() > -1) {
+			formattedAddress.append(result.getAddressLine(0));
+		}
+		
+		formattedAddress.append(result.getLocality() == null ? "" : (" " + result.getLocality()));
+		formattedAddress.append(result.getAdminArea() == null ? "" : (" " + result.getAdminArea()));
+		
+		if (formattedAddress.length() == 0) {
+			formattedAddress.append(result.getLatitude());
+			formattedAddress.append(", ");
+			formattedAddress.append(result.getLongitude());
+		}
+		
+		extras.putString("formatted_address", formattedAddress.toString());
+		result.setExtras(extras);
+		
+		if (result.getExtras() == null) {
+			Log.e(TAG, "result extras is null");
+		}
+	}
 }
