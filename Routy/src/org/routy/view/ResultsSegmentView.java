@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.routy.R;
 
+import com.google.android.maps.MapView;
+
 import android.content.Context;
 import android.location.Address;
 import android.util.Log;
@@ -22,6 +24,7 @@ public abstract class ResultsSegmentView extends LinearLayout{
 	private boolean	isLastAddress;
 	private TextView 	segmentText;
 	private Button		segmentButton;
+	private MapView		segmentMap;
 	private int		id;
 	
 	
@@ -63,7 +66,6 @@ public abstract class ResultsSegmentView extends LinearLayout{
 		if (isLastAddress){
 			segmentButton.setVisibility(GONE);
 		}
-		
 		segmentButton.setOnClickListener(new OnClickListener() {
 			
 			@Override
@@ -72,6 +74,9 @@ public abstract class ResultsSegmentView extends LinearLayout{
 				onSegmentClicked(id, isLastAddress);
 			}
 		});
+		
+		segmentMap = (MapView) findViewById(R.id.mapview_results);
+		segmentMap.scrollTo(100, 100); 	// test
 
 		
 
