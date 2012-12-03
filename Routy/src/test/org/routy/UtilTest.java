@@ -10,9 +10,11 @@ import android.location.Address;
 import android.os.Bundle;
 import android.test.AndroidTestCase;
 import android.util.JsonWriter;
+import android.util.Log;
 
 public class UtilTest extends AndroidTestCase {
 
+	private final String TAG = "UtilTest";
 	
 	public void setUp() throws Exception {
 		super.setUp();
@@ -39,6 +41,21 @@ public class UtilTest extends AndroidTestCase {
 		}
 		assertNotNull(json);
 		System.out.println(json);
+	}
+	
+	public void testAddressToJsonExternal() {
+		Address dummy = new Address(Locale.getDefault());
+		dummy.setFeatureName("Dummy Address");
+		dummy.setLatitude(30.12345);
+		dummy.setLongitude(-97.12345);
+		
+		Bundle extras = new Bundle();
+		extras.putString("formatted_address", "Formatted, pretty Dummy Address");
+		dummy.setExtras(extras);
+		
+		String json = Util.writeAddressToJson(dummy);
+//		System.out.println(json);
+		Log.v(TAG, "single address: " + json);
 	}
 	
 	public void testAddressListToJson() {
@@ -72,6 +89,19 @@ public class UtilTest extends AndroidTestCase {
 			fail("IOException when closing the StringWriter");
 		}
 		System.out.println(json);
+	}
+	
+	public void testJsonToAddressExternal() {
+		String json = "{\"persisted_address\":{\"feature_name\":\"Dummy Address\",\"latitude\":30.12345,\"longitude\":-97.12345,\"formatted_address\":\"Formatted, pretty Dummy Address\",\"valid_status\":2}}";
+		
+		Address dummy1 = Util.readAddressFromJson(json);
+		assertEquals("feature name mismatch", "Dummy Address", dummy1.getFeatureName());
+		assertEquals("latitude mismatch", 30.12345, dummy1.getLatitude());
+		assertEquals("longitude mismatch", -97.12345, dummy1.getLongitude());
+		
+		Bundle extras = dummy1.getExtras();
+		assertNotNull(extras);
+		assertEquals("formatted_address mismatch", "Formatted, pretty Dummy Address", extras.getString("formatted_address"));
 	}
 	
 	public void testJsonToAddressList() {

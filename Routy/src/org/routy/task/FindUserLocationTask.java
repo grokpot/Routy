@@ -3,6 +3,7 @@ package org.routy.task;
 import java.util.Date;
 import java.util.Locale;
 
+import org.routy.Util;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
@@ -89,6 +90,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 					address = addressService.getAddressForLocation(location);
 					
 				} catch (AmbiguousAddressException e) {
+					Log.v(TAG, "more than reverse-geocoded address...using the first one");
 					if (e.getAddresses().size() > 0) {
 						address = e.getFirstAddress();
 					}
@@ -155,6 +157,9 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 		Log.v(TAG, "postExecute() -- got user location");
 		if (progressDialog.isShowing()) {
 			progressDialog.cancel();
+		}
+		if (userLocation.getExtras() == null) {
+			Log.e(TAG, "userLocation address extras is null");
 		}
 		listener.onUserLocationFound(userLocation);
 	}
