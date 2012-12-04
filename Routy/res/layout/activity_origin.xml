@@ -1,93 +1,112 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/origin_layout"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
     android:background="@drawable/gradient"
+    android:fillViewport="true"
     android:padding="10dp" >
 
-    <!--
-         <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_alignLeft="@id/origin_layout"
-        android:text="@string/find_user_prompt"
-        tools:context=".OriginActivity" />
-    -->
-
-    <ImageView
-        android:id="@+id/origin_routy_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:adjustViewBounds="true"
-        android:contentDescription="@string/origin_logo"
-        android:minHeight="200dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/whitesplashhi" />
-
-    <TextView
-        android:id="@+id/textview_origin_purpose"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/origin_routy_logo"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="20dp"
-        android:gravity="center_horizontal"
-        android:text="..the right route for many places."
-        android:textColor="@color/White"
-        android:textSize="20dp"
-        android:textStyle="bold|italic" />
-    
-    <TextView
-        android:id="@+id/origin_textview_welcome"
+    <RelativeLayout
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/origin_address_field"
-        android:gravity="center_horizontal|center_vertical"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:text="@string/origin_welcome"
-        android:textColor="@color/ShitGold"
-        android:textSize="19dp"
-        android:textStyle="bold" />
+        android:orientation="vertical" >
 
-    <EditText
-        android:id="@+id/origin_address_field"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_above="@+id/enter_destinations_button"
-        android:layout_marginBottom="40dp"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:hint="@string/origin_hint"
-        android:scrollHorizontally="true"
-        android:singleLine="true"
-        android:textColor="@color/White" />
-    
-    <Button
-        android:id="@+id/enter_destinations_button"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginBottom="10dp"
-        android:drawableRight="@drawable/nextwhite"
-        android:onClick="goToDestinationsScreen"
-        android:text="@string/goto_destinations" />
+        <LinearLayout
+            android:id="@+id/linearLayout_origin_top"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:orientation="vertical" >
 
-    <Button
-        android:id="@+id/find_user_button"
-        style="?android:attr/borderlessButtonStyle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginBottom="10dp"
-        android:drawableLeft="@drawable/findwhite"
-        android:onClick="findUserLocation"
-        android:text="@string/find_user_prompt" />
+            <ImageView
+                android:id="@+id/origin_routy_logo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/origin_logo"
+                android:minHeight="200dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/whitesplashhi" />
 
-</RelativeLayout>
+            <TextView
+                android:id="@+id/textview_origin_purpose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginBottom="20dp"
+                android:gravity="center_horizontal"
+                android:text="@string/origin_purpose"
+                android:textColor="@color/White"
+                android:textSize="20dp"
+                android:textStyle="bold|italic" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/linearLayout_origin_bottom"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="false"
+            android:layout_below="@id/linearLayout_origin_top"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/origin_textview_welcome"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:gravity="center_horizontal|center_vertical"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="@string/origin_welcome"
+                android:textColor="@color/ShitGold"
+                android:textSize="19dp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/origin_address_field"
+                android:layout_width="fill_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center_horizontal"
+                android:ellipsize="end"
+                android:ems="10"
+                android:gravity="center_vertical"
+                android:hint="@string/origin_hint"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
+                android:textColor="@color/White" >
+
+                <requestFocus />
+            </EditText>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/find_user_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="10dp"
+            android:drawableLeft="@drawable/findwhite"
+            android:onClick="findUserLocation"
+            android:text="@string/find_user_prompt" />
+
+        <Button
+            android:id="@+id/enter_destinations_button"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="10dp"
+            android:drawableRight="@drawable/nextwhite"
+            android:minHeight="48dip"
+            android:onClick="goToDestinationsScreen"
+            android:text="@string/goto_destinations" />
+
+    </RelativeLayout>
+
+</ScrollView>
