@@ -580,6 +580,12 @@ public class DestinationActivity extends FragmentActivity {
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
 	}
+	
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		return false;
+	}
 
 
 	public void onToggleClicked(boolean on) {

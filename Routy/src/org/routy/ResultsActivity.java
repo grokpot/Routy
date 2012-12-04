@@ -341,4 +341,9 @@ public class ResultsActivity extends MapActivity {
 	protected boolean isRouteDisplayed() {
 		return false;
 	}
+	
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		return false;
+	}
 }

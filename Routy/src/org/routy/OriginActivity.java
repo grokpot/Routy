@@ -449,6 +449,12 @@ public class OriginActivity extends FragmentActivity {
 	
 	
 	@Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		return false;
+	}
+	
+	
+	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
 		
