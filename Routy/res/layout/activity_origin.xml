@@ -24,6 +24,7 @@
                 android:id="@+id/origin_routy_logo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/origin_logo"
                 android:minHeight="200dp"

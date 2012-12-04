@@ -76,7 +76,7 @@
             android:drawableLeft="@drawable/pos"
             android:drawablePadding="15dp"
             android:onClick="onAddDestinationClicked"
-            android:text="Add a destination"
+            android:text="@string/destination_add"
             android:textStyle="bold" />
 
         <LinearLayout

@@ -102,10 +102,7 @@ public class OriginActivity extends FragmentActivity {
 	}
 
 
-	private void showInstructions() {
-		// TODO: for testing purposes. Remove before prod.
-		showNoobDialog();
-		
+	private void showInstructions() {		
 		// First-time user dialog cookie
 		boolean noobCookie = originActivityPrefs.getBoolean("noob_cookie", false);
 		if (!noobCookie){

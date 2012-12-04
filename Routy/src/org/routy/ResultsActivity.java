@@ -99,8 +99,6 @@ public class ResultsActivity extends MapActivity {
 		buildResultsView();
 		
 		resultsActivityPrefs = getSharedPreferences("results_prefs", MODE_PRIVATE);
-		// TODO: for testing purposes. Remove before prod.
-		showNoobDialog();
 		// First-time user dialog cookie
 		boolean noobCookie = resultsActivityPrefs.getBoolean("noob_cookie", false);
 		if (!noobCookie){

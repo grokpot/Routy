@@ -148,8 +148,6 @@ public class DestinationActivity extends FragmentActivity {
 			addDestinationRow();
 		}
 
-		// TODO: for testing purposes. Remove before prod.
-		showNoobDialog();
 		// First-time user dialog cookie
 		boolean noobCookie = destinationActivityPrefs.getBoolean("noob_cookie", false);
 		if (!noobCookie){
