@@ -14,6 +14,10 @@
         padding-top: 20px;
         padding-bottom: 40px;
       }
+      
+      .right-justified {
+      	text-align: right;
+      }
 
       /* Custom container */
       .container-narrow {
@@ -26,6 +30,23 @@
       
       .routy-center {
       	text-align: center;
+      }
+      
+      .routy-caption {
+      	color: #FFAE00;
+      }
+      
+      .routy-header-image {
+        height: 100px;
+      }
+      
+      .routy-screenshot-small {
+      	height: 300px;
+      	width: auto;
+      }
+      
+      .space-bottom {
+      	margin-bottom: 20px;
       }
 
       /* Main marketing message and sign up button */
@@ -58,11 +79,11 @@
     <![endif]-->
 
     <!-- Fav and touch icons -->
-    <link rel="shortcut icon" href="../assets/ico/favicon.ico">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
+    <link rel="shortcut icon" href="assets/ico/favicon.ico">
+    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="assets/ico/apple-touch-icon-144-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="assets/ico/apple-touch-icon-114-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="assets/ico/apple-touch-icon-72-precomposed.png">
+    <link rel="apple-touch-icon-precomposed" href="assets/ico/apple-touch-icon-57-precomposed.png">
   </head>
 
   <body>
@@ -70,22 +91,32 @@
     <div class="container-narrow">
 
       <div class="masthead">
-        <h3 class="muted">logo image here!</h3>
+        <!-- <h3 class="muted">logo image here!</h3> -->
+        <img class="routy-header-image" src="assets/img/webroutysmall_flipped.png" />
       </div>
 
       <hr>
 
       <div class="jumbotron">
         <h1>Say "Hi" to Routy!</h1>
-        <p class="lead">...the right route for many places.</p>
+        <p class="lead routy-caption">...the right route for many places.</p>
         <!-- <a class="btn btn-large btn-success" href="#">Sign up today</a> -->
       </div>
       
       <hr>
       
       <div class="row-fluid screenshots">
-	  	<div class="span12">
-	  		<h4 class="routy-center">Screenshots of app...</h4>
+	  	<div class="span4">
+	  		<!-- <h4 class="routy-center">Screenshot of app...</h4> -->
+	  		<img src="assets/img/origin1.png" />
+	  	</div>
+	  	<div class="span4">
+	  		<!-- <h4 class="routy-center">Screenshot of app...</h4> -->
+	  		<img src="assets/img/destinations_add.png" />
+	  	</div>
+	  	<div class="span4">
+	  		<!-- <h4 class="routy-center">Screenshot of app...</h4> -->
+	  		<img src="assets/img/results_map.png" />
 	  	</div>
 	  </div>
 
@@ -93,17 +124,57 @@
 
 	  <div class="row-fluid description">
 	  	<div class="span12">
-	  		<h4 class="routy-center">What is it?</h4>
+	  		<h4 class="routy-center muted">What is it?</h4>
 	  		<p>Routy is an app that helps you figure out the best route between many different destinations. Just give it an origin and up to 5 destinations and Routy will calculate the most efficient route by distance or time beginning at your origin! It's fast, easy, and really simple - jump right in and get Routing!</p>
 	  	</div>
 	  </div>
 	  
 	  <hr>
 	  
-	  <div class="row-fluid features">
+	  <div class="row-fluid features-header">
 	  	<div class="span12">
-	  		<h4 class="routy-center">List of features...</h4>
-	  		
+	  		<h4 class="routy-center muted">List of features...</h4>
+	  	</div>
+	  </div>
+	  
+	  <div class="row-fluid features-nontech space-bottom">
+	  	<div class="span8">
+	  		<p>
+	  			<ul>
+	  				<li>Origin and 5 destinations route finding that's fast and easy.</li>
+					<li>Select between the most shortest distance or fastest time.</li>
+					<li>Don't know an exact address?  Don't worry! We can help you figure it out.</li>
+					<li><b><i>Uses GPS to locate you</i></b> if you want to use your current location as the origin.</li>
+					<li>Shows you a general map with your origin and destinations while linked to your Android maps app for detailed routes for each segment of your trip.</li>
+					<li>A beautiful, clean interface with its own style that helps you along without getting in your way.</li>
+	  			</ul>
+	  		</p>
+	  	</div>
+	  	<div class="span4 right-justified">
+	  		<p><!-- <i>some screenshot</i> -->
+	  			<img src="assets/img/origin_looking.png" />
+	  		</p>
+	  	</div>
+	  </div>
+	  
+	  <div class="row-fluid features-tech">
+	  	<div class="span4">
+	  		<p><!-- <i>some screenshot</i> -->
+	  			<img src="assets/img/destinations_places.png" />
+	  		</p>
+	  	</div>
+	  	<div class="span8 right-justified">
+	  		<p>
+	  			<span>Some technical stuff</span>
+	  			<ul>
+	  				<li>Dynamic list building for pretty screens!</li>
+					<li>XML/JSON parsing for API calls.</li>
+					<li>Integration with both Google Directions and <b><i>Google Places API</i></b>.</li>
+					<li>Error messages built using Android Fragments (ICS) for helpful error handling.</li>
+					<li>Saving state between screens and when the app is loaded.</li>
+					<li>Custom logos, splash screens, buttons, pins, and tags.</li>
+	  			</ul>
+	  		</p>
 	  	</div>
 	  </div>
 	  
