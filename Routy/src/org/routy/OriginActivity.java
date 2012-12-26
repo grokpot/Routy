@@ -7,6 +7,7 @@ import org.routy.exception.NoLocationProviderException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.fragment.TwoButtonDialog;
 import org.routy.listener.FindUserLocationListener;
+import org.routy.model.AddressModel;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.task.FindUserLocationTask;
@@ -35,6 +36,7 @@ public class OriginActivity extends FragmentActivity {
 	private static final int ENABLE_GPS_REQUEST = 1;
 
 	private FragmentActivity context;
+	private AddressModel addressModel;
 
 	private EditText originAddressField;
 	private Address origin;
@@ -54,6 +56,8 @@ public class OriginActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		setContentView(R.layout.activity_origin);
+		
 		// Audio stuff
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
@@ -62,8 +66,6 @@ public class OriginActivity extends FragmentActivity {
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
 
-		setContentView(R.layout.activity_origin);
-
 		// More audio stuff. 
 		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
@@ -71,6 +73,7 @@ public class OriginActivity extends FragmentActivity {
 
 		// Initializations
 		context 			= this;
+		addressModel = AddressModel.getSingleton();
 		
 		originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
 		originAddressField.addTextChangedListener(new TextWatcher() {
