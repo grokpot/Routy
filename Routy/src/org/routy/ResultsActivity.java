@@ -4,7 +4,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.routy.fragment.OneButtonDialog;
 import org.routy.mapview.MapRoute;
 import org.routy.mapview.MapRoute.RouteListener;
 import org.routy.mapview.MapRouteOverlay;
@@ -20,13 +19,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
@@ -164,22 +163,37 @@ public class ResultsActivity extends MapActivity {
 		int maxLat = Integer.MIN_VALUE;
 		int minLon = Integer.MAX_VALUE;
 		int maxLon = Integer.MIN_VALUE;
+		GeoPoint northernMost = null;
 
 		for (GeoPoint item : geoPoints) 
 		{ 
 
 		      int lat = item.getLatitudeE6();
 		      int lon = item.getLongitudeE6();
+		      
+		      if (lat > maxLat) {
+		    	  northernMost = item;
+		      }
 
 		      maxLat = Math.max(lat, maxLat);
 		      minLat = Math.min(lat, minLat);
 		      maxLon = Math.max(lon, maxLon);
 		      minLon = Math.min(lon, minLon);
 		 }
+		
+		Log.v(TAG, String.format("maxlat before extension %d", maxLat));
 
 		double fitFactor = 2.3;
 		mapController.setCenter(new GeoPoint( (maxLat + minLat)/2, (maxLon + minLon)/2 ));
 //		mapController.setZoom(17);
+		
+		// Add the min/sec equivalent of 100 pixels to the top of the top-most point to make room for the item image, so it doesn't get cut off.
+		Point point = mapView.getProjection().toPixels(northernMost, null);
+		Log.v(TAG, String.format("pixel position of top-most point = %d, %d", point.x, point.y));
+		northernMost = mapView.getProjection().fromPixels(point.x, point.y - 100);
+		maxLat = northernMost.getLatitudeE6();
+		Log.v(TAG, String.format("maxlat after extension %d", maxLat));
+		
 		mapController.zoomToSpan((int) (Math.abs(maxLat - minLat) * fitFactor), (int)(Math.abs(maxLon - minLon) * fitFactor));
 		mapController.animateTo(new GeoPoint( (maxLat + minLat)/2, (maxLon + minLon)/2 )); 
 	}

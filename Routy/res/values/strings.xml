@@ -75,7 +75,7 @@
     <string name="origin_logo">Routy Origin Logo</string>
     <string name="origin_name">Welcome to Routy -</string>
     <string name="origin_welcome">Where does your trip begin?</string>
-    <string name="results_header">Here\'s the shortest route for your destinations:</string>
+    <string name="results_header">Here\'s the best route for your destinations:</string>
     <string name="destination_question">Where are you going?</string>
     <string name="destination_origin">Starting from:</string>
 
