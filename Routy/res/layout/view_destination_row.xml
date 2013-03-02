@@ -21,7 +21,7 @@
         android:id="@+id/button_destination_remove" 
         android:layout_width="43dp" 
         android:layout_height="43dp" 
-        android:background="@drawable/negwhitegold"
+        android:background="@drawable/negwhiteonly"
         style="?android:attr/borderlessButtonStyle"/>
         
 </LinearLayout>
