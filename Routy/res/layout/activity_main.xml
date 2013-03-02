@@ -11,7 +11,20 @@
            android:layout_height="fill_parent"
            android:layout_alignParentLeft="true"
            android:layout_alignParentTop="true"
+           android:layout_marginBottom="60dp"
            android:src="@drawable/hisplashwhite"/>
+    
+    <TextView
+                android:id="@+id/textview_origin_purpose"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_above="@+id/progressbar_splash_loading"
+                android:layout_marginBottom="30dp"
+                android:text="@string/origin_purpose"
+                android:textColor="@color/White"
+                android:textSize="20dp"
+                android:textStyle="bold|italic" />
     
     <ProgressBar 
         android:id="@+id/progressbar_splash_loading" 
