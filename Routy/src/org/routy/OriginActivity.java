@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.location.Address;
 import android.media.AudioManager;
 import android.media.SoundPool;
+import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
@@ -65,11 +66,20 @@ public class OriginActivity extends FragmentActivity {
 		speak = sounds.load(this, R.raw.routyspeak, 1);  
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
+		
+		sounds.setOnLoadCompleteListener(new OnLoadCompleteListener() {
 
-		// More audio stuff. 
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(speak, volume, volume, 1, 0, 1);
+      @Override
+      public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
+        if (sampleId == speak) {
+          volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+          volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+          Log.v(TAG, "volume is: " + volume);
+          soundPool.play(sampleId, volume, volume, 1, 0, 1);
+        }
+      }
+		  
+		});
 
 		// Initializations
 		context 			= this;
