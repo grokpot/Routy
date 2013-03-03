@@ -10,7 +10,6 @@ import org.routy.model.GooglePlacesQuery;
 import org.routy.service.GooglePlacesService;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;

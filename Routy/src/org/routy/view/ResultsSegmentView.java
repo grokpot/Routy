@@ -5,11 +5,7 @@ import java.util.UUID;
 import org.routy.R;
 import org.routy.Util;
 
-import com.google.android.maps.GeoPoint;
-import com.google.android.maps.MapController;
-import com.google.android.maps.MapView;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,8 +13,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.android.maps.MapView;
 
 public abstract class ResultsSegmentView extends LinearLayout{
 	

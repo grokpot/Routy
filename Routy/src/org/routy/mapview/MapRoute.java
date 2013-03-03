@@ -1,11 +1,6 @@
 package org.routy.mapview;
 
-import java.io.StringReader;
 import java.util.ArrayList;
-
-import org.apache.http.client.HttpClient;
-import org.xmlpull.v1.XmlPullParser;
-import org.xmlpull.v1.XmlPullParserFactory;
 
 import android.os.Handler;
 
