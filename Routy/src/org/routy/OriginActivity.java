@@ -417,6 +417,7 @@ public class OriginActivity extends FragmentActivity {
 	protected void onResume() {   
 		super.onResume(); 
 
+		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
 		speak = sounds.load(this, R.raw.routyspeak, 1);  
 		bad = sounds.load(this, R.raw.routybad, 1);
