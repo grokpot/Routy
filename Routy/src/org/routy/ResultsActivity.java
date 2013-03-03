@@ -205,7 +205,7 @@ public class ResultsActivity extends Activity {
 			}
 			
 			mMap.addMarker(new MarkerOptions().position(latlng)
-								.title(address.getFeatureName())
+								.title(Util.getAddressText(address))
 								.icon(BitmapDescriptorFactory.fromResource(Util.getItemizedPinId(addressIndex))));
 			
 			v = new ResultsSegmentView(mContext, address, addressIndex, isLastAddress) {

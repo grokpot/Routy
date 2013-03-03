@@ -47,14 +47,16 @@ public abstract class ResultsSegmentView extends LinearLayout{
 		LayoutInflater inflater = LayoutInflater.from(context);
 		inflater.inflate(R.layout.view_result_segment, this);
 		
+		// Moved to Util.java for consistency across the app in how we display place text
 		// Hacky "if" statement that displays the address if it's not a Google Place
-		String addressText = startAddress.getFeatureName();
+		/*String addressText = startAddress.getFeatureName();
 		if (startAddress.getThoroughfare() != null) {
 			addressText = startAddress.getThoroughfare();
 			if (startAddress.getSubThoroughfare() != null) {
 				addressText = startAddress.getSubThoroughfare() + " " + addressText;
 			}
-		}
+		}*/
+		String addressText = Util.getAddressText(startAddress);
 		
 		segmentText		= (TextView) findViewById(R.id.textview_results_segment);
 		segmentText.setText(addressText);

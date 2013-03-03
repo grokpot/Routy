@@ -301,4 +301,17 @@ public class Util {
 			Log.e(TAG, "result extras is null");
 		}
 	}
+	
+	
+	public static String getAddressText(Address address) {
+		// Hacky "if" statement that displays the address if it's not a Google Place
+		String addressText = address.getFeatureName();
+		if (address.getThoroughfare() != null) {
+			addressText = address.getThoroughfare();
+			if (address.getSubThoroughfare() != null) {
+				addressText = address.getSubThoroughfare() + " " + addressText;
+			}
+		}
+		return addressText;
+	}
 }
