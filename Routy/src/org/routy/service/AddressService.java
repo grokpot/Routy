@@ -111,6 +111,7 @@ public class AddressService {
 	 */
 	public Address getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, RoutyException, IOException {
 		if (!Geocoder.isPresent()) {
+			Log.v(TAG, String.format("using web API to get address for location: %f, %f", latitude, longitude));
 			return getAddressViaWeb(latitude, longitude);
 		} else {
 			return getAddressViaGeocoder(latitude, longitude);
@@ -172,21 +173,33 @@ public class AddressService {
 	 * @throws AmbiguousAddressException
 	 */
 	Address getAddressViaGeocoder(double latitude, double longitude) throws IOException, AmbiguousAddressException {
-		List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
+		Log.v(TAG, String.format("using geocoder to get address for location: %f, %f", latitude, longitude));
+		int tries = 0;
 		
-		if (results != null && results.size() > 0) {
-			if (results.size() == 1) {
-				Address result = results.get(0);
-				Util.formatAddress(result);
-				return result;
-			} else {
-				for (Address a : results) {
-					Util.formatAddress(a);
+		// Since this process actually involves the Google server, there can be issues on their end out of our control.  We'll try 10 times if something goes wrong.
+		while (tries < 10) {
+			try {
+				List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
+				if (results != null && results.size() > 0) {
+					if (results.size() == 1) {
+						Address result = results.get(0);
+						Util.formatAddress(result);
+						Log.v(TAG, "got an address for the location using geocoder");
+						return result;
+					} else {
+						for (Address a : results) {
+							Util.formatAddress(a);
+						}
+						throw new AmbiguousAddressException(results);
+					}
 				}
-				throw new AmbiguousAddressException(results);
+			} catch (IOException e) {
+				Log.e(TAG, "IOException calling getFromLocation -- trying again");
+				tries++;
 			}
 		}
 		
+		Log.e(TAG, "couldn't get address using geocoder");
 		return null;
 	}
 

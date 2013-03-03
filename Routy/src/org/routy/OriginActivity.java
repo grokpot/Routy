@@ -261,6 +261,7 @@ public class OriginActivity extends FragmentActivity {
 					showEnableGpsDialog();
 				} catch (Throwable e) {
 					Log.e(TAG, "don't know why we couldn't obtain a location...");
+					Log.e(TAG, e.getMessage());
 					showErrorDialog(getResources().getString(R.string.locating_fail_error));
 				}
 			}
