@@ -12,7 +12,8 @@ public class GoogleDirectionsServiceTest extends AndroidTestCase {
 
 	private final String TAG = "GoogleDirectionsServiceTest";
 	
-	public void setUp() throws Exception {
+	@Override
+  public void setUp() throws Exception {
 		super.setUp();
 	}
 	
@@ -36,7 +37,8 @@ public class GoogleDirectionsServiceTest extends AndroidTestCase {
 		}
 	}
 	
-	public void tearDown() throws Exception {
+	@Override
+  public void tearDown() throws Exception {
 		super.tearDown();
 	}
 }

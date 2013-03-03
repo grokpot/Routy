@@ -8,6 +8,17 @@ import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
 import org.routy.view.ResultsSegmentView;
 
+import com.google.android.gms.maps.CameraUpdate;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -27,17 +38,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
-import com.google.android.gms.maps.CameraUpdate;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class ResultsActivity extends Activity {
 	
@@ -73,7 +73,7 @@ public class ResultsActivity extends Activity {
 		mContext = this;
 
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-		volume = (float) audioManager
+		volume = audioManager
 				.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
@@ -134,7 +134,8 @@ public class ResultsActivity extends Activity {
 		        builder.setMessage(R.string.results_noob_instructions);
 				builder.setPositiveButton(android.R.string.ok, 
 						new DialogInterface.OnClickListener() {
-							public void onClick(DialogInterface dialog, int which) {
+							@Override
+              public void onClick(DialogInterface dialog, int which) {
 		                      return;
 		                } });
 		        return builder.create();
@@ -260,7 +261,7 @@ public class ResultsActivity extends Activity {
 	
 	private void showSegmentInGoogleMaps(int id, boolean isLastAddress) {
 		if (!isLastAddress){
-			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(click, volume, volume, 1, 0, 1);
 				

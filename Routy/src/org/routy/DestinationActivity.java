@@ -65,7 +65,7 @@ public class DestinationActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
 
@@ -276,7 +276,7 @@ public class DestinationActivity extends FragmentActivity {
 	 * @param id
 	 */
 	void removeDestinationRow(UUID id) {
-		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);
 
@@ -314,7 +314,7 @@ public class DestinationActivity extends FragmentActivity {
 	public void acceptDestinations(final View v) {
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
 
-		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);
 
@@ -391,7 +391,7 @@ public class DestinationActivity extends FragmentActivity {
 			}
 		} else {
 			// No destinations entered
-			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, volume, volume, 1, 0, 1);
 			showErrorDialog("Please enter at least one destination to continue.");
@@ -407,7 +407,7 @@ public class DestinationActivity extends FragmentActivity {
 
 	public void onAddDestinationClicked(View v) {
 		Log.v(TAG, "new destination row requested by user");
-		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);
 
@@ -458,7 +458,7 @@ public class DestinationActivity extends FragmentActivity {
 					Log.v(TAG, "adding a new destination row");
 					addDestinationRow();
 				} else {
-					volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+					volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 					volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 					sounds.play(bad, 1, 1, 1, 0, 1);
 

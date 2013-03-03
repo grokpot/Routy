@@ -60,7 +60,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Address> {
 		progressDialog.setTitle("Hang Tight!");
 		progressDialog.setMessage("Looking for you...");
 		progressDialog.setCanceledOnTouchOutside(false);
-		progressDialog.setButton(ProgressDialog.BUTTON_NEGATIVE, "Stop", new DialogInterface.OnClickListener() {
+		progressDialog.setButton(DialogInterface.BUTTON_NEGATIVE, "Stop", new DialogInterface.OnClickListener() {
 			
 			@Override
 			public void onClick(DialogInterface dialog, int which) {

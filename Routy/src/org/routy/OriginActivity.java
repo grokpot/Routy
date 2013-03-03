@@ -60,14 +60,14 @@ public class OriginActivity extends FragmentActivity {
 		
 		// Audio stuff
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
 		speak = sounds.load(this, R.raw.routyspeak, 1);  
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
 
 		// More audio stuff. 
-		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(speak, volume, volume, 1, 0, 1);
 
@@ -209,7 +209,7 @@ public class OriginActivity extends FragmentActivity {
 	 */
 	public void findUserLocation(View view) {
 		Log.v(TAG, "locating user");
-		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
@@ -277,7 +277,7 @@ public class OriginActivity extends FragmentActivity {
 	 */
 	public void goToDestinationsScreen(View view) {
 		// validate the origin address, store it, and move on to the destinations screen
-		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
@@ -362,7 +362,7 @@ public class OriginActivity extends FragmentActivity {
 	 * @param message
 	 */
 	private void showErrorDialog(String message) {
-		volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(bad, volume, volume, 1, 0, 1);
 		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {

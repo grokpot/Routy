@@ -40,7 +40,8 @@ public class MapRouteOverlay extends Overlay
 	return mode;
 	}
 	
-	public boolean draw (Canvas canvas, MapView mapView, boolean shadow, long when)
+	@Override
+  public boolean draw (Canvas canvas, MapView mapView, boolean shadow, long when)
 	{
 	    Projection projection = mapView.getProjection();
 	    if (shadow == false)
