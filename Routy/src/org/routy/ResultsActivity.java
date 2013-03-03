@@ -42,17 +42,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.Overlay;
 
-//public class ResultsActivity extends FragmentActivity {
 public class ResultsActivity extends Activity {
 	
 	private static final int INSTRUCTIONS_DIALOG = 1;
 	Context mContext;
-	
-	// MapView stuff
-//	private MapView					mapView;
-//	private MapController			mapController;
-	private ArrayList<GeoPoint> 	geoPoints;
-	private List<Overlay> 			mapOverlays;
 	
 	// MapFragment stuff
 	private MapFragment mapFragment;
@@ -80,7 +73,6 @@ public class ResultsActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_results);
 		
-//		context  = this;
 		mContext = this;
 
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -172,7 +164,6 @@ public class ResultsActivity extends Activity {
 		}
 		
 		Drawable drawable 	= this.getResources().getDrawable(R.drawable.pin1);
-		geoPoints 			= new ArrayList<GeoPoint>();
 	}
 	
 	
@@ -235,7 +226,6 @@ public class ResultsActivity extends Activity {
 			};
 
 			resultsLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//			mapOverlays.add(itemizedOverlay);
 		}
 		
 		// Sit-chee-ate the map
@@ -312,36 +302,6 @@ public class ResultsActivity extends Activity {
 		return Long.valueOf(Math.round(durationInMinutes)).toString();
 	}
 
-	// Currently unused
-	/*private void drawPath(GeoPoint startPoint,GeoPoint endPoint){		
-	    MapRoute oRoute = new MapRoute(startPoint,endPoint);
-	    oRoute.getPoints(new RouteListener(){
-	    	
-	        @Override
-	        public void onDetermined(ArrayList<GeoPoint> geoPoints){
-	            GeoPoint oPointA = null;
-	            GeoPoint oPointB = null;
-
-//	            mapView.getOverlays().clear();
-
-	            for(int i=1; i<geoPoints.size()-1; i++){
-	                oPointA = geoPoints.get(i-1);
-	                oPointB = geoPoints.get(i);
-	                mapOverlays.add(new MapRouteOverlay(oPointA,oPointB,2,Color.RED));
-	            }
-//	            mapOverlays.add(new MapRoutePinOverlay(geoPoints.get(0),dPin));
-//	            mapOverlays.add(new MapRoutePinOverlay(geoPoints.get(geoPoints.size()-1),dPin));
-
-	            mapView.invalidate();
-	        }
-	        
-	        @Override
-	        public void onError(){
-	        }           
-	        
-	    });
-	}*/
-	
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
@@ -365,11 +325,7 @@ public class ResultsActivity extends Activity {
 		}
 	}
 
-	/*@Override
-	protected boolean isRouteDisplayed() {
-		return false;
-	}*/
-	
+
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		return false;
