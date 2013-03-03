@@ -36,6 +36,8 @@ public abstract class ResultsSegmentView extends LinearLayout{
 	 */
 	public abstract void onSegmentClicked(int id, boolean isLastAddress);
 	
+	public abstract void onAddressClicked(int id);
+	
 	public ResultsSegmentView(Context context, Address startAddress, int addressIndex, boolean isLastAddress){
 		super(context);
 		
@@ -64,6 +66,14 @@ public abstract class ResultsSegmentView extends LinearLayout{
 		segmentText.setText(addressText);
 		// Set respective pin as drawable-left for above TextView 
 		segmentText.setCompoundDrawablesWithIntrinsicBounds(Util.getItemizedTag(id, context), null, null, null);
+		segmentText.setOnClickListener(new OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				onAddressClicked(id);
+			}
+			
+		});
 		
 		segmentButton	= (Button) findViewById(R.id.button_results_segment);
 		segmentButton.setText(context.getString(R.string.view_segment));

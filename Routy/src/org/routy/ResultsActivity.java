@@ -207,14 +207,6 @@ public class ResultsActivity extends Activity {
 				isLastAddress = true;
 			}
 			
-			// Put point on MapView
-			//http://stackoverflow.com/questions/3577866/android-geopoint-with-lat-long-values
-//			GeoPoint geopoint = new GeoPoint((int) (address.getLatitude() * 1E6), (int) (address.getLongitude() * 1E6));
-//			geoPoints.add(geopoint);
-//			OverlayItem overlayitem = new OverlayItem(geopoint, address.getFeatureName(), "Location #" + addressIndex);
-//			RoutyItemizedOverlay itemizedOverlay = new RoutyItemizedOverlay(Util.getItemizedPin(addressIndex, mContext));
-//			itemizedOverlay.addOverlay(overlayitem);
-			
 			// Convert all the lat/long values to LatLng objects to use for computing the map boundaries later
 			latlng = new LatLng(address.getLatitude(), address.getLongitude());
 			points.add(latlng);
@@ -233,6 +225,12 @@ public class ResultsActivity extends Activity {
 				@Override
 				public void onSegmentClicked(int id, boolean isLastAddress) {
 					showSegmentInGoogleMaps(id, isLastAddress);
+				}
+
+				@Override
+				public void onAddressClicked(int id) {
+					// Animate map to the address clicked on.
+					animateToAddress(id);
 				}
 			};
 
@@ -260,8 +258,20 @@ public class ResultsActivity extends Activity {
 		
 	}
 	
-	private void showSegmentInGoogleMaps(int id,
-			boolean isLastAddress) {
+	
+	private void animateToAddress(int id) {
+		try {
+			LatLng target = points.get(id);
+			Log.v(TAG, "max zoom level is: " + mMap.getMaxZoomLevel());
+			mMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.builder().target(target).tilt(30).zoom(mMap.getMaxZoomLevel() - 3).build()));
+		} catch (IndexOutOfBoundsException e) {
+			Log.e(TAG, "Trying to animate to address with id=" + id + " but that's out of bounds.");
+		}
+		
+	}
+	
+	
+	private void showSegmentInGoogleMaps(int id, boolean isLastAddress) {
 		if (!isLastAddress){
 			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
