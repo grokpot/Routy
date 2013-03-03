@@ -1,12 +1,13 @@
 package org.routy.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import android.location.Address;
 
 public class Route {
 	
-	private ArrayList<Address> addresses;
+	private List<Address> addresses;
 	private int distance;
 	
 	public Route() {
@@ -14,12 +15,12 @@ public class Route {
 		this.distance = 0;
 	}
 	
-	public Route(ArrayList<Address> addresses, int distance) {
-		this.addresses = addresses;
+	public Route(List<Address> addresses2, int distance) {
+		this.addresses = addresses2;
 		this.distance = distance;
 	}
 	
-	public ArrayList<Address> getAddresses() {
+	public List<Address> getAddresses() {
 		return addresses;
 	}
 	
@@ -27,7 +28,7 @@ public class Route {
 		this.addresses.add(address);
 	}
 	
-	public ArrayList<Address> getAddresses(Address address) {
+	public List<Address> getAddresses(Address address) {
 		return this.addresses;
 	}
 	

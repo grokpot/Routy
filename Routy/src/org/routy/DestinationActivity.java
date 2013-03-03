@@ -382,7 +382,7 @@ public class DestinationActivity extends FragmentActivity {
 					public void onRouteCalculated(Route route) {
 						// Call ResultsActivity activity
 						Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-						resultsIntent.putExtra("addresses", route.getAddresses());
+						resultsIntent.putExtra("addresses", (ArrayList<Address>) route.getAddresses());
 						resultsIntent.putExtra("distance", route.getTotalDistance());
 						resultsIntent.putExtra("optimize_for", routeOptimized);
 						startActivity(resultsIntent);

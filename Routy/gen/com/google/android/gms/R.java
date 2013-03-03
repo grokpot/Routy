@@ -310,22 +310,23 @@ containing a value of this type.
         public static final int LinearLayout_destinations=0x7f05000a;
         public static final int LinearLayout_destinations_buttons=0x7f05000c;
         public static final int button_destination_add_new=0x7f05000b;
-        public static final int button_destination_remove=0x7f050027;
-        public static final int button_results_segment=0x7f050029;
+        public static final int button_destination_remove=0x7f050029;
+        public static final int button_results_segment=0x7f05002b;
         public static final int button_route_it=0x7f050010;
         public static final int button_test_defaults=0x7f05000d;
-        public static final int edit_name=0x7f050022;
-        public static final int edittext_destination_add=0x7f050026;
+        public static final int edit_name=0x7f050024;
+        public static final int edittext_destination_add=0x7f050028;
         public static final int enter_destinations_button=0x7f05001b;
         public static final int find_user_button=0x7f05001a;
-        public static final int gplace_list_item=0x7f050023;
+        public static final int gplace_list_item=0x7f050025;
         public static final int hybrid=0x7f050004;
         public static final int imageView1=0x7f050011;
+        public static final int layout_results=0x7f05001c;
         public static final int linearLayout_origin_bottom=0x7f050017;
         public static final int linearLayout_origin_top=0x7f050015;
-        public static final int linearlayout_results=0x7f05001f;
-        public static final int mapview_results=0x7f05001d;
-        public static final int menu_settings=0x7f05002a;
+        public static final int linearlayout_results=0x7f050021;
+        public static final int mapfrag_results=0x7f05001d;
+        public static final int menu_settings=0x7f05002c;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
         public static final int origin_address_field=0x7f050019;
@@ -333,21 +334,22 @@ containing a value of this type.
         public static final int origin_routy_logo=0x7f050016;
         public static final int origin_textview_welcome=0x7f050018;
         public static final int progressbar_splash_loading=0x7f050013;
-        public static final int results_textview_header=0x7f05001e;
+        public static final int relativelayout_results_wrapper=0x7f05001f;
+        public static final int results_textview_header=0x7f050020;
         public static final int satellite=0x7f050002;
         public static final int scrollview_destinations_wrapper=0x7f050005;
-        public static final int scrollview_results_wrapper=0x7f05001c;
+        public static final int scrollview_results_wrapper=0x7f05001e;
         public static final int terrain=0x7f050003;
         public static final int textview_destinations_example=0x7f050009;
         public static final int textview_destinations_goingto=0x7f050008;
         public static final int textview_destinations_origin=0x7f050007;
         public static final int textview_destinations_startingat=0x7f050006;
-        public static final int textview_gplace_address=0x7f050025;
-        public static final int textview_gplace_name=0x7f050024;
+        public static final int textview_gplace_address=0x7f050027;
+        public static final int textview_gplace_name=0x7f050026;
         public static final int textview_origin_purpose=0x7f050012;
-        public static final int textview_results_segment=0x7f050028;
-        public static final int textview_total_distance=0x7f050020;
-        public static final int textview_total_duration=0x7f050021;
+        public static final int textview_results_segment=0x7f05002a;
+        public static final int textview_total_distance=0x7f050022;
+        public static final int textview_total_duration=0x7f050023;
         public static final int toggleDistDur=0x7f05000f;
         public static final int toggle_instructions=0x7f05000e;
     }
@@ -383,12 +385,12 @@ containing a value of this type.
         /**   Requested by string saying which app requested the notification. [CHAR LIMIT=42] 
          */
         public static final int auth_client_requested_by_msg=0x7f060010;
-        public static final int bad_origin_address_error=0x7f06001e;
-        public static final int biglogodesc=0x7f06004c;
-        public static final int by_dist=0x7f06003c;
-        public static final int by_dur=0x7f06003b;
-        public static final int cancel=0x7f060041;
-        public static final int clear_screen=0x7f06002b;
+        public static final int bad_origin_address_error=0x7f06001f;
+        public static final int biglogodesc=0x7f06004d;
+        public static final int by_dist=0x7f06003d;
+        public static final int by_dur=0x7f06003c;
+        public static final int cancel=0x7f060042;
+        public static final int clear_screen=0x7f06002c;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -442,47 +444,48 @@ containing a value of this type.
         find the service-side assets. [CHAR LIMIT=25] 
          */
         public static final int common_signin_button_text_long=0x7f06000d;
-        public static final int default_error_message=0x7f06001b;
-        public static final int default_listpicker_title=0x7f060023;
-        public static final int default_loading_message=0x7f060022;
-        public static final int destination_add=0x7f060035;
-        public static final int destination_add_short=0x7f060043;
+        public static final int default_error_message=0x7f06001c;
+        public static final int default_listpicker_title=0x7f060024;
+        public static final int default_loading_message=0x7f060023;
+        public static final int destination_add=0x7f060036;
+        public static final int destination_add_short=0x7f060044;
         public static final int destination_noob_instructions=0x7f060017;
-        public static final int destination_noob_title=0x7f06004e;
-        public static final int destination_origin=0x7f06004a;
-        public static final int destination_prompt=0x7f060031;
-        public static final int destination_question=0x7f060049;
-        public static final int destination_remove=0x7f060032;
-        public static final int destination_remove_short=0x7f060044;
-        public static final int destination_subtext=0x7f060050;
-        public static final int destination_toggle_instructions=0x7f06003a;
-        public static final int enable_gps_prompt=0x7f060021;
+        public static final int destination_noob_title=0x7f06004f;
+        public static final int destination_origin=0x7f06004b;
+        public static final int destination_prompt=0x7f060032;
+        public static final int destination_question=0x7f06004a;
+        public static final int destination_remove=0x7f060033;
+        public static final int destination_remove_short=0x7f060045;
+        public static final int destination_subtext=0x7f060051;
+        public static final int destination_toggle_instructions=0x7f06003b;
+        public static final int enable_gps_prompt=0x7f060022;
         /**  <string name="google_maps_api_key_debug_jeff">0jK_s6wBtEbASDAwZGnaF3zV7uykgMiIBcI8rzw</string>
     <string name="google_maps_api_key_debug_ryan">0Cz9qngAOR4AzAhg2r3fen3T5Qu75MABjxiPD6g</string>
     <string name="google_maps_api_key_prod">0jK_s6wBtEbCYn4HUqGGQSTT2HUyJl_aTngoo6Q</string> 
  Global 
          */
-        public static final int error_message_title=0x7f06001a;
-        public static final int find_user_prompt=0x7f06002a;
+        public static final int error_message_title=0x7f06001b;
+        public static final int find_user_prompt=0x7f06002b;
         public static final int google_maps_api_key_active=0x7f060019;
-        public static final int goto_destinations=0x7f06002e;
+        public static final int google_maps_v2_api_key_active=0x7f06001a;
+        public static final int goto_destinations=0x7f06002f;
         public static final int hello_world=0x7f060012;
-        public static final int locating_fail_error=0x7f060020;
+        public static final int locating_fail_error=0x7f060021;
         public static final int menu_settings=0x7f060013;
-        public static final int no=0x7f060042;
-        public static final int no_internet_error=0x7f06001c;
-        public static final int no_location_provider_error=0x7f06001f;
-        public static final int no_origin_address_error=0x7f06001d;
+        public static final int no=0x7f060043;
+        public static final int no_internet_error=0x7f06001d;
+        public static final int no_location_provider_error=0x7f060020;
+        public static final int no_origin_address_error=0x7f06001e;
         /**  Button Labels 
          */
-        public static final int ok=0x7f060040;
-        public static final int origin_failed_validate=0x7f060027;
+        public static final int ok=0x7f060041;
+        public static final int origin_failed_validate=0x7f060028;
         /**  Origin Screen Stuff 
          */
-        public static final int origin_hint=0x7f060028;
-        public static final int origin_logo=0x7f060045;
-        public static final int origin_modify=0x7f060034;
-        public static final int origin_name=0x7f060046;
+        public static final int origin_hint=0x7f060029;
+        public static final int origin_logo=0x7f060046;
+        public static final int origin_modify=0x7f060035;
+        public static final int origin_name=0x7f060047;
         /**  Instructions 
  <string name="origin_noob_instructions">Welcome to Routy - the best way to find the most efficient route between
         different destinations. Enter a starting address or click Find me! to get your current location. 
@@ -490,37 +493,37 @@ containing a value of this type.
         you\'re done!</string> 
          */
         public static final int origin_noob_instructions=0x7f060016;
-        public static final int origin_noob_title=0x7f06004d;
-        public static final int origin_prompt=0x7f060029;
-        public static final int origin_purpose=0x7f060051;
-        public static final int origin_validated=0x7f060026;
-        public static final int origin_welcome=0x7f060047;
-        public static final int please_wait=0x7f06002c;
-        public static final int results_header=0x7f060048;
+        public static final int origin_noob_title=0x7f06004e;
+        public static final int origin_prompt=0x7f06002a;
+        public static final int origin_purpose=0x7f060052;
+        public static final int origin_validated=0x7f060027;
+        public static final int origin_welcome=0x7f060048;
+        public static final int please_wait=0x7f06002d;
+        public static final int results_header=0x7f060049;
         public static final int results_noob_instructions=0x7f060018;
-        public static final int results_noob_title=0x7f06004f;
-        public static final int route_it=0x7f060033;
-        public static final int route_it_button=0x7f060039;
-        public static final int routed=0x7f060025;
+        public static final int results_noob_title=0x7f060050;
+        public static final int route_it=0x7f060034;
+        public static final int route_it_button=0x7f06003a;
+        public static final int routed=0x7f060026;
         /**  Content Descriptions 
          */
-        public static final int routeitdesc=0x7f06004b;
-        public static final int stop_locating=0x7f06002d;
-        public static final int test_destination_1=0x7f060036;
-        public static final int test_destination_2=0x7f060037;
-        public static final int test_destination_3=0x7f060038;
-        public static final int title_activity_destination=0x7f06002f;
+        public static final int routeitdesc=0x7f06004c;
+        public static final int stop_locating=0x7f06002e;
+        public static final int test_destination_1=0x7f060037;
+        public static final int test_destination_2=0x7f060038;
+        public static final int test_destination_3=0x7f060039;
+        public static final int title_activity_destination=0x7f060030;
         public static final int title_activity_main=0x7f060014;
         public static final int title_activity_origin=0x7f060015;
-        public static final int title_activity_results=0x7f060030;
-        public static final int total_distance=0x7f06003e;
-        public static final int total_duration=0x7f06003f;
+        public static final int title_activity_results=0x7f060031;
+        public static final int total_distance=0x7f06003f;
+        public static final int total_duration=0x7f060040;
         /**  Toasts 
          */
-        public static final int validated=0x7f060024;
+        public static final int validated=0x7f060025;
         /**  Route Screen Stuff 
          */
-        public static final int view_segment=0x7f06003d;
+        public static final int view_segment=0x7f06003e;
     }
     public static final class style {
         public static final int AppTheme=0x7f080000;

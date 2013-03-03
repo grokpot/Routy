@@ -204,38 +204,6 @@ public class AddressService {
 	}
 
 
-	/*private void formatAddress(Address result) {
-		Bundle extras = new Bundle();
-		StringBuffer formattedAddress = new StringBuffer();
-		for (int i = 0; i < result.getMaxAddressLineIndex(); i++) {
-			formattedAddress.append(result.getAddressLine(i));
-			formattedAddress.append(", ");
-		}
-		
-		formattedAddress.append(result.getAddressLine(result.getMaxAddressLineIndex()));
-		
-		if (result.getMaxAddressLineIndex() > -1) {
-			formattedAddress.append(result.getAddressLine(0));
-		}
-		
-		formattedAddress.append(result.getLocality() == null ? "" : result.getLocality());
-		formattedAddress.append(result.getAdminArea() == null ? "" : result.getAdminArea());
-		
-		if (formattedAddress.length() == 0) {
-			formattedAddress.append(result.getLatitude());
-			formattedAddress.append(", ");
-			formattedAddress.append(result.getLongitude());
-		}
-		
-		extras.putString("formatted_address", formattedAddress.toString());
-		result.setExtras(extras);
-		
-		if (result.getExtras() == null) {
-			Log.e(TAG, "result extras is null");
-		}
-	}*/
-	
-	
 	/**
 	 * Makes a call to the Google Geocoding API to get an address for the given location name.
 	 * 

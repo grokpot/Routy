@@ -238,6 +238,26 @@ public class Util {
 	}
 	
 	
+	public static int getItemizedPinId(int index) {
+		int id = -1;
+		switch(index){
+			case 0: 	id = R.drawable.pinhome2;
+					break;
+			case 1: 	id = R.drawable.pin1;
+					break;
+			case 2: 	id = R.drawable.pin2;
+					break;
+			case 3: 	id = R.drawable.pin3;
+					break;
+			case 4: 	id = R.drawable.pin4;
+					break;
+			case 5: 	id = R.drawable.pin5;
+					break;
+		}
+		return id;
+	}
+	
+	
 	public static Drawable getItemizedTag(int index, Context context){
 		Drawable drawable = null;
 		switch(index){
