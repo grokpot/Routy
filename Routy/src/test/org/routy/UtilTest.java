@@ -16,7 +16,8 @@ public class UtilTest extends AndroidTestCase {
 
 	private final String TAG = "UtilTest";
 	
-	public void setUp() throws Exception {
+	@Override
+  public void setUp() throws Exception {
 		super.setUp();
 	}
 	
@@ -130,7 +131,8 @@ public class UtilTest extends AndroidTestCase {
 		assertEquals("formatted_address mismatch", "Another pretty Dummy Address", extras2.getString("formatted_address"));
 	}
 	
-	public void tearDown() throws Exception {
+	@Override
+  public void tearDown() throws Exception {
 		super.tearDown();
 	}
 }

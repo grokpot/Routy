@@ -33,7 +33,7 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-    volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+    volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
 		setContentView(R.layout.activity_main);
 
@@ -60,7 +60,7 @@ public class MainActivity extends FragmentActivity {
 		
 		if (!InternetService.deviceHasInternetConnection(mContext)) {
 			Log.v(TAG, "No internet connection.");
-			volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
       volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, volume, volume, 1, 0, 1);
 			initErrorDialog();

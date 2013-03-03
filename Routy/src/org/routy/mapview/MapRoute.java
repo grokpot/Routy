@@ -31,19 +31,22 @@ public class MapRoute {
 	}
 	
 	private Runnable ruFetchOk = new Runnable(){
-	    public void run(){
+	    @Override
+      public void run(){
 	        routeListener.onDetermined(geoPoints);
 	    }
 	};
 
 	private Runnable ruFetchError = new Runnable(){
-	    public void run(){
+	    @Override
+      public void run(){
 	        routeListener.onDetermined(geoPoints);
 	    }
 	};
 
 	private Runnable ruFetch = new Runnable(){
-	    public void run(){
+	    @Override
+      public void run(){
 	        String szUrl = "http://maps.googleapis.com/maps/api/directions/xml";
 	        szUrl += "?origin=" + (startPoint.getLatitudeE6()/1e6) + "," + (startPoint.getLongitudeE6()/1e6);
 	        szUrl += "&destination=" + (endPoint.getLatitudeE6()/1e6) + "," + (endPoint.getLongitudeE6()/1e6);
