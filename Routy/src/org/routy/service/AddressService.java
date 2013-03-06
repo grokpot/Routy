@@ -172,12 +172,23 @@ public class AddressService {
 	 * @throws IOException
 	 * @throws AmbiguousAddressException
 	 */
-	Address getAddressViaGeocoder(double latitude, double longitude) throws IOException, AmbiguousAddressException {
+	Address getAddressViaGeocoder(double latitude, double longitude) throws AmbiguousAddressException {
 		Log.v(TAG, String.format("using geocoder to get address for location: %f, %f", latitude, longitude));
 		int tries = 0;
 		
+		// JUST A TEST
+		for (int i = 0; i < 5; i++) {
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		// Since this process actually involves the Google server, there can be issues on their end out of our control.  We'll try 10 times if something goes wrong.
 		while (tries < 10) {
+			Log.v(TAG, String.format("Reverse geocoding: try %d", tries));
 			try {
 				List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
 				if (results != null && results.size() > 0) {
@@ -190,6 +201,7 @@ public class AddressService {
 						for (Address a : results) {
 							Util.formatAddress(a);
 						}
+						Log.v(TAG, "ambiguous address returned from geocoder");
 						throw new AmbiguousAddressException(results);
 					}
 				}

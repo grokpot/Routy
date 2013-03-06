@@ -15,7 +15,7 @@
             android:layout_margin="10dp" 
             map:mapType="normal"
             map:uiZoomControls="false" 
-            map:uiZoomGestures="true"
+            map:uiZoomGestures="false"
             map:uiScrollGestures="true"
             map:cameraTilt="30" />
     

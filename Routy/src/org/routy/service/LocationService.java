@@ -1,12 +1,18 @@
 package org.routy.service;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
+import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.NoLocationProviderException;
+import org.routy.exception.RoutyException;
 import org.routy.model.AppProperties;
 
+import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -29,13 +35,17 @@ public abstract class LocationService {
 	private final String TAG = "LocationService";
 	private final double accuracy;
 	private final LocationManager manager;
+//	private final Context context;
+//	private boolean sensor;
 	
 	private long startTimeMs;
 	
 	
 	public LocationService(LocationManager locManager, double accuracy) {
+//		this.context = context;
 		this.manager = locManager;
 		this.accuracy = accuracy;
+//		this.sensor = false;
 	}
 	
 	
@@ -90,6 +100,26 @@ public abstract class LocationService {
 		}
 		
 	}
+	
+	
+	/*private Address reverseGeocode(Location location) {
+		AddressService addressSvc = new AddressService(new Geocoder(context), sensor);
+		Address result = null;
+
+		try {
+			result = addressSvc.getAddressForLocation(location);
+		} catch (AmbiguousAddressException e) {
+			result = e.getFirstAddress();
+		} catch (RoutyException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return result;
+	}*/
 	
 	
 	/**
