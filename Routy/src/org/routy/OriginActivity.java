@@ -7,11 +7,13 @@ import org.routy.exception.NoLocationProviderException;
 import org.routy.fragment.OneButtonDialog;
 import org.routy.fragment.TwoButtonDialog;
 import org.routy.listener.FindUserLocationListener;
+import org.routy.listener.ReverseGeocodeListener;
 import org.routy.model.AddressModel;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.task.FindUserLocationTask;
 import org.routy.task.GooglePlacesQueryTask;
+import org.routy.task.ReverseGeocodeTask;
 import org.routy.view.DestinationRowView;
 
 import android.app.AlertDialog;
@@ -19,6 +21,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
+import android.location.Location;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
@@ -233,7 +236,7 @@ public class OriginActivity extends FragmentActivity {
 	void locate() {
 		new FindUserLocationTask(this, new FindUserLocationListener() {
 			
-			@Override
+			/*@Override
 			public void onUserLocationFound(Address userLocation) {
 				if (userLocation != null) {
 					Log.v(TAG, "got user location: " + userLocation.getAddressLine(0));
@@ -252,6 +255,33 @@ public class OriginActivity extends FragmentActivity {
 					originAddressField.setText(addressStr);
 					originValidated = true;
 				}
+			}*/
+			
+			@Override
+			public void onUserLocationFound(Location userLocation) {
+				new ReverseGeocodeTask(context, true, new ReverseGeocodeListener() {
+					
+					@Override
+					public void onResult(Address address) {
+						if (address != null) {
+							Log.v(TAG, "got user location: " + address.getAddressLine(0));
+							
+							origin = address;
+							
+							Bundle extras = origin.getExtras();
+							if (extras == null) {
+								Log.e(TAG, "origin extras is null");
+							}
+							extras.putInt("valid_status", DestinationRowView.VALID);
+							origin.setExtras(extras);
+							
+							String addressStr = origin.getExtras().getString("formatted_address");
+							
+							originAddressField.setText(addressStr);
+							originValidated = true;
+						}
+					}
+				}).execute(userLocation);
 			}
 			
 			@Override
@@ -271,7 +301,6 @@ public class OriginActivity extends FragmentActivity {
 					showEnableGpsDialog();
 				} catch (Throwable e) {
 					Log.e(TAG, "don't know why we couldn't obtain a location...");
-					Log.e(TAG, e.getMessage());
 					showErrorDialog(getResources().getString(R.string.locating_fail_error));
 				}
 			}
