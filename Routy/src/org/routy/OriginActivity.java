@@ -38,10 +38,12 @@ import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
+import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -66,11 +68,8 @@ public class OriginActivity extends FragmentActivity {
 	private boolean originValidated;		// true if the origin was obtained using geolocation (not user entry)
 
 	
-	// TODO: Combine these
-	// shared prefs for origin persistence
+	// shared prefs for origin and destination persistence
 	private SharedPreferences originActivityPrefs;
-	// shared prefs for destination persistence
-	private SharedPreferences destinationActivityPrefs;
 
 
 	private SoundPool sounds;
@@ -139,8 +138,7 @@ public class OriginActivity extends FragmentActivity {
 		originValidated		= false;
 
 		restoreSavedOrigin(savedInstanceState);
-//TODO: uncomment this and make it work		
-//		restoreSavedDestinations(savedInstanceState);
+		restoreSavedDestinations(savedInstanceState);
 		
 		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
 		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
@@ -213,8 +211,8 @@ public class OriginActivity extends FragmentActivity {
 	
 	// Initialize destination shared preferences
 	private void restoreSavedDestinations(Bundle savedInstanceState) {
-		destinationActivityPrefs = getSharedPreferences("destination_prefs", MODE_PRIVATE);
-		String storedAddressesJson = destinationActivityPrefs.getString(SAVED_DESTS_JSON_KEY, null);
+		originActivityPrefs = getSharedPreferences("activity_prefs", MODE_PRIVATE);
+		String storedAddressesJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, null);
 	
 		if (storedAddressesJson != null && storedAddressesJson.length() > 0) {
 			List<Address> restoredAddresses = Util.jsonToAddressList(storedAddressesJson);
@@ -284,9 +282,6 @@ public class OriginActivity extends FragmentActivity {
 	private void userAintANoobNomore() {
 		//TODO: combine these, combine the noob messages
 		SharedPreferences.Editor ed = originActivityPrefs.edit();
-		ed.putBoolean("noob_cookie", true);
-		ed.commit();
-		ed = destinationActivityPrefs.edit();
 		ed.putBoolean("noob_cookie", true);
 		ed.commit();	
 	}
@@ -918,7 +913,7 @@ public class OriginActivity extends FragmentActivity {
 
 		// Put the storedAddresses into shared prefs via a set of strings
 		Log.v(TAG, "Saving destinations in shared prefs");
-		SharedPreferences.Editor ed = destinationActivityPrefs.edit();
+		SharedPreferences.Editor ed = originActivityPrefs.edit();
 		ed.putString(SAVED_DESTS_JSON_KEY, json);
 		//		ed.putStringSet("saved_destination_strings", storedAddresses);
 		ed.commit();

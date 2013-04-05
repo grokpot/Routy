@@ -43,7 +43,7 @@
     <!-- Origin Screen Stuff -->
     <string name="origin_hint">Enter an address or place</string>
     <string name="origin_prompt">Origin</string>
-    <string name="find_user_prompt"> Find Me</string>
+    <string name="find_user_prompt">…or Find Me!</string>
     <string name="clear_screen">Clear</string>
     <string name="please_wait">Looking</string>
     <string name="stop_locating">Stop</string>

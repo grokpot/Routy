@@ -15,7 +15,8 @@
         android:hint="@string/destination_prompt"
         android:scrollHorizontally="true"
         android:singleLine="true"
-        android:textColor="@color/White" />
+        android:textColor="@color/White"
+        android:textColorHint="@color/LightGrey" />
     
     <Button 
         android:id="@+id/button_destination_remove" 
