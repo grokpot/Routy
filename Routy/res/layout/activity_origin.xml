@@ -51,7 +51,7 @@
                 android:paddingBottom="10dp"
                 android:text="@string/origin_welcome"
                 android:textColor="@color/ShitGold"
-                android:textSize="22dp"
+                android:textSize="26dp"
                 android:textStyle="bold" />
 
             <EditText
@@ -76,20 +76,21 @@
         <Button
             android:id="@+id/find_user_button"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/linearLayout_origin_bottom"
             android:layout_centerInParent="true"
-            android:layout_marginBottom="8dp"
-            android:layout_marginTop="8dp"
-            android:background="@drawable/textview_border"
-            android:drawablePadding="5dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/orange_button"
             android:drawableRight="@drawable/findwhite"
+            android:gravity="center"
             android:onClick="findUserLocation"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:paddingLeft="15dp"
-            android:text="@string/find_user_prompt" 
+            android:paddingBottom="8dp"
+            android:paddingRight="5dp"
+            android:paddingTop="8dp"
+            android:text="@string/find_user_prompt"
+            android:textColor="@color/White"
             android:textSize="18dp"
             android:textStyle="bold" />
 
@@ -110,7 +111,7 @@
             android:gravity="center_horizontal"
             android:text="@string/destination_question"
             android:textColor="@color/ShitGold"
-            android:textSize="22dp"
+            android:textSize="26dp"
             android:textStyle="bold|italic"
             android:typeface="normal" />
 
@@ -125,14 +126,21 @@
         <Button
             android:id="@+id/button_destination_add_new"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/orange_button"
             android:drawableLeft="@drawable/poswhiteonly"
-            android:drawablePadding="15dp"
+            android:gravity="center"
             android:onClick="onAddDestinationClicked"
-            android:layout_marginTop="15dp"
+            android:paddingBottom="8dp"
+            android:paddingLeft="15dp"
+            android:paddingTop="8dp"
             android:text="@string/destination_add"
+            android:textColor="@color/White"
+            android:textSize="18dp"
             android:textStyle="bold" />
 
         <LinearLayout
@@ -164,10 +172,11 @@
         <ImageButton
             android:id="@+id/button_route_it"
             style="?android:attr/borderlessButtonStyle"
-            android:layout_width="wrap_content"
+            android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
             android:layout_marginTop="20dp"
+            android:background="@drawable/green_button"
             android:baselineAlignBottom="true"
             android:contentDescription="@string/routeitdesc"
             android:onClick="acceptDestinations"
