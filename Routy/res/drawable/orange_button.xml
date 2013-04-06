@@ -14,6 +14,11 @@
                 android:top="10dp"
                 android:right="10dp"
                 android:bottom="10dp" />
+			<corners
+				android:bottomRightRadius="10dp"
+				android:bottomLeftRadius="10dp"
+				android:topLeftRadius="10dp"
+				android:topRightRadius="10dp"/>
         </shape>
     </item>
     <item>
@@ -32,6 +37,11 @@
                 android:top="10dp"
                 android:right="10dp"
                 android:bottom="10dp" />
+			<corners
+				android:bottomRightRadius="10dp"
+				android:bottomLeftRadius="10dp"
+				android:topLeftRadius="10dp"
+				android:topRightRadius="10dp"/>
         </shape>
     </item>
 </selector>

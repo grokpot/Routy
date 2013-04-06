@@ -131,6 +131,7 @@ public class OriginActivity extends FragmentActivity {
 			public void afterTextChanged(Editable s) {
 				// nothing
 			}
+			// TODO: on focus lost, validate origin
 		});
 		
 		origin				= null;
@@ -302,6 +303,63 @@ public class OriginActivity extends FragmentActivity {
 		getMenuInflater().inflate(R.menu.activity_origin, menu);
 		return true;
 	}
+	
+	
+	/**
+	 * Validates the origin address.  If it's good, it gets packaged into an Intent and sent to 
+	 * the DestinationActivity screen.
+	 * 
+	 * @param view
+	 */
+	public void validateOrigin(View view) {
+		// validate the origin address and store it
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);  
+
+		final String locationQuery = originAddressField.getText().toString();
+		
+		if (!originValidated && (locationQuery == null || locationQuery.length() == 0)) {
+			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
+		} else {
+			if (!originValidated) {
+				Log.v(TAG, "origin was user-entered and needs to be validated");
+				
+				// use GooglePlacesQueryTask to do this...
+				new GooglePlacesQueryTask(this) {
+					
+					@Override
+					public void onResult(GooglePlace place) {
+						// make an Address out of the Google place and start the DestinationActivity
+						origin = new Address(Locale.getDefault());
+						origin.setFeatureName(place.getName());
+						origin.setLatitude(place.getLatitude());
+						origin.setLongitude(place.getLongitude());
+						
+						Bundle extras = new Bundle();
+						extras.putString("formatted_address", place.getFormattedAddress());
+						extras.putInt("valid_status", DestinationRowView.VALID);
+						origin.setExtras(extras);
+						
+						originAddressField.setText(place.getFormattedAddress());	// TODO set the text in the edittext field
+						originValidated = true;
+						
+					}
+					
+					@Override
+					public void onFailure(Throwable t) {
+						showErrorDialog("Routy couldn't understand \"" + locationQuery + "\".  Please try something a little different.");		// TODO extract to strings.xml
+					}
+					
+					@Override
+					public void onNoSelection() {
+						// TODO do nothing?
+						
+					}
+				}.execute(new GooglePlacesQuery(locationQuery, null, null));
+			}
+		}
+	}
 
 
 	/**
@@ -397,10 +455,6 @@ public class OriginActivity extends FragmentActivity {
 	}
 	
 	
-	
-	/**********/
-	
-	
 	/**
 	 * Adds a {@link DestinationRowView} to the Destinations list.
 	 * @param address
@@ -417,6 +471,9 @@ public class OriginActivity extends FragmentActivity {
 	 * @return			the row that was added, or null if no row was added
 	 */
 	DestinationRowView addDestinationRow(String address) {
+		
+		// TODO: if origin isn't validated, prompt user to do that first
+		
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
 			DestinationRowView v = new DestinationRowView(context, address) {
 
@@ -486,6 +543,70 @@ public class OriginActivity extends FragmentActivity {
 			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");*/
 
 			return null;
+		}
+	}
+	
+	
+	public void onAddDestinationClicked(View v) {
+		Log.v(TAG, "new destination row requested by user");
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);
+
+		// If the last row is not empty, add a new row
+		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
+		if (lastRow.getAddressString() != null && lastRow.getAddressString().length() > 0) {
+			if (lastRow.needsValidation()) {
+				// Validate the last row if it has not been validated.  Otherwise, it puts the new row up first, and then validates due to focusChanged.
+				Log.v(TAG, "validating last row before adding new one");
+				final DestinationRowView r = lastRow;
+
+				// disable the onFocusLost listener just once so it doesn't try to validate twice here
+				r.disableOnFocusLostCallback(true);
+
+				// do the validation
+				new GooglePlacesQueryTask(context) {
+
+					@Override
+					public void onResult(GooglePlace place) {
+						if (place != null && place.getAddress() != null) {
+							r.setAddress(place.getAddress());
+							r.setValid();
+
+							Log.v(TAG, "adding a new destination row");
+							addDestinationRow();
+						} else {
+							r.setInvalid();
+						}
+
+						// If the list is full, hide the add button
+						/*if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
+							addDestButton.setVisibility(View.INVISIBLE);
+						}*/
+					}
+					
+					@Override
+					public void onFailure(Throwable t) {
+						showErrorDialog("Routy couldn't understand \"" + r.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
+					}
+
+					@Override
+					public void onNoSelection() {
+						// Doing nothing leaves it NOT_VALIDATED
+					}
+				}.execute(new GooglePlacesQuery(lastRow.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+			} else {
+				if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
+					Log.v(TAG, "adding a new destination row");
+					addDestinationRow();
+				} else {
+					volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+					volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+					sounds.play(bad, 1, 1, 1, 0, 1);
+
+					showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
+				}
+			}
 		}
 	}
 	
@@ -635,71 +756,6 @@ public class OriginActivity extends FragmentActivity {
 	}
 	
 	
-	public void onAddDestinationClicked(View v) {
-		Log.v(TAG, "new destination row requested by user");
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(click, volume, volume, 1, 0, 1);
-
-		// If the last row is not empty, add a new row
-		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
-		if (lastRow.getAddressString() != null && lastRow.getAddressString().length() > 0) {
-			if (lastRow.needsValidation()) {
-				// Validate the last row if it has not been validated.  Otherwise, it puts the new row up first, and then validates due to focusChanged.
-				Log.v(TAG, "validating last row before adding new one");
-				final DestinationRowView r = lastRow;
-
-				// disable the onFocusLost listener just once so it doesn't try to validate twice here
-				r.disableOnFocusLostCallback(true);
-
-				// do the validation
-				new GooglePlacesQueryTask(context) {
-
-					@Override
-					public void onResult(GooglePlace place) {
-						if (place != null && place.getAddress() != null) {
-							r.setAddress(place.getAddress());
-							r.setValid();
-
-							Log.v(TAG, "adding a new destination row");
-							addDestinationRow();
-						} else {
-							r.setInvalid();
-						}
-
-						// If the list is full, hide the add button
-						/*if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
-							addDestButton.setVisibility(View.INVISIBLE);
-						}*/
-					}
-					
-					@Override
-					public void onFailure(Throwable t) {
-						showErrorDialog("Routy couldn't understand \"" + r.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
-					}
-
-					@Override
-					public void onNoSelection() {
-						// Doing nothing leaves it NOT_VALIDATED
-					}
-				}.execute(new GooglePlacesQuery(lastRow.getAddressString(), origin.getLatitude(), origin.getLongitude()));
-			} else {
-				if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
-					Log.v(TAG, "adding a new destination row");
-					addDestinationRow();
-				} else {
-					volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-					volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-					sounds.play(bad, 1, 1, 1, 0, 1);
-
-					showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
-				}
-			}
-		}
-
-	}
-	
-	
 	public void onToggleClicked(boolean on) {
 		Log.v(TAG, "route optimize preference changed!");
 		if (on) {
@@ -718,70 +774,6 @@ public class OriginActivity extends FragmentActivity {
 	
 	public void hideAddButton() {
 		addDestButton.setVisibility(View.INVISIBLE);
-	}
-
-	
-	/*********/
-	
-
-	/**
-	 * Validates the origin address.  If it's good, it gets packaged into an Intent and sent to 
-	 * the DestinationActivity screen.
-	 * 
-	 * @param view
-	 */
-	public void goToDestinationsScreen(View view) {
-		// validate the origin address, store it, and move on to the destinations screen
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(click, volume, volume, 1, 0, 1);  
-
-		final String locationQuery = originAddressField.getText().toString();
-		
-		if (!originValidated && (locationQuery == null || locationQuery.length() == 0)) {
-			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
-		} else {
-			if (!originValidated) {
-				Log.v(TAG, "origin was user-entered and needs to be validated");
-				
-				// use GooglePlacesQueryTask to do this...
-				new GooglePlacesQueryTask(this) {
-					
-					@Override
-					public void onResult(GooglePlace place) {
-						// make an Address out of the Google place and start the DestinationActivity
-						origin = new Address(Locale.getDefault());
-						origin.setFeatureName(place.getName());
-						origin.setLatitude(place.getLatitude());
-						origin.setLongitude(place.getLongitude());
-						
-						Bundle extras = new Bundle();
-						extras.putString("formatted_address", place.getFormattedAddress());
-						extras.putInt("valid_status", DestinationRowView.VALID);
-						origin.setExtras(extras);
-						
-						originAddressField.setText(place.getFormattedAddress());	// TODO set the text in the edittext field
-						originValidated = true;
-						
-					}
-					
-					@Override
-					public void onFailure(Throwable t) {
-						showErrorDialog("Routy couldn't understand \"" + locationQuery + "\".  Please try something a little different.");		// TODO extract to strings.xml
-					}
-					
-					@Override
-					public void onNoSelection() {
-						// TODO do nothing?
-						
-					}
-				}.execute(new GooglePlacesQuery(locationQuery, null, null));
-			}
-//TODO: remove this
-//			} else {
-//				startDestinationActivity();
-//			}
-		}
 	}
 
 	
