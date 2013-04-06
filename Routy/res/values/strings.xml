@@ -26,7 +26,7 @@
     <string name="error_message_title">Ruh-Roh!</string>
     <string name="default_error_message">Something went wrong, but don\'t worry, it wasn\'t your fault.</string>
     <string name="no_internet_error">Routy needs an internet connection to do work&#8230;</string>
-    <string name="no_origin_address_error">Routy needs an origin address.  Please enter one or click Find Me and Routy will locate you.</string>
+    <string name="no_origin_address_error">Routy needs an starting location.  Please enter one or click Find Me and Routy will locate you!</string>
     <string name="bad_origin_address_error">Routy couldn\'t understand the address for your origin.  Could you try again?</string>
     <string name="no_location_provider_error">Routy needs WI-FI or GPS to locate you.  Please try again when you have one of these turned on.</string>
     <string name="locating_fail_error">Well that\'s no good&#8230; Routy couldn\'t find your location. Try typing it in!</string>
@@ -41,7 +41,7 @@
     <string name="origin_failed_validate">Bad origin address.</string>
     
     <!-- Origin Screen Stuff -->
-    <string name="origin_hint">Enter an address or place</string>
+    <string name="origin_hint">Enter a starting address or place</string>
     <string name="origin_prompt">Origin</string>
     <string name="find_user_prompt">…or Find Me!</string>
     <string name="clear_screen">Clear</string>

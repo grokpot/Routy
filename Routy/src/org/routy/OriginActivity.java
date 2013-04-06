@@ -57,6 +57,8 @@ public class OriginActivity extends FragmentActivity {
 	private static final String TAG = "OriginActivity";
 	private static final int ENABLE_GPS_REQUEST = 1;
 	private final String SAVED_DESTS_JSON_KEY = "saved_destination_json";
+	private final String ADD_DESTINATION_CALLBACK = "destination_callback";
+	private final String ROUTEIT_CALLBACK = "routeit_callback";
 
 	private FragmentActivity context;
 	private AddressModel addressModel;
@@ -131,7 +133,6 @@ public class OriginActivity extends FragmentActivity {
 			public void afterTextChanged(Editable s) {
 				// nothing
 			}
-			// TODO: on focus lost, validate origin
 		});
 		
 		origin				= null;
@@ -212,47 +213,48 @@ public class OriginActivity extends FragmentActivity {
 	
 	// Initialize destination shared preferences
 	private void restoreSavedDestinations(Bundle savedInstanceState) {
-		originActivityPrefs = getSharedPreferences("activity_prefs", MODE_PRIVATE);
-		String storedAddressesJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, null);
-	
-		if (storedAddressesJson != null && storedAddressesJson.length() > 0) {
-			List<Address> restoredAddresses = Util.jsonToAddressList(storedAddressesJson);
-	
-			for (int i = 0; i < restoredAddresses.size(); i++) {
-				Address address = restoredAddresses.get(i);
-				Bundle addressExtras = address.getExtras();
-	
-				if (addressExtras != null) {
-					int status = addressExtras.getInt("valid_status");
-	
-					DestinationRowView newRow = null;
-					if (status == DestinationRowView.VALID) {
-						// Put the new row in the list
-						newRow = addDestinationRow(address.getFeatureName());
-						newRow.setAddress(address);
-						newRow.setValid();
-	
-						Log.v(TAG, "restored: " + newRow.getAddress().getFeatureName() + " [status=" + newRow.getStatus() + "]");
-	
-					} else if (status == DestinationRowView.INVALID || status == DestinationRowView.NOT_VALIDATED) {
-						String addressString = addressExtras.getString("address_string");
-	
-						newRow = addDestinationRow(addressString);
-	
-						if (status == DestinationRowView.INVALID) {
-							newRow.setInvalid();
-						} else {
-							newRow.clearValidationStatus();
-						}
-	
-						Log.v(TAG, "restored: " + newRow.getAddressString() + " [status=" + newRow.getStatus() + "]");
-					}
-	
-				}
-			}
-		} else {
-			addDestinationRow();
-		}
+//		originActivityPrefs = getSharedPreferences("activity_prefs", MODE_PRIVATE);
+//		String storedAddressesJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, null);
+//			
+//		if (storedAddressesJson != null && storedAddressesJson.length() > 0) {
+//			List<Address> restoredAddresses = Util.jsonToAddressList(storedAddressesJson);
+//	
+//			for (int i = 0; i < restoredAddresses.size(); i++) {
+//				Address address = restoredAddresses.get(i);
+//				Bundle addressExtras = address.getExtras();
+//	
+//				if (addressExtras != null) {
+//					int status = addressExtras.getInt("valid_status");
+//	
+//					DestinationRowView newRow = null;
+//					if (status == DestinationRowView.VALID) {
+//						// Put the new row in the list
+//						newRow = addDestinationRow(address.getFeatureName());
+//						newRow.setAddress(address);
+//						newRow.setValid();
+//	
+//						Log.v(TAG, "restored: " + newRow.getAddress().getFeatureName() + " [status=" + newRow.getStatus() + "]");
+//	
+//					} else if (status == DestinationRowView.INVALID || status == DestinationRowView.NOT_VALIDATED) {
+//						String addressString = addressExtras.getString("address_string");
+//	
+//						newRow = addDestinationRow(addressString);
+//	
+//						if (status == DestinationRowView.INVALID) {
+//							newRow.setInvalid();
+//						} else {
+//							newRow.clearValidationStatus();
+//						}
+//	
+//						Log.v(TAG, "restored: " + newRow.getAddressString() + " [status=" + newRow.getStatus() + "]");
+//					}
+//	
+//				}
+//			}
+//		} else {
+//			addDestinationRow();
+//		}
+		addDestinationRow();
 	}
 	
 	
@@ -308,10 +310,8 @@ public class OriginActivity extends FragmentActivity {
 	/**
 	 * Validates the origin address.  If it's good, it gets packaged into an Intent and sent to 
 	 * the DestinationActivity screen.
-	 * 
-	 * @param view
 	 */
-	public void validateOrigin(View view) {
+	public void validateOrigin(final String callback) {
 		// validate the origin address and store it
 		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
@@ -344,6 +344,12 @@ public class OriginActivity extends FragmentActivity {
 						originAddressField.setText(place.getFormattedAddress());	// TODO set the text in the edittext field
 						originValidated = true;
 						
+						if (ADD_DESTINATION_CALLBACK.equals(callback)) {
+							onAddDestinationClicked();
+						}
+						else if (ROUTEIT_CALLBACK.equals(callback)) {
+							routeIt();
+						}
 					}
 					
 					@Override
@@ -354,7 +360,6 @@ public class OriginActivity extends FragmentActivity {
 					@Override
 					public void onNoSelection() {
 						// TODO do nothing?
-						
 					}
 				}.execute(new GooglePlacesQuery(locationQuery, null, null));
 			}
@@ -455,6 +460,81 @@ public class OriginActivity extends FragmentActivity {
 	}
 	
 	
+	public void onAddDestinationClicked(View v) {
+		onAddDestinationClicked();
+	}
+	
+	public void onAddDestinationClicked() {
+
+		if (!originValidated){
+			validateOrigin(ADD_DESTINATION_CALLBACK);
+			return;
+		}
+		
+		Log.v(TAG, "new destination row requested by user");
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);
+
+		// If the last row is not empty, add a new row
+		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
+		if (lastRow.getAddressString() != null && lastRow.getAddressString().length() > 0) {
+			if (lastRow.needsValidation()) {
+				// Validate the last row if it has not been validated.  Otherwise, it puts the new row up first, and then validates due to focusChanged.
+				Log.v(TAG, "validating last row before adding new one");
+				final DestinationRowView r = lastRow;
+
+				// disable the onFocusLost listener just once so it doesn't try to validate twice here
+				r.disableOnFocusLostCallback(true);
+
+				// do the validation
+				new GooglePlacesQueryTask(context) {
+
+					@Override
+					public void onResult(GooglePlace place) {
+						if (place != null && place.getAddress() != null) {
+							r.setAddress(place.getAddress());
+							r.setValid();
+
+							Log.v(TAG, "adding a new destination row");
+							addDestinationRow();
+						} else {
+							r.setInvalid();
+						}
+
+						// TODO: can we remove this?
+						// If the list is full, hide the add button
+						/*if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
+							addDestButton.setVisibility(View.INVISIBLE);
+						}*/
+					}
+					
+					@Override
+					public void onFailure(Throwable t) {
+						showErrorDialog("Routy couldn't understand \"" + r.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
+					}
+
+					@Override
+					public void onNoSelection() {
+						// Doing nothing leaves it NOT_VALIDATED
+					}
+				}.execute(new GooglePlacesQuery(lastRow.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+			} else {
+				if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
+					Log.v(TAG, "adding a new destination row");
+					addDestinationRow();
+				} else {
+					volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+					volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+					sounds.play(bad, 1, 1, 1, 0, 1);
+
+					showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
+				}
+			}
+		}
+	}
+	
+	
 	/**
 	 * Adds a {@link DestinationRowView} to the Destinations list.
 	 * @param address
@@ -470,10 +550,7 @@ public class OriginActivity extends FragmentActivity {
 	 * @param address
 	 * @return			the row that was added, or null if no row was added
 	 */
-	DestinationRowView addDestinationRow(String address) {
-		
-		// TODO: if origin isn't validated, prompt user to do that first
-		
+	DestinationRowView addDestinationRow(String address) {		
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
 			DestinationRowView v = new DestinationRowView(context, address) {
 
@@ -547,70 +624,6 @@ public class OriginActivity extends FragmentActivity {
 	}
 	
 	
-	public void onAddDestinationClicked(View v) {
-		Log.v(TAG, "new destination row requested by user");
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(click, volume, volume, 1, 0, 1);
-
-		// If the last row is not empty, add a new row
-		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
-		if (lastRow.getAddressString() != null && lastRow.getAddressString().length() > 0) {
-			if (lastRow.needsValidation()) {
-				// Validate the last row if it has not been validated.  Otherwise, it puts the new row up first, and then validates due to focusChanged.
-				Log.v(TAG, "validating last row before adding new one");
-				final DestinationRowView r = lastRow;
-
-				// disable the onFocusLost listener just once so it doesn't try to validate twice here
-				r.disableOnFocusLostCallback(true);
-
-				// do the validation
-				new GooglePlacesQueryTask(context) {
-
-					@Override
-					public void onResult(GooglePlace place) {
-						if (place != null && place.getAddress() != null) {
-							r.setAddress(place.getAddress());
-							r.setValid();
-
-							Log.v(TAG, "adding a new destination row");
-							addDestinationRow();
-						} else {
-							r.setInvalid();
-						}
-
-						// If the list is full, hide the add button
-						/*if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
-							addDestButton.setVisibility(View.INVISIBLE);
-						}*/
-					}
-					
-					@Override
-					public void onFailure(Throwable t) {
-						showErrorDialog("Routy couldn't understand \"" + r.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
-					}
-
-					@Override
-					public void onNoSelection() {
-						// Doing nothing leaves it NOT_VALIDATED
-					}
-				}.execute(new GooglePlacesQuery(lastRow.getAddressString(), origin.getLatitude(), origin.getLongitude()));
-			} else {
-				if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
-					Log.v(TAG, "adding a new destination row");
-					addDestinationRow();
-				} else {
-					volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-					volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-					sounds.play(bad, 1, 1, 1, 0, 1);
-
-					showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
-				}
-			}
-		}
-	}
-	
-	
 	/**
 	 * Removes the EditText and "remove" button row ({@link DestinationRowView}} with the given {@link UUID} from the screen.
 	 * @param id
@@ -661,13 +674,23 @@ public class OriginActivity extends FragmentActivity {
 	}
 	
 	
+	public void acceptDestinations(View v){
+		routeIt();
+	}
+	
 	/**
 	 * Called when "Route It!" is clicked.  Does any final validation and preparations before calculating 
 	 * the best route and passing route data to the results activity.
 	 * 
 	 * @param v
 	 */
-	public void acceptDestinations(final View v) {
+	public void routeIt() {
+		
+		if (!originValidated){
+			validateOrigin(ROUTEIT_CALLBACK);
+			return;
+		}
+		
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
 
 		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
@@ -708,8 +731,7 @@ public class OriginActivity extends FragmentActivity {
 						if (place != null && place.getAddress() != null) {
 							r.setAddress(place.getAddress());
 							r.setValid();
-
-							acceptDestinations(v);
+							routeIt();
 						} else {
 							r.setInvalid();
 
