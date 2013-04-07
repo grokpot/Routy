@@ -231,17 +231,14 @@ public class ResultsActivity extends Activity {
 		zoomToOverlays(points);
 
 		// Route information display
-		TextView text_total_distance = (TextView) findViewById(R.id.textview_total_distance);
-		TextView text_total_duration = (TextView) findViewById(R.id.textview_total_duration);
+		TextView results_header = (TextView) findViewById(R.id.results_textview_header);
 		
 		if (routeOptimizePreference.equals(RouteOptimizePreference.PREFER_DISTANCE)) {
-			text_total_duration.setVisibility(View.INVISIBLE);
 			String truncatedDistanceInMiles = convertMetersToMiles(route.getTotalDistance());
-			text_total_distance.setText(getString(R.string.total_distance) + truncatedDistanceInMiles + " miles");
+			results_header.setText(results_header.getText() + " (" + truncatedDistanceInMiles + " miles):");
 		} else if (routeOptimizePreference.equals(RouteOptimizePreference.PREFER_DURATION)) {
-			text_total_distance.setVisibility(View.INVISIBLE);
 			String durationInMinutes = convertSecondsToMinutes(route.getTotalDistance());
-			text_total_duration.setText(getString(R.string.total_duration) + durationInMinutes + " minutes");
+			results_header.setText(results_header.getText() + " (" + durationInMinutes + " miles):");
 		}
 		
 		

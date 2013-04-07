@@ -66,8 +66,6 @@
     
     <!-- Route Screen Stuff -->
     <string name="view_segment">Get Directions</string>
-    <string name="total_distance">Total distance is:\n </string>
-    <string name="total_duration">Total duration is:\n </string>
     
     <!-- Button Labels -->
     <string name="ok">OK</string>
@@ -78,7 +76,7 @@
     <string name="origin_logo">Routy Origin Logo</string>
     <string name="origin_name">Welcome to Routy -</string>
     <string name="origin_welcome">Where does your trip begin?</string>
-    <string name="results_header">Here\'s the best route for your destinations:</string>
+    <string name="results_header">Here\'s the best route for your destinations</string>
     <string name="destination_question">Where are you going?</string>
     <string name="destination_origin">Starting from:</string>
 
