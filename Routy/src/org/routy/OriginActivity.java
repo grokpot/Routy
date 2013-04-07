@@ -388,6 +388,7 @@ public class OriginActivity extends FragmentActivity {
 	void locate() {
 		new FindUserLocationTask(this, new FindUserLocationListener() {
 			
+			// TODO: can we remove this?
 			/*@Override
 			public void onUserLocationFound(Address userLocation) {
 				if (userLocation != null) {

@@ -126,13 +126,6 @@
                 android:layout_marginBottom="35dp"
                 android:orientation="vertical" >
 
-                <Button
-                    android:id="@+id/button_test_defaults"
-                    style="android:buttonStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:visibility="gone" />
-
                 <Switch
                     android:id="@+id/toggleDistDur"
                     android:layout_width="wrap_content"
