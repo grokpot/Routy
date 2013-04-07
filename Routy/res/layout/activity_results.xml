@@ -6,18 +6,30 @@
     android:background="@drawable/gradient"
     android:fillViewport="true" >
 
-    <fragment 
-            xmlns:map="http://schemas.android.com/apk/res" 
-            class="com.google.android.gms.maps.MapFragment"
-            android:id="@+id/mapfrag_results"  
-            android:layout_width="match_parent" 
-            android:layout_height="300dp" 
-            android:layout_margin="10dp" 
-            map:mapType="normal"
-            map:uiZoomControls="false" 
-            map:uiZoomGestures="false"
-            map:uiScrollGestures="true"
-            map:cameraTilt="30" />
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" >
+		
+	    <fragment
+	        xmlns:map="http://schemas.android.com/apk/res"
+	        android:id="@+id/mapfrag_results"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_margin="10dp"
+	        class="com.google.android.gms.maps.MapFragment"
+	        map:cameraTilt="30"
+	        map:mapType="normal"
+	        map:uiScrollGestures="true"
+	        map:uiZoomControls="false"
+	        map:uiZoomGestures="false" />
+	    
+		<LinearLayout
+		    android:layout_width="match_parent"
+		    android:layout_height="match_parent"
+		    android:background="@drawable/test_mapview"
+		    android:orientation="vertical" />
+		
+	</FrameLayout>
     
     <ScrollView
         android:id="@+id/scrollview_results_wrapper"
