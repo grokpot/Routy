@@ -4,6 +4,8 @@ import org.routy.fragment.TwoButtonDialog;
 import org.routy.model.AppProperties;
 import org.routy.service.InternetService;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -108,5 +110,19 @@ public class MainActivity extends FragmentActivity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
+	}
+	
+	@Override
+	public void onStart() {
+	  super.onStart();
+	  // Analytics
+	  EasyTracker.getInstance().activityStart(this);
+	}
+	
+	@Override
+	public void onStop() {
+	  super.onStop();
+	  // Analytics
+	  EasyTracker.getInstance().activityStop(this);
 	}
 }

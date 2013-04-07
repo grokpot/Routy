@@ -8,6 +8,7 @@ import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
 import org.routy.view.ResultsSegmentView;
 
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -321,6 +322,22 @@ public class ResultsActivity extends Activity {
 			sounds.release();
 			sounds = null;
 		}
+	}
+	
+	
+	@Override
+	public void onStart() {
+	  super.onStart();
+	  // Analytics
+	  EasyTracker.getInstance().activityStart(this);
+	}
+	
+	
+	@Override
+	public void onStop() {
+	  super.onStop();
+	  // Analytics
+	  EasyTracker.getInstance().activityStop(this);
 	}
 
 

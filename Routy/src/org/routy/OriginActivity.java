@@ -26,6 +26,8 @@ import org.routy.task.GooglePlacesQueryTask;
 import org.routy.task.ReverseGeocodeTask;
 import org.routy.view.DestinationRowView;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -605,6 +607,7 @@ public class OriginActivity extends FragmentActivity {
 				}
 			};
 
+			// TODO: can we remove these comment blocks?
 			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 			v.focusOnAddressField();
 
@@ -956,9 +959,23 @@ public class OriginActivity extends FragmentActivity {
 			Log.v(TAG, "saving json: " + json);
 			ed.putBoolean("origin_validated", originValidated);
 			ed.commit();
-		}
-		
-		
+		}	
+	}
+	
+	
+	@Override
+	public void onStart() {
+	  super.onStart();
+	  // Analytics
+	  EasyTracker.getInstance().activityStart(this);
+	}
+	
+	
+	@Override
+	public void onStop() {
+	  super.onStop();
+	  // Analytics
+	  EasyTracker.getInstance().activityStop(this);
 	}
 	
 	
