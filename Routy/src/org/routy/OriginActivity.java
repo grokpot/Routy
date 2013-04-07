@@ -768,8 +768,7 @@ public class OriginActivity extends FragmentActivity {
 						resultsIntent.putExtra("optimize_for", routeOptimized);
 						startActivity(resultsIntent);
 					}
-				}.execute(new RouteRequest(origin, validAddresses, false, 
-						routeOptimized/* ? RouteOptimizePreference.PREFER_DISTANCE : RouteOptimizePreference.PREFER_DURATION*/));
+				}.execute(new RouteRequest(origin, validAddresses, false, routeOptimized));
 			}
 		} else {
 			// No destinations entered

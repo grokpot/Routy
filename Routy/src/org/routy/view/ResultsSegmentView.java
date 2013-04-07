@@ -72,7 +72,6 @@ public abstract class ResultsSegmentView extends LinearLayout{
 		});
 		
 		segmentButton	= (Button) findViewById(R.id.button_results_segment);
-		segmentButton.setText(context.getString(R.string.view_segment));
 		if (isLastAddress){
 			segmentButton.setVisibility(GONE);
 		}
