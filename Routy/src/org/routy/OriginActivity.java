@@ -144,7 +144,7 @@ public class OriginActivity extends FragmentActivity {
 		restoreSavedOrigin(savedInstanceState);
 		restoreSavedDestinations(savedInstanceState);
 		
-		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
+		routeOptimized = RouteOptimizePreference.PREFER_DURATION;
 		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
 		preferenceSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			@Override
