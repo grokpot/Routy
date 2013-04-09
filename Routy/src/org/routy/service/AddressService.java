@@ -176,7 +176,7 @@ public class AddressService {
 		Log.v(TAG, String.format("using geocoder to get address for location: %f, %f", latitude, longitude));
 		int tries = 0;
 		
-		// JUST A TEST
+		/*// JUST A TEST
 		for (int i = 0; i < 5; i++) {
 			try {
 				Thread.sleep(1000);
@@ -184,10 +184,10 @@ public class AddressService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		}*/
 		
 		// Since this process actually involves the Google server, there can be issues on their end out of our control.  We'll try 10 times if something goes wrong.
-		while (tries < 10) {
+		while (tries < 3) {
 			Log.v(TAG, String.format("Reverse geocoding: try %d", tries));
 			try {
 				List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
