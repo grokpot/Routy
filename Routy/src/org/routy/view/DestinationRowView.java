@@ -117,8 +117,12 @@ public abstract class DestinationRowView extends LinearLayout {
 			
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
+				EditText current = (EditText) v;
 				if (!hasFocus) {
 					Log.v(TAG, "onFocusChange (lost focus) from row with id=" + id);
+					if (current.getText() != null) {
+						current.setHint(R.string.origin_hint);
+					}
 					if (!ignoreOnFocusLostCallback) {
 						onFocusLost(id);
 					} else {
@@ -126,6 +130,9 @@ public abstract class DestinationRowView extends LinearLayout {
 							ignoreOnFocusLostCallback = false;
 						}
 					}
+				}
+				if (hasFocus) {
+					current.setHint("");
 				}
 			}
 		});

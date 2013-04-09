@@ -136,6 +136,17 @@ public class OriginActivity extends FragmentActivity {
 				// nothing
 			}
 		});
+		originAddressField.setOnFocusChangeListener(new OnFocusChangeListener(){
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				EditText current = (EditText) v;
+				if (current.getText() != null) {
+					current.setHint(R.string.origin_hint);
+				}
+				if (hasFocus) {
+					current.setHint("");
+				}}
+		});
 		
 		origin				= null;
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
