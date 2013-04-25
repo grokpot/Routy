@@ -66,7 +66,7 @@ public class OriginActivity extends FragmentActivity {
 	private AddressModel addressModel;
 
 	private EditText originAddressField;
-	private Address origin;
+//	private Address origin;
 	private LinearLayout destLayout;
 	private Button addDestButton;
 	private boolean originValidated;		// true if the origin was obtained using geolocation (not user entry)
@@ -89,6 +89,8 @@ public class OriginActivity extends FragmentActivity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		Log.v(TAG, "onCreate()");
+		
 		setContentView(R.layout.activity_origin);
 		
 		// Audio stuff
@@ -114,7 +116,6 @@ public class OriginActivity extends FragmentActivity {
 		// Initializations
 		context 			= this;
 		addressModel = AddressModel.getSingleton();
-		
 		addDestButton = (Button) findViewById(R.id.button_destination_add_new);
 		// Get the layout containing the list of destination
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
@@ -123,7 +124,6 @@ public class OriginActivity extends FragmentActivity {
 		originAddressField.addTextChangedListener(new TextWatcher() {	
 			@Override
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
-				originValidated = false;
 			}
 			
 			@Override
@@ -133,15 +133,23 @@ public class OriginActivity extends FragmentActivity {
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				// nothing
+				Log.v(TAG, "afterTextChanged()");
+				
+				if (!s.toString().equals(addressModel.getOrigin().getExtras().getString("formatted_address"))) {
+					Address newOrigin = new Address(Locale.getDefault());
+					newOrigin.setExtras(new Bundle());
+					newOrigin.getExtras().putString("address_string", s.toString());
+					newOrigin.getExtras().putString("validation_status", AddressStatus.NOT_VALIDATED.toString());
+					addressModel.setOrigin(newOrigin);
+					originValidated = false;
+				}
 			}
 		});
 		
-		origin				= null;
+//		origin				= null;
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
 		originValidated		= false;
 
-//		restoreSavedOrigin(savedInstanceState);
 		restoreSavedDestinations(savedInstanceState);
 		
 		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
@@ -166,9 +174,29 @@ public class OriginActivity extends FragmentActivity {
 			userAintANoobNomore();
 		}
 	}
+	
+	
+	private void restoreSavedOrigin() {
+		if (addressModel.getOrigin() != null) {
+//			origin = addressModel.getOrigin();
+			if (addressModel.isOriginValid()) {
+				originAddressField.setText(addressModel.getOrigin().getExtras().getString("formatted_address"));
+			} else {
+				originAddressField.setText(addressModel.getOrigin().getExtras().getString("address_string"));
+			}
+			originValidated = addressModel.isOriginValid();
+		} else {
+			Log.v(TAG, "onResume() -- origin in model is null");
+			originValidated = false;
+		}
+	}
 
 
-	private void restoreSavedOrigin(Bundle savedInstanceState) {
+	/**
+	 * @deprecated
+	 * @param savedInstanceState
+	 */
+	/*private void restoreSavedOrigin(Bundle savedInstanceState) {
 		// get stored origin address from shared prefs first...if there isn't one, THEN try savedInstanceState
 		originValidated = originActivityPrefs.getBoolean("origin_validated", false);
 		
@@ -210,7 +238,9 @@ public class OriginActivity extends FragmentActivity {
 				}
 			}
 		}
-	}
+		
+		
+	}*/
 	
 	
 	// Initialize destination shared preferences
@@ -332,7 +362,7 @@ public class OriginActivity extends FragmentActivity {
 					@Override
 					public void onResult(GooglePlace place) {	//TODO get rid of GooglePlace object and just use Address?  Something unified.
 						// make an Address out of the Google place and start the DestinationActivity
-						origin = new Address(Locale.getDefault());
+						Address origin = new Address(Locale.getDefault());
 						origin.setFeatureName(place.getName());
 						origin.setLatitude(place.getLatitude());
 						origin.setLongitude(place.getLongitude());
@@ -344,7 +374,7 @@ public class OriginActivity extends FragmentActivity {
 						origin.getExtras().putString("formatted_address", place.getFormattedAddress());
 						origin.getExtras().putString("validation_status", AddressStatus.VALID.toString());
 						
-						originAddressField.setText(place.getFormattedAddress());	// TODO set the text in the edittext field
+						originAddressField.setText(place.getFormattedAddress());
 						originValidated = true;
 						
 						//MVC
@@ -403,22 +433,21 @@ public class OriginActivity extends FragmentActivity {
 						if (address != null) {
 							Log.v(TAG, "got user location: " + address.getAddressLine(0));
 							
-							origin = address;
+							Address origin = address;
 							
 							if (origin.getExtras() == null) {
 								origin.setExtras(new Bundle());
 							}
 							
-//							origin.getExtras().putInt("valid_status", DestinationRowView.VALID);
-							
 							String addressStr = origin.getExtras().getString("formatted_address");
 							
-							originAddressField.setText(addressStr);
 							originValidated = true;
 							
 							//MVC
 							origin.getExtras().putString("validation_status", AddressStatus.VALID.toString());
 							addressModel.setOrigin(origin);
+							
+							originAddressField.setText(addressStr);
 						}
 					}
 				}).execute(userLocation);
@@ -506,7 +535,7 @@ public class OriginActivity extends FragmentActivity {
 					public void onNoSelection() {
 						// Doing nothing leaves it NOT_VALIDATED
 					}
-				}.execute(new GooglePlacesQuery(lastRow.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+				}.execute(new GooglePlacesQuery(lastRow.getAddressString(), addressModel.getOrigin().getLatitude(), addressModel.getOrigin().getLongitude()));
 			} else {
 				if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
 					Log.v(TAG, "adding a new destination row");
@@ -586,7 +615,7 @@ public class OriginActivity extends FragmentActivity {
 								public void onNoSelection() {
 									// Doing nothing leaves it NOT_VALIDATED
 								}
-							}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+							}.execute(new GooglePlacesQuery(row.getAddressString(), addressModel.getOrigin().getLatitude(), addressModel.getOrigin().getLongitude()));
 						}
 					}
 				}
@@ -736,7 +765,7 @@ public class OriginActivity extends FragmentActivity {
 					public void onNoSelection() {
 						// Doing nothing leaves it NOT_VALIDATED
 					}
-				}.execute(new GooglePlacesQuery(row.getAddressString(), origin.getLatitude(), origin.getLongitude()));
+				}.execute(new GooglePlacesQuery(row.getAddressString(), addressModel.getOrigin().getLatitude(), addressModel.getOrigin().getLongitude()));
 			} else {
 				Log.v(TAG, "All destinations have been validated.");
 
@@ -752,7 +781,7 @@ public class OriginActivity extends FragmentActivity {
 						resultsIntent.putExtra("optimize_for", routeOptimized);
 						startActivity(resultsIntent);
 					}
-				}.execute(new RouteRequest(origin, validAddresses, false, 
+				}.execute(new RouteRequest(addressModel.getOrigin(), validAddresses, false, 
 						routeOptimized/* ? RouteOptimizePreference.PREFER_DISTANCE : RouteOptimizePreference.PREFER_DURATION*/));
 			}
 		} else {
@@ -839,7 +868,7 @@ public class OriginActivity extends FragmentActivity {
 			public void onRightButtonClicked(DialogInterface dialog, int which) {
 				dialog.dismiss();
 
-				// Show the "Location Services" settings page
+				//Show the "Location Services" settings page
 				Intent gpsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 				Log.v(TAG, "ENABLE_GPS_REQUEST = " + ENABLE_GPS_REQUEST);
 				context.startActivityForResult(gpsIntent, ENABLE_GPS_REQUEST);
@@ -867,16 +896,14 @@ public class OriginActivity extends FragmentActivity {
 		click = sounds.load(this, R.raw.routyclick, 1);
 		
 		Log.v(TAG, "onResume() -- loading model");
-		String json = originActivityPrefs.getString(SAVED_ORIGIN_JSON_KEY, "");
-		Log.v(TAG, "JSON: " + json);
-		addressModel.loadModel(json);
-		if (addressModel.getOrigin() != null) {
-			origin = addressModel.getOrigin();
-			originAddressField.setText("R" + origin.getExtras().getString("formatted_address"));
-			originValidated = addressModel.isOriginValid();
-		} else {
-			Log.v(TAG, "onResume() -- origin in model is null");
-		}
+		String originJson = originActivityPrefs.getString(SAVED_ORIGIN_JSON_KEY, "");
+		Log.v(TAG, "Origin JSON: " + originJson);
+		String destJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, "");
+		Log.v(TAG, "Destinations JSON: " + destJson);
+		
+		addressModel.loadModel(originJson, destJson);
+		
+		restoreSavedOrigin();
 	}
 
 
@@ -893,44 +920,10 @@ public class OriginActivity extends FragmentActivity {
 		if (addressModel.getOrigin() == null) {
 			Log.v(TAG, "pausing with no origin");
 		} else {
-			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getAddressLine(0));
+			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getExtras().getString("formatted_address"));
 		}
 		
-		//TODO replace all this with a call to AddressModel.getJSON()
-		
-		/*
-		Log.v(TAG, "building the JSON string from the origin address");
-		if (!originValidated && originActivityPrefs != null) {
-			// save the origin input string
-			Log.v(TAG, "origin not validated, saving just the input string");
-			SharedPreferences.Editor ed = originActivityPrefs.edit();
-			ed.putString("saved_origin_string", originAddressField.getText().toString());
-			ed.putBoolean("origin_validated", originValidated);
-			ed.commit();
-			
-		} else if (origin != null && originActivityPrefs != null) {
-			// store origin in shared prefs
-			Log.v(TAG, "saving origin to SharedPreferences");
-			String json = Util.writeAddressToJson(origin);
-			SharedPreferences.Editor ed = originActivityPrefs.edit();
-			ed.putString("saved_origin", json);
-			Log.v(TAG, "saving json: " + json);
-			ed.putBoolean("origin_validated", originValidated);
-			ed.commit();
-		}*/
-		
-		
-		//Save the Origin
-		if (addressModel.getOrigin() != null && originActivityPrefs != null) {
-			Log.v(TAG, "saving Origin");
-			
-			String json = addressModel.getOriginJSON();
-			Log.v(TAG, "Origin JSON: " + json);
-			
-			SharedPreferences.Editor ed = originActivityPrefs.edit();
-			ed.putString(SAVED_ORIGIN_JSON_KEY, json);
-			ed.commit();
-		}
+		saveOrigin();
 		
 		
 		Log.v(TAG, "building the JSON string from all the destination addresses");
@@ -955,6 +948,7 @@ public class OriginActivity extends FragmentActivity {
 					Bundle extras = new Bundle();
 					extras.putString("address_string", destView.getAddressString());
 					extras.putInt("valid_status", destView.getStatus());
+					
 					address.setExtras(extras);
 				} else {
 					// bah!
@@ -975,6 +969,22 @@ public class OriginActivity extends FragmentActivity {
 		ed.putString(SAVED_DESTS_JSON_KEY, json);
 		//		ed.putStringSet("saved_destination_strings", storedAddresses);
 		ed.commit();
+	}
+
+
+	private void saveOrigin() {
+		if (addressModel.getOrigin() != null && originActivityPrefs != null) {
+			Log.v(TAG, "saving Origin");
+			
+			String json = addressModel.getOriginJSON();
+			Log.v(TAG, "Origin JSON: " + json);
+			
+			SharedPreferences.Editor ed = originActivityPrefs.edit();
+			ed.putString(SAVED_ORIGIN_JSON_KEY, json);
+			ed.commit();
+		} else if (originActivityPrefs == null) {
+			Log.e(TAG, "originActivityPrefs null while trying to save the origin");
+		}
 	}
 	
 	

@@ -96,7 +96,7 @@ public class Util {
 			jWriter.name("persisted_address");
 			
 			jWriter.beginObject();
-			jWriter.name("feature_name").value(address.getFeatureName());
+			jWriter.name("feature_name").value(address.getFeatureName() == null ? "" : address.getFeatureName());
 			try {
 				jWriter.name("latitude");
 				jWriter.value(address.getLatitude());
@@ -117,6 +117,11 @@ public class Util {
 				
 				if (formattedAddress != null) {
 					jWriter.name("formatted_address").value(formattedAddress);
+				}
+				
+				String addressString = extras.getString("address_string");
+				if (addressString != null) {
+					jWriter.name("address_string").value(addressString);
 				}
 				
 				// Gotta save the validation status so we know if we have to re-validate or not
@@ -180,6 +185,7 @@ public class Util {
 	}
 	
 
+	//TODO Fill out the entire address object...or figure out how to
 	static Address readAddress(JsonReader jReader) {
 		if (jReader == null) {
 			return null;
@@ -212,6 +218,11 @@ public class Util {
 							address.setExtras(new Bundle());
 						}
 						address.getExtras().putString("validation_status", jReader.nextString());
+					} else if (name.equalsIgnoreCase("address_string")) {
+						if (address.getExtras() == null) {
+							address.setExtras(new Bundle());
+						}
+						address.getExtras().putString("address_string", jReader.nextString());
 					} else {
 						jReader.skipValue();
 					}

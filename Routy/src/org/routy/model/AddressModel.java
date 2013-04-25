@@ -30,7 +30,7 @@ public class AddressModel {
 	}
 
 	public void setOrigin(Address origin) {
-		Log.v(TAG, "setting origin to " + (origin.getMaxAddressLineIndex() > -1 ? origin.getAddressLine(0) : origin.getSubThoroughfare()));
+		Log.v(TAG, "setting origin to " + (origin.getExtras().getString("formatted_address") == null ? origin.getExtras().getString("address_string") : origin.getExtras().getString("formatted_address")));
 		Log.v(TAG, "origin status is " + origin.getExtras().getString("validation_status"));
 		this.origin = origin;
 	}
@@ -51,27 +51,29 @@ public class AddressModel {
 		this.destinations = destinations;
 	}
 	
-	public String getJSON() {
-		//TODO Return a JSON string that can be used to save/load the AddressModel
-		return null;
-	}
-	
-	//XXX this can be incorporated into #getJSON()
 	public String getOriginJSON() {
 		//Return a JSON string that can be used to save/load the Origin
 		return Util.writeAddressToJson(origin);
 	}
 	
-	public void loadModel(String json) {
+	public void loadModel(String originJson, String destJson) {
 		//TODO
-		loadOriginJSON(json);
+		loadOriginJSON(originJson);
 	}
 	
 	private void loadOriginJSON(String json) {
 		//Parse the JSON string to load an Address into origin
-		Address newOrigin = Util.readAddressFromJson(json);
-		origin = newOrigin;
+		if (json != null && json.length() > 0) {
+			Address newOrigin = Util.readAddressFromJson(json);
+			origin = newOrigin;
+			
+			Log.v(TAG, "origin loaded.");
+		} else {
+			Log.v(TAG, "no saved origin JSON");
+		}
+	}
+	
+	private void loadDestinationsJSON(String json) {
 		
-		Log.v(TAG, "origin loaded.  address: " + origin.getAddressLine(0) + " -- status: " + origin.getExtras().getString("validation_status", "no status found"));
 	}
 }
