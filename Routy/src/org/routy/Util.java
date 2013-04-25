@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.routy.model.AddressStatus;
 import org.routy.view.DestinationRowView;
 
 import android.content.Context;
@@ -120,6 +121,9 @@ public class Util {
 				
 				// Gotta save the validation status so we know if we have to re-validate or not
 				jWriter.name("valid_status").value(extras.getInt("valid_status", DestinationRowView.NOT_VALIDATED));
+				
+				//NEW valid status field
+				jWriter.name("validation_status").value(extras.getString("validation_status", AddressStatus.NOT_VALIDATED.toString()));
 			}
 			jWriter.endObject();
 			
@@ -199,9 +203,15 @@ public class Util {
 					} else if (name.equalsIgnoreCase("longitude")) {
 						address.setLongitude(jReader.nextDouble());
 					} else if (name.equalsIgnoreCase("formatted_address")) {
-						Bundle extras = new Bundle();
-						extras.putString("formatted_address", jReader.nextString());
-						address.setExtras(extras);
+						if (address.getExtras() == null) {
+							address.setExtras(new Bundle());
+						}
+						address.getExtras().putString("formatted_address", jReader.nextString());
+					} else if (name.equalsIgnoreCase("validation_status")) {
+						if (address.getExtras() == null) {
+							address.setExtras(new Bundle());
+						}
+						address.getExtras().putString("validation_status", jReader.nextString());
 					} else {
 						jReader.skipValue();
 					}
