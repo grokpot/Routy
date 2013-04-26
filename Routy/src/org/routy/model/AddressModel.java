@@ -1,5 +1,6 @@
 package org.routy.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -56,24 +57,32 @@ public class AddressModel {
 		return Util.writeAddressToJson(origin);
 	}
 	
+	public String getDestinationsJSON() {
+		return Util.addressListToJSON(getDestinations());
+	}
+	
 	public void loadModel(String originJson, String destJson) {
-		//TODO
 		loadOriginJSON(originJson);
+		loadDestinationsJSON(destJson);
 	}
 	
 	private void loadOriginJSON(String json) {
 		//Parse the JSON string to load an Address into origin
 		if (json != null && json.length() > 0) {
-			Address newOrigin = Util.readAddressFromJson(json);
-			origin = newOrigin;
-			
-			Log.v(TAG, "origin loaded.");
+			setOrigin(Util.readAddressFromJson(json));
+			Log.v(TAG, "origin loaded into AddressModel.");
 		} else {
 			Log.v(TAG, "no saved origin JSON");
 		}
 	}
 	
 	private void loadDestinationsJSON(String json) {
-		
+		if (json != null && json.length() > 0) {
+			setDestinations(Util.jsonToAddressList(json));
+			Log.v(TAG, "destinations loaded into AddressModel.");
+		} else {
+			Log.v(TAG, "no saved destinations JSON");
+			destinations = new ArrayList<Address>();
+		}
 	}
 }

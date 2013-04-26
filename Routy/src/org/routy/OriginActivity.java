@@ -150,7 +150,7 @@ public class OriginActivity extends FragmentActivity {
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
 		originValidated		= false;
 
-		restoreSavedDestinations(savedInstanceState);
+//		restoreSavedDestinations(savedInstanceState);
 		
 		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
 		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
@@ -178,7 +178,6 @@ public class OriginActivity extends FragmentActivity {
 	
 	private void restoreSavedOrigin() {
 		if (addressModel.getOrigin() != null) {
-//			origin = addressModel.getOrigin();
 			if (addressModel.isOriginValid()) {
 				originAddressField.setText(addressModel.getOrigin().getExtras().getString("formatted_address"));
 			} else {
@@ -191,12 +190,28 @@ public class OriginActivity extends FragmentActivity {
 		}
 	}
 
+	
+	private void restoreSavedDestinations() {
+		Log.v(TAG, "restoring saved destinations from the model");
+		//TODO Take the data that's been reloaded into the model and display it in the Views
+		if (addressModel.getDestinations() == null || addressModel.getDestinations().size() == 0) {
+			//Add an empty row
+			addDestinationRow();
+		} else {
+			for (Address dest : addressModel.getDestinations()) {
+				String status = dest.getExtras().getString("validation_status");
+				if (AddressStatus.VALID.toString().equals(status)) {
+					Log.v(TAG, "[VALID] address: " + dest.getExtras().getString("formatted_address"));
+				} else {
+					Log.v(TAG, status + " address: " + dest.getExtras().getString("address_string"));
+				}
+			}
+		}
+	}
 
-	/**
-	 * @deprecated
-	 * @param savedInstanceState
-	 */
-	/*private void restoreSavedOrigin(Bundle savedInstanceState) {
+	
+	/*@Deprecated
+	 private void restoreSavedOrigin(Bundle savedInstanceState) {
 		// get stored origin address from shared prefs first...if there isn't one, THEN try savedInstanceState
 		originValidated = originActivityPrefs.getBoolean("origin_validated", false);
 		
@@ -244,6 +259,7 @@ public class OriginActivity extends FragmentActivity {
 	
 	
 	// Initialize destination shared preferences
+	@Deprecated
 	private void restoreSavedDestinations(Bundle savedInstanceState) {
 //		originActivityPrefs = getSharedPreferences("activity_prefs", MODE_PRIVATE);
 //		String storedAddressesJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, null);
@@ -434,19 +450,16 @@ public class OriginActivity extends FragmentActivity {
 							Log.v(TAG, "got user location: " + address.getAddressLine(0));
 							
 							Address origin = address;
-							
 							if (origin.getExtras() == null) {
 								origin.setExtras(new Bundle());
 							}
 							
 							String addressStr = origin.getExtras().getString("formatted_address");
-							
 							originValidated = true;
-							
 							//MVC
 							origin.getExtras().putString("validation_status", AddressStatus.VALID.toString());
 							addressModel.setOrigin(origin);
-							
+							//Display it in the text field
 							originAddressField.setText(addressStr);
 						}
 					}
@@ -904,6 +917,7 @@ public class OriginActivity extends FragmentActivity {
 		addressModel.loadModel(originJson, destJson);
 		
 		restoreSavedOrigin();
+		restoreSavedDestinations();
 	}
 
 
@@ -924,8 +938,11 @@ public class OriginActivity extends FragmentActivity {
 		}
 		
 		saveOrigin();
-		
-		
+		saveDestinations();
+	}
+
+
+	private void saveDestinations() {
 		Log.v(TAG, "building the JSON string from all the destination addresses");
 		List<Address> addressesToSave = new ArrayList<Address>();
 		for (int i = 0; i < destLayout.getChildCount(); i++) {
@@ -936,10 +953,14 @@ public class OriginActivity extends FragmentActivity {
 				if (destView.getStatus() == DestinationRowView.VALID) {
 					// Add the address from this row to the list
 					address = destView.getAddress();
+					
+					Log.v(TAG, "saving address: " + address.getExtras().getString("formatted_address"));
 
 					// It's valid so we'll just keep track of that
 					Bundle extras = address.getExtras();
 					extras.putInt("valid_status", destView.getStatus());
+					extras.putString("validation_status", AddressStatus.VALID.toString());
+					address.setExtras(extras);
 				} else if (destView.getStatus() == DestinationRowView.INVALID || destView.getStatus() == DestinationRowView.NOT_VALIDATED) {
 					// Manually create an Address object with just the EditText value and the status because it won't be there
 					address = new Address(Locale.getDefault());
@@ -948,7 +969,7 @@ public class OriginActivity extends FragmentActivity {
 					Bundle extras = new Bundle();
 					extras.putString("address_string", destView.getAddressString());
 					extras.putInt("valid_status", destView.getStatus());
-					
+					extras.putString("validation_status", destView.getStatus() == DestinationRowView.INVALID ? AddressStatus.INVALID.toString() : AddressStatus.NOT_VALIDATED.toString());
 					address.setExtras(extras);
 				} else {
 					// bah!
@@ -967,7 +988,6 @@ public class OriginActivity extends FragmentActivity {
 		Log.v(TAG, "Saving destinations in shared prefs");
 		SharedPreferences.Editor ed = originActivityPrefs.edit();
 		ed.putString(SAVED_DESTS_JSON_KEY, json);
-		//		ed.putStringSet("saved_destination_strings", storedAddresses);
 		ed.commit();
 	}
 
