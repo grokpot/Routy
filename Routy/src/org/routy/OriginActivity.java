@@ -149,8 +149,6 @@ public class OriginActivity extends FragmentActivity {
 //		origin				= null;
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
 		originValidated		= false;
-
-//		restoreSavedDestinations(savedInstanceState);
 		
 		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
 		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
@@ -160,6 +158,17 @@ public class OriginActivity extends FragmentActivity {
 				onToggleClicked(isChecked);
 			}
 		});
+		
+		Log.v(TAG, "onCreate() -- loading model");
+		String originJson = originActivityPrefs.getString(SAVED_ORIGIN_JSON_KEY, "");
+		Log.v(TAG, "Origin JSON: " + originJson);
+		String destJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, "");
+		Log.v(TAG, "Destinations JSON: " + destJson);
+		
+		addressModel.loadModel(originJson, destJson);
+		
+		restoreSavedOrigin();
+		restoreSavedDestinations();
 		
 		showInstructions();
 
@@ -202,11 +211,44 @@ public class OriginActivity extends FragmentActivity {
 			addDestinationRow();
 		} else {
 			for (Address dest : addressModel.getDestinations()) {
-				String status = dest.getExtras().getString("validation_status");
+				/*String status = dest.getExtras().getString("validation_status");
 				if (AddressStatus.VALID.toString().equals(status)) {
 					Log.v(TAG, "[VALID] address: " + dest.getExtras().getString("formatted_address"));
 				} else {
 					Log.v(TAG, status + " address: " + dest.getExtras().getString("address_string"));
+				}*/
+//				Address address = restoredAddresses.get(i);
+				Bundle addressExtras = dest.getExtras();
+	
+				if (addressExtras != null) {
+//					int status = addressExtras.getInt("valid_status");
+					String status = addressExtras.getString("validation_status");
+	
+					DestinationRowView newRow = null;
+					if (AddressStatus.VALID.toString().equals(status)) {
+						// Put the new row in the list
+						newRow = addDestinationRow(dest.getFeatureName());
+						newRow.setAddress(dest);
+						newRow.setValid();
+	
+						Log.v(TAG, "restored: " + newRow.getAddress().getFeatureName() + " [status=" + newRow.getStatus() + "]");
+	
+					} else if (AddressStatus.INVALID.toString().equals(status) || AddressStatus.NOT_VALIDATED.toString().equals(status)) {
+						String addressString = addressExtras.getString("address_string");
+	
+						newRow = addDestinationRow(addressString);
+	
+						if (AddressStatus.INVALID.toString().equals(status)) {
+							newRow.setInvalid();
+						} else {
+							newRow.clearValidationStatus();
+						}
+	
+						Log.v(TAG, "restored: " + newRow.getAddressString() + " [status=" + newRow.getStatus() + "]");
+					} else {
+						Log.w(TAG, String.format("encountered an invalid address status (%s) when restoring destinations", status));
+					}
+	
 				}
 			}
 		}
@@ -899,6 +941,14 @@ public class OriginActivity extends FragmentActivity {
 		};
 		dialog.show(context.getSupportFragmentManager(), TAG);
 	}
+	
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
+		Log.v(TAG, "onStart()");
+	}
 
 	
 	@Override
@@ -910,17 +960,14 @@ public class OriginActivity extends FragmentActivity {
 		speak = sounds.load(this, R.raw.routyspeak, 1);  
 		bad = sounds.load(this, R.raw.routybad, 1);
 		click = sounds.load(this, R.raw.routyclick, 1);
+	}
+	
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
 		
-		Log.v(TAG, "onResume() -- loading model");
-		String originJson = originActivityPrefs.getString(SAVED_ORIGIN_JSON_KEY, "");
-		Log.v(TAG, "Origin JSON: " + originJson);
-		String destJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, "");
-		Log.v(TAG, "Destinations JSON: " + destJson);
-		
-		addressModel.loadModel(originJson, destJson);
-		
-		restoreSavedOrigin();
-		restoreSavedDestinations();
+		Log.v(TAG, "onStop()");
 	}
 
 
@@ -932,23 +979,6 @@ public class OriginActivity extends FragmentActivity {
 			sounds.release(); 
 			sounds = null; 
 		} 
-		
-		
-		if (addressModel.getOrigin() == null) {
-			Log.v(TAG, "pausing with no origin");
-		} else {
-			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getExtras().getString("formatted_address"));
-		}
-		
-		if (destLayout.getChildCount() == 1) {
-			DestinationRowView destView = (DestinationRowView) destLayout.getChildAt(0);
-			if ("".equals(destView.getAddressString())) {
-				destLayout.removeView(destView);
-			}
-		}
-		
-		saveOrigin();
-		saveDestinations();
 	}
 
 
@@ -1023,6 +1053,22 @@ public class OriginActivity extends FragmentActivity {
 		super.onDestroy();
 		
 		Log.v(TAG, "onDestroy()");
+		
+		if (addressModel.getOrigin() == null) {
+			Log.v(TAG, "pausing with no origin");
+		} else {
+			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getExtras().getString("formatted_address"));
+		}
+		
+		if (destLayout.getChildCount() == 1) {
+			DestinationRowView destView = (DestinationRowView) destLayout.getChildAt(0);
+			if ("".equals(destView.getAddressString())) {
+				destLayout.removeView(destView);
+			}
+		}
+		
+		saveOrigin();
+		saveDestinations();
 	}
 	
 	
