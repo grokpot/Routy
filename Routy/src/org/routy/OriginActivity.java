@@ -191,9 +191,12 @@ public class OriginActivity extends FragmentActivity {
 	}
 
 	
+	/**
+	 *	Takes the data that's been reloaded into the model and display it in the Views 
+	 */
 	private void restoreSavedDestinations() {
+		//TODO
 		Log.v(TAG, "restoring saved destinations from the model");
-		//TODO Take the data that's been reloaded into the model and display it in the Views
 		if (addressModel.getDestinations() == null || addressModel.getDestinations().size() == 0) {
 			//Add an empty row
 			addDestinationRow();
@@ -935,6 +938,13 @@ public class OriginActivity extends FragmentActivity {
 			Log.v(TAG, "pausing with no origin");
 		} else {
 			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getExtras().getString("formatted_address"));
+		}
+		
+		if (destLayout.getChildCount() == 1) {
+			DestinationRowView destView = (DestinationRowView) destLayout.getChildAt(0);
+			if ("".equals(destView.getAddressString())) {
+				destLayout.removeView(destView);
+			}
 		}
 		
 		saveOrigin();
