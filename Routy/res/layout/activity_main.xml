@@ -7,12 +7,12 @@
     <ImageView 
         android:id="@+id/imageView2"
         android:contentDescription="@string/poweredbygoogledesc"
-        android:layout_width="100dp"
-        android:layout_height="30dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/textview_origin_purpose"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="15dp"
-        android:src="@drawable/poweredbymed"/>
+        android:src="@drawable/poweredbysmall"/>
     
     <ImageView
            android:id="@+id/imageView1"
