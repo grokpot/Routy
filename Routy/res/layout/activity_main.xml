@@ -3,7 +3,17 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient">
-
+    
+    <ImageView 
+        android:id="@+id/imageView2"
+        android:contentDescription="@string/poweredbygoogledesc"
+        android:layout_width="100dp"
+        android:layout_height="30dp"
+        android:layout_above="@+id/textview_origin_purpose"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/poweredbymed"/>
+    
     <ImageView
            android:id="@+id/imageView1"
            android:contentDescription="@string/biglogodesc"
