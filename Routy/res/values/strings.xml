@@ -11,7 +11,7 @@
         different destinations. Enter a starting address or click Find me! to get your current location. 
         Once we have your origin set up we can work on entering all of your destinations. Click Next when
         you\'re done!</string> -->
-    <string name="origin_noob_instructions">Welcome to Routy - use it for road trips, running errands, or just for fun!\n\nEnter a starting address or click \&quot;Find me!\&quot;, then click Next!</string>
+    <string name="origin_noob_instructions">Welcome -  to Routy - use it for road trips, running errands, or just for fun!\n\nEnter a starting address or click \&quot;Find me!\&quot;, then click Next!</string>
     <string name="destination_noob_instructions">Now enter addresses, places, or interesections in any order. You can also choose between a shorter route or a faster time.\n\nWhen you\'re ready, click \"Route it!\" to see the results! If you change your mind, just press back.</string>
     <string name="results_noob_instructions">Here\'s your trip with a detailed description below. If you want to change any part of your trip, just press back.\n\nHappy routing!</string>
     <string name="google_maps_api_key_active">0Cz9qngAOR4AzAhg2r3fen3T5Qu75MABjxiPD6g</string>
