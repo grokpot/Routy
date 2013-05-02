@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.routy.model.AddressStatus;
+import org.routy.model.RoutyAddress;
 import org.routy.view.DestinationRowView;
 
 import android.content.Context;
@@ -28,7 +29,7 @@ public class Util {
 	 * @param addresses
 	 * @return
 	 */
-	public static String addressListToJSON(List<Address> addresses) {
+	public static String addressListToJSON(List<? extends Address> addresses) {
 		if (addresses == null) {
 			return null;
 		}
@@ -124,9 +125,6 @@ public class Util {
 					jWriter.name("address_string").value(addressString);
 				}
 				
-				// Gotta save the validation status so we know if we have to re-validate or not
-				jWriter.name("valid_status").value(extras.getInt("valid_status", DestinationRowView.NOT_VALIDATED));
-				
 				//NEW valid status field
 				jWriter.name("validation_status").value(extras.getString("validation_status", AddressStatus.NOT_VALIDATED.toString()));
 			}
@@ -148,8 +146,8 @@ public class Util {
 	 * @param json
 	 * @return
 	 */
-	public static List<Address> jsonToAddressList(String json) {
-		List<Address> addresses = new ArrayList<Address>();
+	public static List<RoutyAddress> jsonToAddressList(String json) {
+		List<RoutyAddress> addresses = new ArrayList<RoutyAddress>();
 		
 		try {
 			StringReader sReader = new StringReader(json);
@@ -177,7 +175,7 @@ public class Util {
 	}
 	
 	
-	public static Address readAddressFromJson(String json) {
+	public static RoutyAddress readAddressFromJson(String json) {
 		StringReader sReader = new StringReader(json);
 		JsonReader jReader = new JsonReader(sReader);
 		
@@ -186,12 +184,12 @@ public class Util {
 	
 
 	//TODO Fill out the entire address object...or figure out how to
-	static Address readAddress(JsonReader jReader) {
+	static RoutyAddress readAddress(JsonReader jReader) {
 		if (jReader == null) {
 			return null;
 		}
 		
-		Address address = new Address(Locale.getDefault());
+		RoutyAddress address = new RoutyAddress(Locale.getDefault());
 		try {
 			jReader.beginObject();
 			String persistedAddress = jReader.nextName();
@@ -201,13 +199,22 @@ public class Util {
 				while (jReader.hasNext()) {
 					String name = jReader.nextName();
 					Log.v(TAG, "reading name: " + name);
-					
 					if (name.equalsIgnoreCase("feature_name")) {
 						address.setFeatureName(jReader.nextString());
 					} else if (name.equalsIgnoreCase("latitude")) {
-						address.setLatitude(jReader.nextDouble());
+						try {
+							address.setLatitude(jReader.nextDouble());
+						} catch (IllegalStateException e) {
+							//DO NOTHING
+							jReader.skipValue();
+						}
 					} else if (name.equalsIgnoreCase("longitude")) {
-						address.setLongitude(jReader.nextDouble());
+						try {
+							address.setLongitude(jReader.nextDouble());
+						} catch (IllegalStateException e) {
+							//DO NOTHING
+							jReader.skipValue();
+						}
 					} else if (name.equalsIgnoreCase("formatted_address")) {
 						if (address.getExtras() == null) {
 							address.setExtras(new Bundle());

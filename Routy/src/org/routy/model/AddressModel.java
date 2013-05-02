@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.routy.Util;
+import org.routy.callback.ValidateAddressCallback;
 
 import android.location.Address;
 import android.util.Log;
@@ -15,8 +16,9 @@ public class AddressModel {
 	
 	private static final AddressModel addressModel = new AddressModel();
 	
-	private Address origin;
-	private List<Address> destinations;
+	private RoutyAddress origin;
+	private List<RoutyAddress> destinations;
+	private String unvalidatedDestEntry;
 	
 	private AddressModel() {
 		super();
@@ -26,32 +28,41 @@ public class AddressModel {
 		return addressModel;
 	}
 
-	public Address getOrigin() {
+	public RoutyAddress getOrigin() {
 		return origin;
 	}
 
-	public void setOrigin(Address origin) {
+	public void setOrigin(RoutyAddress origin) {
 		Log.v(TAG, "setting origin to " + (origin.getExtras().getString("formatted_address") == null ? origin.getExtras().getString("address_string") : origin.getExtras().getString("formatted_address")));
-		Log.v(TAG, "origin status is " + origin.getExtras().getString("validation_status"));
+		Log.v(TAG, "origin status is " + origin.getStatus().toString());
 		this.origin = origin;
 	}
 	
 	public boolean isOriginValid() {
 		return origin != null && origin.getExtras() != null && AddressStatus.VALID.toString().equals(origin.getExtras().getString("validation_status"));
+		
 	}
 	
-	public void addDestination(Address destination) {
+	public void addDestination(RoutyAddress destination) {
 		destinations.add(destination);
 	}
 
-	public List<Address> getDestinations() {
+	public List<RoutyAddress> getDestinations() {
 		return destinations;
 	}
 
-	public void setDestinations(List<Address> destinations) {
+	public void setDestinations(List<RoutyAddress> destinations) {
 		this.destinations = destinations;
 	}
 	
+	public String getUnvalidatedDestEntry() {
+		return unvalidatedDestEntry;
+	}
+
+	public void setUnvalidatedDestEntry(String unvalidatedDestEntry) {
+		this.unvalidatedDestEntry = unvalidatedDestEntry;
+	}
+
 	public String getOriginJSON() {
 		//Return a JSON string that can be used to save/load the Origin
 		return Util.writeAddressToJson(origin);
@@ -82,7 +93,23 @@ public class AddressModel {
 			Log.v(TAG, "destinations loaded into AddressModel.");
 		} else {
 			Log.v(TAG, "no saved destinations JSON");
-			destinations = new ArrayList<Address>();
+			destinations = new ArrayList<RoutyAddress>();
 		}
+	}
+
+	public void removeDestination(int indexInLayout) {
+		if (indexInLayout >= 0 && indexInLayout < destinations.size()) {
+			destinations.remove(indexInLayout);
+		}
+	}
+
+	public void setDestinationAt(int indexInLayout, RoutyAddress validatedAddress) {
+		if (indexInLayout >= 0 && indexInLayout < destinations.size() && validatedAddress != null) {
+			destinations.set(indexInLayout, validatedAddress);
+		}
+	}
+
+	public boolean hasDestinations() {
+		return getDestinations() != null && getDestinations().size() > 0;
 	}
 }

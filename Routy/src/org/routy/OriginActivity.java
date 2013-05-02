@@ -3,10 +3,8 @@ package org.routy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.UUID;
 
-import junit.framework.Assert;
-
+import org.routy.callback.ValidateAddressCallback;
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.fragment.OneButtonDialog;
@@ -15,12 +13,12 @@ import org.routy.listener.FindUserLocationListener;
 import org.routy.listener.ReverseGeocodeListener;
 import org.routy.model.AddressModel;
 import org.routy.model.AddressStatus;
-import org.routy.model.AppProperties;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
+import org.routy.model.RoutyAddress;
 import org.routy.task.CalculateRouteTask;
 import org.routy.task.FindUserLocationTask;
 import org.routy.task.GooglePlacesQueryTask;
@@ -39,19 +37,16 @@ import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
-import android.text.Selection;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.View.OnFocusChangeListener;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Switch;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 
 public class OriginActivity extends FragmentActivity {
 
@@ -59,19 +54,14 @@ public class OriginActivity extends FragmentActivity {
 	private static final int ENABLE_GPS_REQUEST = 1;
 	private final String SAVED_DESTS_JSON_KEY = "saved_destination_json";
 	private final String SAVED_ORIGIN_JSON_KEY = "saved_origin_json";
-	private final String ADD_DESTINATION_CALLBACK = "destination_callback";
-	private final String ROUTEIT_CALLBACK = "routeit_callback";
 
 	private FragmentActivity context;
 	private AddressModel addressModel;
 
 	private EditText originAddressField;
-//	private Address origin;
 	private LinearLayout destLayout;
 	private Button addDestButton;
-	private boolean originValidated;		// true if the origin was obtained using geolocation (not user entry)
 
-	
 	// shared prefs for origin and destination persistence
 	private SharedPreferences originActivityPrefs;
 
@@ -94,6 +84,95 @@ public class OriginActivity extends FragmentActivity {
 		setContentView(R.layout.activity_origin);
 		
 		// Audio stuff
+		initializeAudio();
+
+		//Initializations
+		context 			= this;
+		addressModel = AddressModel.getSingleton();
+		addDestButton = (Button) findViewById(R.id.button_destination_add_new);
+		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);	//Contains the list of destination rows
+		
+		originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
+		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
+		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
+		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
+		bindInputFields();
+		
+		loadSavedData();
+		
+		refreshOriginLayout();
+		refreshDestinationLayout();
+		
+		showNoobInstructions();
+	}
+
+
+	/**
+	 * Takes the destination list in the model and displays it appropriately in the OriginActivity
+	 */
+	private void refreshDestinationLayout() {
+		// TODO Auto-generated method stub
+		assert destLayout != null;
+		
+		if (addressModel.hasDestinations()) {
+			//TODO Draw a new row for each destination
+			
+		} else {
+			//TODO Display the entry row
+		}
+	}
+
+
+	private void loadSavedData() {
+		Log.v(TAG, "onCreate() -- loading model");
+		String originJson = originActivityPrefs.getString(SAVED_ORIGIN_JSON_KEY, "");
+		Log.v(TAG, "Origin JSON: " + originJson);
+		String destJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, "");
+		Log.v(TAG, "Destinations JSON: " + destJson);
+		addressModel.loadModel(originJson, destJson);
+	}
+
+
+	private void bindInputFields() {
+		originAddressField.addTextChangedListener(new TextWatcher() {	
+			@Override
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			}
+			
+			@Override
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+			}
+			
+			@Override
+			public void afterTextChanged(Editable s) {
+				Log.v(TAG, "afterTextChanged()");
+				
+				//TODO this is janky and should be moved to execute only when the origin field has lost focus.
+				if (s != null && s.length() > 0) {
+					if (addressModel.getOrigin() == null || !s.toString().equals(addressModel.getOrigin().getExtras().getString("formatted_address"))) {
+						RoutyAddress newOrigin = new RoutyAddress(Locale.getDefault());
+						newOrigin.setExtras(new Bundle());
+						newOrigin.getExtras().putString("address_string", s.toString());
+//						newOrigin.getExtras().putString("validation_status", AddressStatus.NOT_VALIDATED.toString());
+						newOrigin.setNotValidated();
+						addressModel.setOrigin(newOrigin);
+					}
+				} else {
+					addressModel.setOrigin(null);
+				}
+			}
+		});
+		
+		preferenceSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+			@Override
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				onToggleClicked(isChecked);
+			}
+		});
+	}
+
+
+	private void initializeAudio() {
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
@@ -112,244 +191,23 @@ public class OriginActivity extends FragmentActivity {
 			  }
 			}
 		});
-
-		// Initializations
-		context 			= this;
-		addressModel = AddressModel.getSingleton();
-		addDestButton = (Button) findViewById(R.id.button_destination_add_new);
-		// Get the layout containing the list of destination
-		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);
-		
-		originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
-		originAddressField.addTextChangedListener(new TextWatcher() {	
-			@Override
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
-			}
-			
-			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-				// nothing
-			}
-			
-			@Override
-			public void afterTextChanged(Editable s) {
-				Log.v(TAG, "afterTextChanged()");
-				
-				if (!s.toString().equals(addressModel.getOrigin().getExtras().getString("formatted_address"))) {
-					Address newOrigin = new Address(Locale.getDefault());
-					newOrigin.setExtras(new Bundle());
-					newOrigin.getExtras().putString("address_string", s.toString());
-					newOrigin.getExtras().putString("validation_status", AddressStatus.NOT_VALIDATED.toString());
-					addressModel.setOrigin(newOrigin);
-					originValidated = false;
-				}
-			}
-		});
-		
-//		origin				= null;
-		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
-		originValidated		= false;
-		
-		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
-		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
-		preferenceSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				onToggleClicked(isChecked);
-			}
-		});
-		
-		Log.v(TAG, "onCreate() -- loading model");
-		String originJson = originActivityPrefs.getString(SAVED_ORIGIN_JSON_KEY, "");
-		Log.v(TAG, "Origin JSON: " + originJson);
-		String destJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, "");
-		Log.v(TAG, "Destinations JSON: " + destJson);
-		
-		addressModel.loadModel(originJson, destJson);
-		
-		restoreSavedOrigin();
-		restoreSavedDestinations();
-		
-		showInstructions();
-
 	}
 
 
-	private void showInstructions() {		
-		// First-time user dialog cookie
-		boolean noobCookie = originActivityPrefs.getBoolean("noob_cookie", false);
-		if (!noobCookie){
-			showNoobDialog();
-			userAintANoobNomore();
-		}
-	}
-	
-	
-	private void restoreSavedOrigin() {
-		if (addressModel.getOrigin() != null) {
-			if (addressModel.isOriginValid()) {
+	/**
+	 * Takes the origin from the model and displays it appropriately in the OriginActivity
+	 */
+	private void refreshOriginLayout() {
+		//Fill in the display/activity with data from the model
+		if (/*addressModel.isOriginValid()*/ addressModel.getOrigin() != null) {
+			if (addressModel.getOrigin().isValid()) {
 				originAddressField.setText(addressModel.getOrigin().getExtras().getString("formatted_address"));
 			} else {
 				originAddressField.setText(addressModel.getOrigin().getExtras().getString("address_string"));
 			}
-			originValidated = addressModel.isOriginValid();
-		} else {
-			Log.v(TAG, "onResume() -- origin in model is null");
-			originValidated = false;
 		}
 	}
 
-	
-	/**
-	 *	Takes the data that's been reloaded into the model and display it in the Views 
-	 */
-	private void restoreSavedDestinations() {
-		//TODO
-		Log.v(TAG, "restoring saved destinations from the model");
-		if (addressModel.getDestinations() == null || addressModel.getDestinations().size() == 0) {
-			//Add an empty row
-			addDestinationRow();
-		} else {
-			for (Address dest : addressModel.getDestinations()) {
-				/*String status = dest.getExtras().getString("validation_status");
-				if (AddressStatus.VALID.toString().equals(status)) {
-					Log.v(TAG, "[VALID] address: " + dest.getExtras().getString("formatted_address"));
-				} else {
-					Log.v(TAG, status + " address: " + dest.getExtras().getString("address_string"));
-				}*/
-//				Address address = restoredAddresses.get(i);
-				Bundle addressExtras = dest.getExtras();
-	
-				if (addressExtras != null) {
-//					int status = addressExtras.getInt("valid_status");
-					String status = addressExtras.getString("validation_status");
-	
-					DestinationRowView newRow = null;
-					if (AddressStatus.VALID.toString().equals(status)) {
-						// Put the new row in the list
-						newRow = addDestinationRow(dest.getFeatureName());
-						newRow.setAddress(dest);
-						newRow.setValid();
-	
-						Log.v(TAG, "restored: " + newRow.getAddress().getFeatureName() + " [status=" + newRow.getStatus() + "]");
-	
-					} else if (AddressStatus.INVALID.toString().equals(status) || AddressStatus.NOT_VALIDATED.toString().equals(status)) {
-						String addressString = addressExtras.getString("address_string");
-	
-						newRow = addDestinationRow(addressString);
-	
-						if (AddressStatus.INVALID.toString().equals(status)) {
-							newRow.setInvalid();
-						} else {
-							newRow.clearValidationStatus();
-						}
-	
-						Log.v(TAG, "restored: " + newRow.getAddressString() + " [status=" + newRow.getStatus() + "]");
-					} else {
-						Log.w(TAG, String.format("encountered an invalid address status (%s) when restoring destinations", status));
-					}
-	
-				}
-			}
-		}
-	}
-
-	
-	/*@Deprecated
-	 private void restoreSavedOrigin(Bundle savedInstanceState) {
-		// get stored origin address from shared prefs first...if there isn't one, THEN try savedInstanceState
-		originValidated = originActivityPrefs.getBoolean("origin_validated", false);
-		
-		if (!originValidated) {
-			Log.v(TAG, "origin was not validated last time...just restoring the string");
-			String savedOriginString = originActivityPrefs.getString("saved_origin_string", null);
-			originAddressField.setText(savedOriginString);
-			
-		} else {
-			String savedOriginJson = originActivityPrefs.getString("saved_origin", null);
-			if (savedOriginJson != null && savedOriginJson.length() > 0) {
-				Log.v(TAG, "building origin address from json: " + savedOriginJson);
-				origin = Util.readAddressFromJson(savedOriginJson);
-				
-				if (origin != null) {
-					Log.v(TAG, "got the restored origin address from sharedprefs");
-					
-					Bundle extras = origin.getExtras();
-					String addressStr = null;
-					if (extras != null) {
-						addressStr = extras.getString("formatted_address");
-					} else {
-						addressStr = String.format("%f, %f", origin.getLatitude(), origin.getLongitude());
-					}
-					
-					originAddressField.setText(addressStr);
-					
-					SharedPreferences.Editor ed = originActivityPrefs.edit();
-					ed.remove("saved_origin");
-					ed.commit();
-				}
-			}
-			
-			if (origin == null && savedInstanceState != null) {
-				// Get the origin as an Address object
-				origin = (Address) savedInstanceState.get("origin_address");
-				if (origin != null) {
-					Log.v(TAG, "got the restored origin address from instance state");
-				}
-			}
-		}
-		
-		
-	}*/
-	
-	
-	// Initialize destination shared preferences
-	@Deprecated
-	private void restoreSavedDestinations(Bundle savedInstanceState) {
-//		originActivityPrefs = getSharedPreferences("activity_prefs", MODE_PRIVATE);
-//		String storedAddressesJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, null);
-//			
-//		if (storedAddressesJson != null && storedAddressesJson.length() > 0) {
-//			List<Address> restoredAddresses = Util.jsonToAddressList(storedAddressesJson);
-//	
-//			for (int i = 0; i < restoredAddresses.size(); i++) {
-//				Address address = restoredAddresses.get(i);
-//				Bundle addressExtras = address.getExtras();
-//	
-//				if (addressExtras != null) {
-//					int status = addressExtras.getInt("valid_status");
-//	
-//					DestinationRowView newRow = null;
-//					if (status == DestinationRowView.VALID) {
-//						// Put the new row in the list
-//						newRow = addDestinationRow(address.getFeatureName());
-//						newRow.setAddress(address);
-//						newRow.setValid();
-//	
-//						Log.v(TAG, "restored: " + newRow.getAddress().getFeatureName() + " [status=" + newRow.getStatus() + "]");
-//	
-//					} else if (status == DestinationRowView.INVALID || status == DestinationRowView.NOT_VALIDATED) {
-//						String addressString = addressExtras.getString("address_string");
-//	
-//						newRow = addDestinationRow(addressString);
-//	
-//						if (status == DestinationRowView.INVALID) {
-//							newRow.setInvalid();
-//						} else {
-//							newRow.clearValidationStatus();
-//						}
-//	
-//						Log.v(TAG, "restored: " + newRow.getAddressString() + " [status=" + newRow.getStatus() + "]");
-//					}
-//	
-//				}
-//			}
-//		} else {
-//			addDestinationRow();
-//		}
-		addDestinationRow();
-	}
-	
 	
 	/**
 	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.
@@ -363,11 +221,6 @@ public class OriginActivity extends FragmentActivity {
 				dialog.dismiss();
 			}
 		};
-		// TODO: This was in DA but not in OA, do we need it?
-		//		@Override
-		//		public void onButtonClicked(DialogInterface dialog, int which) {
-		//			dialog.dismiss();
-		//		}
 		dialog.show(context.getSupportFragmentManager(), TAG);
 	}
 	
@@ -381,12 +234,22 @@ public class OriginActivity extends FragmentActivity {
 		ed.putBoolean("noob_cookie", true);
 		ed.commit();	
 	}
+	
+	
+	private void showNoobInstructions() {		
+		// First-time user dialog cookie
+		boolean noobCookie = originActivityPrefs.getBoolean("noob_cookie", false);
+		if (!noobCookie){
+			showNoobDialog();
+			userAintANoobNomore();
+		}
+	}
 
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (requestCode) {
-		case ENABLE_GPS_REQUEST:
+		case ENABLE_GPS_REQUEST:	//Called when the user returns from the GPS settings activity
 			locate();
 			break;
 		}
@@ -401,65 +264,53 @@ public class OriginActivity extends FragmentActivity {
 	
 	
 	/**
-	 * Validates the origin address.
+	 * Validates an address string.
+	 * 
+	 * @param c		the callback that is called when validation is successful
 	 */
-	public void validateOrigin(final String callback) {
-		// validate the origin address and store it
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(click, volume, volume, 1, 0, 1);  
+	public void validateAddress(final String locationQuery, final Double centerLat, final Double centerLng, final ValidateAddressCallback c) {
+		if (locationQuery != null && locationQuery.length() > 0) {
+			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+			sounds.play(click, volume, volume, 1, 0, 1);  
 
-		final String locationQuery = originAddressField.getText().toString();
-		
-		if (!originValidated && (locationQuery == null || locationQuery.length() == 0)) {
-			showErrorDialog(getResources().getString(R.string.no_origin_address_error));
-		} else {
-			if (!originValidated) {
-				Log.v(TAG, "origin was user-entered and needs to be validated");
-				
-				// use GooglePlacesQueryTask to do this...
-				new GooglePlacesQueryTask(this) {
-					
-					@Override
-					public void onResult(GooglePlace place) {	//TODO get rid of GooglePlace object and just use Address?  Something unified.
-						// make an Address out of the Google place and start the DestinationActivity
-						Address origin = new Address(Locale.getDefault());
-						origin.setFeatureName(place.getName());
-						origin.setLatitude(place.getLatitude());
-						origin.setLongitude(place.getLongitude());
-						
-						if (origin.getExtras() == null) {
-							origin.setExtras(new Bundle());
-						}
-						
-						origin.getExtras().putString("formatted_address", place.getFormattedAddress());
-						origin.getExtras().putString("validation_status", AddressStatus.VALID.toString());
-						
-						originAddressField.setText(place.getFormattedAddress());
-						originValidated = true;
-						
-						//MVC
-						addressModel.setOrigin(origin);
-						
-						if (ADD_DESTINATION_CALLBACK.equals(callback)) {
-							onAddDestinationClicked();
-						}
-						else if (ROUTEIT_CALLBACK.equals(callback)) {
-							routeIt();
-						}
-					}
-					
-					@Override
-					public void onFailure(Throwable t) {
-						showErrorDialog("Routy couldn't understand \"" + locationQuery + "\".  Please try something a little different.");		// TODO extract to strings.xml
-					}
-					
-					@Override
-					public void onNoSelection() {
-						// TODO do nothing?
-					}
-				}.execute(new GooglePlacesQuery(locationQuery, null, null));
+			Log.v(TAG, "validating address -- query: " + locationQuery);
+			if (centerLat != null && centerLng != null) {
+				Log.v(TAG, "searching around center @ " + centerLat + "," + centerLng);
 			}
+			
+			// use GooglePlacesQueryTask to do this...
+			new GooglePlacesQueryTask(this) {
+				
+				@Override
+				public void onResult(GooglePlace place) {	//TODO get rid of GooglePlace object and just use Address?  Something unified.
+					// make an Address out of the Google place
+					RoutyAddress result = new RoutyAddress(Locale.getDefault());
+					result.setFeatureName(place.getName() != null ? place.getName() : "");
+					result.setLatitude(place.getLatitude());
+					result.setLongitude(place.getLongitude());
+					
+					if (result.getExtras() == null) {
+						result.setExtras(new Bundle());
+					}
+					
+					result.getExtras().putString("formatted_address", place.getFormattedAddress());
+//					result.getExtras().putString("validation_status", AddressStatus.VALID.toString());
+					result.setValid();
+					
+					c.onAddressValidated(result);
+				}
+				
+				@Override
+				public void onFailure(Throwable t) {
+					showErrorDialog("Routy couldn't understand \"" + locationQuery + "\".  Please try something a little different.");		// TODO extract to strings.xml
+				}
+				
+				@Override
+				public void onNoSelection() {
+					//Do nothing?
+				}
+			}.execute(new GooglePlacesQuery(locationQuery, centerLat, centerLng));
 		}
 	}
 
@@ -490,22 +341,20 @@ public class OriginActivity extends FragmentActivity {
 				new ReverseGeocodeTask(context, true, new ReverseGeocodeListener() {
 					
 					@Override
-					public void onResult(Address address) {
+					public void onResult(RoutyAddress address) {
 						if (address != null) {
 							Log.v(TAG, "got user location: " + address.getAddressLine(0));
 							
-							Address origin = address;
+							RoutyAddress origin = address;
 							if (origin.getExtras() == null) {
 								origin.setExtras(new Bundle());
 							}
 							
 							String addressStr = origin.getExtras().getString("formatted_address");
-							originValidated = true;
-							//MVC
-							origin.getExtras().putString("validation_status", AddressStatus.VALID.toString());
+//							origin.getExtras().putString("validation_status", AddressStatus.VALID.toString());
+							origin.setValid();
 							addressModel.setOrigin(origin);
-							//Display it in the text field
-							originAddressField.setText(addressStr);
+							originAddressField.setText(addressStr);		//TODO this should be a call to refreshOriginLayout()
 						}
 					}
 				}).execute(userLocation);
@@ -534,220 +383,8 @@ public class OriginActivity extends FragmentActivity {
 		}).execute(0);
 	}
 	
-	
-	public void onAddDestinationClicked(View v) {
-		onAddDestinationClicked();
-	}
-	
-	public void onAddDestinationClicked() {
 
-		if (!originValidated){
-			validateOrigin(ADD_DESTINATION_CALLBACK);
-			return;
-		}
-		
-		Log.v(TAG, "new destination row requested by user");
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(click, volume, volume, 1, 0, 1);
 
-		// If the last row is not empty, add a new row
-		DestinationRowView lastRow = (DestinationRowView) destLayout.getChildAt(destLayout.getChildCount() - 1);
-		if (lastRow.getAddressString() != null && lastRow.getAddressString().length() > 0) {
-			if (lastRow.needsValidation()) {
-				// Validate the last row if it has not been validated.  Otherwise, it puts the new row up first, and then validates due to focusChanged.
-				Log.v(TAG, "validating last row before adding new one");
-				final DestinationRowView r = lastRow;
-
-				// disable the onFocusLost listener just once so it doesn't try to validate twice here
-				r.disableOnFocusLostCallback(true);
-
-				// do the validation
-				new GooglePlacesQueryTask(context) {
-
-					@Override
-					public void onResult(GooglePlace place) {
-						if (place != null && place.getAddress() != null) {
-							r.setAddress(place.getAddress());
-							r.setValid();
-
-							Log.v(TAG, "adding a new destination row");
-							addDestinationRow();
-						} else {
-							r.setInvalid();
-						}
-
-						// TODO: can we remove this?
-						// If the list is full, hide the add button
-						/*if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
-							addDestButton.setVisibility(View.INVISIBLE);
-						}*/
-					}
-					
-					@Override
-					public void onFailure(Throwable t) {
-						showErrorDialog("Routy couldn't understand \"" + r.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
-					}
-
-					@Override
-					public void onNoSelection() {
-						// Doing nothing leaves it NOT_VALIDATED
-					}
-				}.execute(new GooglePlacesQuery(lastRow.getAddressString(), addressModel.getOrigin().getLatitude(), addressModel.getOrigin().getLongitude()));
-			} else {
-				if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
-					Log.v(TAG, "adding a new destination row");
-					addDestinationRow();
-				} else {
-					volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-					volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-					sounds.play(bad, 1, 1, 1, 0, 1);
-
-					showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");
-				}
-			}
-		}
-	}
-	
-	
-	/**
-	 * Adds a {@link DestinationRowView} to the Destinations list.
-	 * @param address
-	 * @return			the row that was added, or null if no row was added
-	 */
-	DestinationRowView addDestinationRow() {
-		return addDestinationRow("");
-	}
-	
-	
-	/**
-	 * Adds a {@link DestinationRowView} to the Destinations list.
-	 * @param address
-	 * @return			the row that was added, or null if no row was added
-	 */
-	DestinationRowView addDestinationRow(String address) {		
-		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
-			DestinationRowView v = new DestinationRowView(context, address) {
-
-				@Override
-				public void onRemoveClicked(UUID id) {
-					removeDestinationRow(id);
-				}
-
-				// The user tapped on a different row and this row lost focus
-				@Override
-				public void onFocusLost(final UUID id) {
-					final DestinationRowView row = getRowById(id);
-
-					Log.v(TAG, "FOCUS LOST row id=" + row.getUUID() + ": " + row.getAddressString() + " valid status=" + row.getStatus());
-
-					// The user tapped on a different text box.  Do validation if necessary, but don't add an additional row.
-					if (row.getAddressString() != null && row.getAddressString().length() > 0) {
-						if (row.getStatus() == DestinationRowView.INVALID || row.getStatus() == DestinationRowView.NOT_VALIDATED) {
-							new GooglePlacesQueryTask(context) {
-
-								@Override
-								public void onResult(GooglePlace place) {
-									if (place != null && place.getAddress() != null) {
-										row.setAddress(place.getAddress());
-										row.setValid();
-
-										if ((getRowIndexById(id) == destLayout.getChildCount() - 1) && (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS - 1)) {
-											Log.v(TAG, "place validated...showing add button");
-											showAddButton();
-										} else {
-											Log.v(TAG, "place validated...hiding add button");
-											hideAddButton();
-										}
-									} else {
-										row.setInvalid();
-									}
-								}
-								
-								@Override
-								public void onFailure(Throwable t) {
-									showErrorDialog("Routy couldn't understand \"" + row.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
-								}
-
-								@Override
-								public void onNoSelection() {
-									// Doing nothing leaves it NOT_VALIDATED
-								}
-							}.execute(new GooglePlacesQuery(row.getAddressString(), addressModel.getOrigin().getLatitude(), addressModel.getOrigin().getLongitude()));
-						}
-					}
-				}
-			};
-
-			destLayout.addView(v, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-			v.focusOnAddressField();
-
-			/*if (destLayout.getChildCount() == AppProperties.NUM_MAX_DESTINATIONS) {
-				addDestButton.setVisibility(View.INVISIBLE);
-			}*/
-
-			return v;
-		} else {
-			/*volume = (float) audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			sounds.play(bad, 1, 1, 1, 0, 1);
-
-			showErrorDialog("Routy is all maxed out at " + AppProperties.NUM_MAX_DESTINATIONS + " destinations for now.");*/
-
-			return null;
-		}
-	}
-	
-	
-	/**
-	 * Removes the EditText and "remove" button row ({@link DestinationRowView}} with the given {@link UUID} from the screen.
-	 * @param id
-	 */
-	void removeDestinationRow(UUID id) {
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(click, volume, volume, 1, 0, 1);
-
-		int idx = 0;
-		if (destLayout.getChildCount() > 1) {
-			idx = getRowIndexById(id);
-
-			if (idx >= 0) {
-				Log.v(TAG, "Remove DestinationAddView id=" + id);
-				destLayout.removeViewAt(idx);
-			} else {
-				Log.e(TAG, "attempt to remove a row that does not exist -- id=" + id);
-			}
-		} else if (destLayout.getChildCount() == 1) {
-			idx = getRowIndexById(id);		// Should be 0 all the time
-
-			((DestinationRowView) destLayout.getChildAt(idx)).reset();
-		}
-
-		// set focus on the row idx one less than idx
-		((DestinationRowView) destLayout.getChildAt(Math.max(0, idx - 1))).focusOnAddressField();
-
-		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
-			addDestButton.setVisibility(View.VISIBLE);
-		}
-	}
-	
-	
-	private DestinationRowView getRowById(UUID id) {
-		int idx = getRowIndexById(id);
-		return (DestinationRowView) destLayout.getChildAt(idx);
-	}
-	
-	
-	private int getRowIndexById(UUID id) {
-		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			if (((DestinationRowView) destLayout.getChildAt(i)).getUUID().equals(id)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
 	
 	public void acceptDestinations(View v){
 		routeIt();
@@ -761,9 +398,25 @@ public class OriginActivity extends FragmentActivity {
 	 */
 	public void routeIt() {
 		
-		if (!originValidated){
-			validateOrigin(ROUTEIT_CALLBACK);
-			return;
+		Log.v(TAG, "validating the origin before calculating route");
+		if (addressModel.getOrigin() != null) {
+			RoutyAddress origin = addressModel.getOrigin();
+			
+			if (!origin.isValid()) {
+				String locationQuery = origin.getExtras().getString("address_string");
+				if (locationQuery == null || locationQuery.length() == 0) {
+					showErrorDialog(getResources().getString(R.string.no_origin_address_error));
+				} else {
+					validateAddress(locationQuery, null, null, new ValidateAddressCallback() {
+						@Override
+						public void onAddressValidated(RoutyAddress validatedAddress) {
+							addressModel.setOrigin(validatedAddress);
+							originAddressField.setText(validatedAddress.getExtras().getString("formatted_address"));	//TODO should be a call to refreshOriginLayout()
+							routeIt();
+						}
+					});
+				}
+			}
 		}
 		
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
@@ -873,19 +526,6 @@ public class OriginActivity extends FragmentActivity {
 		addDestButton.setVisibility(View.INVISIBLE);
 	}
 
-	
-	/**
-	 *  Saves the validated origin in shared preferences, saves user time when using Routy next.
-	 *//*
-	private void saveOriginInSharedPrefs() {
-		// TODO onDestroy needs to save the origin address OBJECT in sharedprefs
-		
-		SharedPreferences.Editor ed = originActivityPrefs.edit();
-		ed.putString("saved_origin_address", "");
-		ed.putString("saved_origin_string", originAddressField.getText().toString());
-		ed.commit();	
-	}*/
-
 
 	/**
 	 * Displays an {@link AlertDialog} with one button that dismisses the dialog.  Use this to display error messages 
@@ -903,13 +543,6 @@ public class OriginActivity extends FragmentActivity {
 				dialog.dismiss();
 			}
 		};
-		//TODO: This was in DA but not OA, do we need it?
-//		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {
-//			@Override
-//			public void onButtonClicked(DialogInterface dialog, int which) {
-//				dialog.dismiss();
-//			}
-//		};
 		dialog.show(context.getSupportFragmentManager(), TAG);
 	}
 
@@ -982,56 +615,6 @@ public class OriginActivity extends FragmentActivity {
 	}
 
 
-	private void saveDestinations() {
-		Log.v(TAG, "building the JSON string from all the destination addresses");
-		List<Address> addressesToSave = new ArrayList<Address>();
-		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			DestinationRowView destView = (DestinationRowView) destLayout.getChildAt(i);
-
-			if (destView.getAddressString() != null && destView.getAddressString().length() > 0) {
-				Address address = null;
-				if (destView.getStatus() == DestinationRowView.VALID) {
-					// Add the address from this row to the list
-					address = destView.getAddress();
-					
-					Log.v(TAG, "saving address: " + address.getExtras().getString("formatted_address"));
-
-					// It's valid so we'll just keep track of that
-					Bundle extras = address.getExtras();
-					extras.putInt("valid_status", destView.getStatus());
-					extras.putString("validation_status", AddressStatus.VALID.toString());
-					address.setExtras(extras);
-				} else if (destView.getStatus() == DestinationRowView.INVALID || destView.getStatus() == DestinationRowView.NOT_VALIDATED) {
-					// Manually create an Address object with just the EditText value and the status because it won't be there
-					address = new Address(Locale.getDefault());
-
-					// Since it'll need to be validated when we come back, we need to save what was in the EditText with the status
-					Bundle extras = new Bundle();
-					extras.putString("address_string", destView.getAddressString());
-					extras.putInt("valid_status", destView.getStatus());
-					extras.putString("validation_status", destView.getStatus() == DestinationRowView.INVALID ? AddressStatus.INVALID.toString() : AddressStatus.NOT_VALIDATED.toString());
-					address.setExtras(extras);
-				} else {
-					// bah!
-					throw new IllegalStateException("Destination row " + i + " had an invalid status value of: " + destView.getStatus());
-				}
-
-				Assert.assertNotNull(address);
-				addressesToSave.add(address);
-			}
-		}
-
-		String json = Util.addressListToJSON(addressesToSave);
-		Log.v(TAG, "saved destinations json: " + json);
-
-		// Put the storedAddresses into shared prefs via a set of strings
-		Log.v(TAG, "Saving destinations in shared prefs");
-		SharedPreferences.Editor ed = originActivityPrefs.edit();
-		ed.putString(SAVED_DESTS_JSON_KEY, json);
-		ed.commit();
-	}
-
-
 	private void saveOrigin() {
 		if (addressModel.getOrigin() != null && originActivityPrefs != null) {
 			Log.v(TAG, "saving Origin");
@@ -1060,15 +643,7 @@ public class OriginActivity extends FragmentActivity {
 			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getExtras().getString("formatted_address"));
 		}
 		
-		if (destLayout.getChildCount() == 1) {
-			DestinationRowView destView = (DestinationRowView) destLayout.getChildAt(0);
-			if ("".equals(destView.getAddressString())) {
-				destLayout.removeView(destView);
-			}
-		}
-		
 		saveOrigin();
-		saveDestinations();
 	}
 	
 	
@@ -1081,9 +656,5 @@ public class OriginActivity extends FragmentActivity {
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		
-		/*outState.putParcelable("origin_address", origin);
-		outState.putBoolean("origin_validated", originValidated);
-		Log.d(TAG, "saved the origin object");*/
 	}
 }

@@ -24,13 +24,14 @@ public abstract class DestinationRowView extends LinearLayout {
 	public static final int INVALID = 1;
 	public static final int NOT_VALIDATED = 2;
 	
+	@Deprecated
 	private UUID id;
+	private int indexInLayout;
 	private int status;
 	
 	private String addressString;
 	private Address address;
 	private EditText editText;
-//	private Button addButton;
 	private Button removeButton;
 	private boolean ignoreOnFocusLostCallback;
 	private boolean ignoreOnFocusLostCallbackTemp;
@@ -40,12 +41,11 @@ public abstract class DestinationRowView extends LinearLayout {
 	 * Called when the "remove" button is clicked for a DestinationAddView
 	 * @param id		the {@link UUID} of the DestinationAddView to remove
 	 */
-	public abstract void onRemoveClicked(UUID id);
-	
-//	public abstract void onAddClicked(UUID id);
-	
-	public abstract void onFocusLost(UUID id);
-	
+	public abstract void onRemoveClicked(int indexInLayout, UUID id);
+	public abstract void onFocusLost(int indexInLayout, UUID id, Editable s);
+	public abstract void destinationTextChanged(int indexInLayout, Editable s);
+//	public abstract void onTextEntered();
+//	public abstract void onFieldEmptied();
 	
 	public DestinationRowView(Context context) {
 		this(context, "");
@@ -59,6 +59,7 @@ public abstract class DestinationRowView extends LinearLayout {
 		this.address = null;
 		this.status = DestinationRowView.NOT_VALIDATED;
 		this.ignoreOnFocusLostCallback = false;
+		this.indexInLayout = -1;
 		
 		initViews(context);
 	}
@@ -71,6 +72,7 @@ public abstract class DestinationRowView extends LinearLayout {
 		this.address = null;
 		this.status = DestinationRowView.NOT_VALIDATED;
 		this.ignoreOnFocusLostCallback = false;
+		this.indexInLayout = -1;
 		
 		initViews(context);
 	}
@@ -81,10 +83,17 @@ public abstract class DestinationRowView extends LinearLayout {
 		this.id = UUID.randomUUID();
 		this.address = address;
 		this.status = DestinationRowView.VALID;
-		this.addressString = address.getFeatureName();
+		this.addressString = address != null ? address.getFeatureName() : "";
 		this.ignoreOnFocusLostCallback = false;
+		this.indexInLayout = -1;
 		
 		initViews(context);
+	}
+	
+	public DestinationRowView(Context context, Address address, int indexInLayout) {
+		this(context, address);
+		
+		this.indexInLayout = indexInLayout;
 	}
 	
 	
@@ -110,7 +119,7 @@ public abstract class DestinationRowView extends LinearLayout {
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				// this space intentionally left blank
+				destinationTextChanged(indexInLayout, s);
 			}
 		});
 		editText.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -120,7 +129,8 @@ public abstract class DestinationRowView extends LinearLayout {
 				if (!hasFocus) {
 					Log.v(TAG, "onFocusChange (lost focus) from row with id=" + id);
 					if (!ignoreOnFocusLostCallback) {
-						onFocusLost(id);
+						EditText e = (EditText) v;
+						onFocusLost(indexInLayout, id, e.getEditableText());
 					} else {
 						if (ignoreOnFocusLostCallbackTemp) {
 							ignoreOnFocusLostCallback = false;
@@ -136,7 +146,7 @@ public abstract class DestinationRowView extends LinearLayout {
 			@Override
 			public void onClick(View v) {
 				Log.v(TAG, "onRemoveClicked from row with id=" + id);
-				onRemoveClicked(id);
+				onRemoveClicked(indexInLayout, id);
 			}
 		});
 	}

@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import org.routy.model.RoutyAddress;
+
 import android.location.Address;
 import android.os.Bundle;
 import android.test.AndroidTestCase;
@@ -108,7 +110,7 @@ public class UtilTest extends AndroidTestCase {
 	public void testJsonToAddressList() {
 		String json = "{\"persisted_addresses\":[{\"persisted_address\":{\"feature_name\":\"Dummy Address\",\"latitude\":30.12345,\"longitude\":-97.12345,\"formatted_address\":\"Formatted, pretty Dummy Address\"}},{\"persisted_address\":{\"feature_name\":\"Dummy Address TWO\",\"latitude\":31.54321,\"longitude\":-98.54321,\"formatted_address\":\"Another pretty Dummy Address\"}}]}";
 		
-		List<Address> addresses = Util.jsonToAddressList(json);
+		List<RoutyAddress> addresses = Util.jsonToAddressList(json);
 		assertEquals("address list size mismatch", 2, addresses.size());
 		
 		Address dummy1 = addresses.get(0);

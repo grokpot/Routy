@@ -1,8 +1,8 @@
 package org.routy.listener;
 
-import android.location.Address;
+import org.routy.model.RoutyAddress;
 
 public abstract class ReverseGeocodeListener {
 
-	public abstract void onResult(Address address);
+	public abstract void onResult(RoutyAddress address);
 }

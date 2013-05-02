@@ -5,18 +5,18 @@ import java.io.IOException;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.RoutyException;
 import org.routy.listener.ReverseGeocodeListener;
+import org.routy.model.RoutyAddress;
 import org.routy.service.AddressService;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
 import android.util.Log;
 
-public class ReverseGeocodeTask extends AsyncTask<Location, Void, Address> {
+public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> {
 
 	private final String TAG = "ReverseGeocodeTask";
 	
@@ -54,7 +54,7 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, Address> {
 	}
 	
 	@Override
-	protected Address doInBackground(Location... params) {
+	protected RoutyAddress doInBackground(Location... params) {
 		if (params.length > 0) {
 			try {
 				return service.getAddressForLocation(params[0]);
@@ -72,7 +72,7 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, Address> {
 	}
 	
 	@Override
-	protected void onPostExecute(Address address) {
+	protected void onPostExecute(RoutyAddress address) {
 		Log.v(TAG, "postExecute() -- got user location");
 		if (progressDialog.isShowing()) {
 			progressDialog.cancel();
@@ -82,7 +82,7 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, Address> {
 	
 	
 	@Override
-	protected void onCancelled(Address address) {
+	protected void onCancelled(RoutyAddress address) {
 		Log.v(TAG, "reverse geocoding cancelled");
 		progressDialog.cancel();
 	}

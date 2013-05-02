@@ -20,6 +20,7 @@ import org.routy.exception.GeocoderAPIException;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.model.AppProperties;
+import org.routy.model.RoutyAddress;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
@@ -91,7 +92,7 @@ public class AddressService {
 	 * @throws IOException 
 	 * @throws RoutyException 
 	 */
-	public Address getAddressForLocation(Location location) throws RoutyException, IOException, AmbiguousAddressException {
+	public RoutyAddress getAddressForLocation(Location location) throws RoutyException, IOException, AmbiguousAddressException {
 		Log.v(TAG, "getting address for a location");
 		return getAddressForCoordinates(location.getLatitude(), location.getLongitude());
 	}
@@ -109,7 +110,7 @@ public class AddressService {
 	 * @throws RoutyException 
 	 * @throws IOException 
 	 */
-	public Address getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, RoutyException, IOException {
+	public RoutyAddress getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, RoutyException, IOException {
 		if (!Geocoder.isPresent()) {
 			Log.v(TAG, String.format("using web API to get address for location: %f, %f", latitude, longitude));
 			return getAddressViaWeb(latitude, longitude);
@@ -172,7 +173,7 @@ public class AddressService {
 	 * @throws IOException
 	 * @throws AmbiguousAddressException
 	 */
-	Address getAddressViaGeocoder(double latitude, double longitude) throws AmbiguousAddressException {
+	RoutyAddress getAddressViaGeocoder(double latitude, double longitude) throws AmbiguousAddressException {
 		Log.v(TAG, String.format("using geocoder to get address for location: %f, %f", latitude, longitude));
 		int tries = 0;
 		
@@ -193,7 +194,7 @@ public class AddressService {
 				List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
 				if (results != null && results.size() > 0) {
 					if (results.size() == 1) {
-						Address result = results.get(0);
+						RoutyAddress result = new RoutyAddress(results.get(0));
 						Util.formatAddress(result);
 						Log.v(TAG, "got an address for the location using geocoder");
 						return result;
@@ -250,7 +251,7 @@ public class AddressService {
 	 * @throws RoutyException 
 	 * @throws IOException 
 	 */
-	Address getAddressViaWeb(double latitude, double longitude) throws IOException, RoutyException {	// TODO make this throw an exception if it gets more than 1 address
+	RoutyAddress getAddressViaWeb(double latitude, double longitude) throws IOException, RoutyException {	// TODO make this throw an exception if it gets more than 1 address
 		StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
 		geoUrl.append("latlng=");
 		geoUrl.append(latitude);
@@ -272,7 +273,7 @@ public class AddressService {
 	 * @throws IllegalArgumentException		if url is null or empty
 	 * @throws RoutyException 
 	 */
-	Address getAddressForURL(String url) throws IOException, RoutyException {
+	RoutyAddress getAddressForURL(String url) throws IOException, RoutyException {
 		if (url != null && url.length() > 0) {
 			try {
 				// Get the JSON response from the Geocoding API
@@ -280,7 +281,7 @@ public class AddressService {
 				
 				String xmlResponse = InternetService.getStringResponse(url);
 				if (xmlResponse != null && xmlResponse.length() > 0) {
-					Address result = parseXMLResponse(xmlResponse);
+					RoutyAddress result = parseXMLResponse(xmlResponse);
 					Util.formatAddress(result);
 					return result;
 				}
@@ -334,7 +335,7 @@ public class AddressService {
 	}
 
 	
-	Address parseXMLResponse(String xmlResponse) throws GeocoderAPIException, RoutyException {
+	RoutyAddress parseXMLResponse(String xmlResponse) throws GeocoderAPIException, RoutyException {
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		String expr;
 		
@@ -359,7 +360,7 @@ public class AddressService {
 			} else { 
 				// TODO status is ok - parse the XML into an Address object
 				int lineNumber = 0;
-				Address result = new Address(Locale.getDefault());
+				RoutyAddress result = new RoutyAddress(Locale.getDefault());
 				
 				expr = "/GeocodeResponse/result";
 				NodeList results = (NodeList) xpath.evaluate(expr, root, XPathConstants.NODESET);
