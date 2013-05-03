@@ -99,7 +99,7 @@
                 android:orientation="vertical" >
             </LinearLayout>
 
-            <Button
+            <!-- <Button
                 android:id="@+id/button_destination_add_new"
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="fill_parent"
@@ -117,7 +117,7 @@
                 android:text="@string/destination_add"
                 android:textColor="@color/White"
                 android:textSize="18dp"
-                android:textStyle="bold" />
+                android:textStyle="bold" /> -->
 
             <LinearLayout
                 android:id="@+id/LinearLayout_destinations_buttons"

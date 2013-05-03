@@ -64,7 +64,6 @@ public class OriginActivity extends FragmentActivity {
 
 	private EditText originAddressField;
 	private LinearLayout destLayout;
-	private Button addDestButton;
 
 	// shared prefs for origin and destination persistence
 	private SharedPreferences originActivityPrefs;
@@ -93,7 +92,6 @@ public class OriginActivity extends FragmentActivity {
 		//Initializations
 		context 			= this;
 		addressModel = AddressModel.getSingleton();
-		addDestButton = (Button) findViewById(R.id.button_destination_add_new);
 		destLayout = (LinearLayout) findViewById(R.id.LinearLayout_destinations);	//Contains the list of destination rows
 		
 		originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
@@ -601,16 +599,6 @@ public class OriginActivity extends FragmentActivity {
 	}
 	
 	
-	public void showAddButton() {
-		addDestButton.setVisibility(View.VISIBLE);
-	}
-
-	
-	public void hideAddButton() {
-		addDestButton.setVisibility(View.INVISIBLE);
-	}
-
-
 	/**
 	 * Displays an {@link AlertDialog} with one button that dismisses the dialog.  Use this to display error messages 
 	 * to the user.
