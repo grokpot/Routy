@@ -3,6 +3,7 @@ package org.routy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 
 import org.routy.callback.ValidateAddressCallback;
 import org.routy.exception.GpsNotEnabledException;
@@ -12,7 +13,7 @@ import org.routy.fragment.TwoButtonDialog;
 import org.routy.listener.FindUserLocationListener;
 import org.routy.listener.ReverseGeocodeListener;
 import org.routy.model.AddressModel;
-import org.routy.model.AddressStatus;
+import org.routy.model.AppProperties;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.model.Route;
@@ -23,6 +24,7 @@ import org.routy.task.CalculateRouteTask;
 import org.routy.task.FindUserLocationTask;
 import org.routy.task.GooglePlacesQueryTask;
 import org.routy.task.ReverseGeocodeTask;
+import org.routy.view.DestinationEntryRow;
 import org.routy.view.DestinationRowView;
 
 import android.app.AlertDialog;
@@ -41,6 +43,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -113,13 +117,93 @@ public class OriginActivity extends FragmentActivity {
 	private void refreshDestinationLayout() {
 		// TODO Auto-generated method stub
 		assert destLayout != null;
+		destLayout.removeAllViews();
 		
+		//TODO Draw a new row for each destination
 		if (addressModel.hasDestinations()) {
-			//TODO Draw a new row for each destination
-			
-		} else {
-			//TODO Display the entry row
+			for (int i = 0; i < addressModel.getDestinations().size(); i++) {
+				addDestinationRow(addressModel.getDestinations().get(i), i);
+			}
 		}
+		
+		//If we can still take another destination, we'll display the entry row.
+		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
+			displayDestinationEntryRow();
+		}
+	}
+	
+	
+	private void addDestinationRow(RoutyAddress address, int indexInLayout) {
+		DestinationRowView newRow = new DestinationRowView(this, address, indexInLayout) {
+			
+			@Override
+			public void onRemoveClicked(int indexInLayout, UUID id) {
+				// TODO Auto-generated method stub
+				addressModel.removeDestination(indexInLayout);
+				refreshDestinationLayout();
+			}
+			
+			@Override
+			public void onFocusLost(final int indexInLayout, UUID id, Editable s) {
+				if (indexInLayout < addressModel.getDestinations().size() && !addressModel.getDestinations().get(indexInLayout).isValid()) {
+					validateAddress(s.toString(), null, null, new ValidateAddressCallback() {
+						@Override
+						public void onAddressValidated(RoutyAddress validatedAddress) {
+							addressModel.setDestinationAt(indexInLayout, validatedAddress);
+							refreshDestinationLayout();
+						}
+					});
+				}
+			}
+			
+			@Override
+			public void destinationTextChanged(int indexInLayout, Editable s) {
+				addressModel.getDestinations().get(indexInLayout).setNotValidated();
+			}
+		};
+		
+		destLayout.addView(newRow, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+	}
+
+
+	private void displayDestinationEntryRow() {
+		DestinationEntryRow destEntryRow = new DestinationEntryRow(this) {
+			
+			@Override
+			public void onEntryConfirmed(Editable s) {
+				//TODO Replace this when we're fetching user location behind the scenes
+				Double lat = null;
+				Double lng = null;
+				if (addressModel.getOrigin() != null && addressModel.getOrigin().isValid()) {
+					lat = addressModel.getOrigin().getLatitude();
+					lng = addressModel.getOrigin().getLongitude();
+				}
+				
+				if (s != null && s.length() > 0) {
+					validateAddress(s.toString(), null, null, new ValidateAddressCallback() {
+						
+						@Override
+						public void onAddressValidated(RoutyAddress validatedAddress) {
+							Log.v(TAG, "new destination entered, validating");
+							//Add the validated address to the model and re-draw the destination layout
+							addressModel.addDestination(validatedAddress);
+							refreshDestinationLayout();
+						}
+					});
+				}
+			}
+		};
+		//TODO Don't need this...for now.  If the user taps on a different row outside of the entry layout, we don't necessarily need to validate it yet.
+		/*destEntryRow.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				// TODO Auto-generated method stub
+				
+			}
+		});*/
+		destLayout.addView(destEntryRow, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+		destEntryRow.focusOnEntryField();
 	}
 
 
