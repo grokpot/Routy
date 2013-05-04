@@ -43,9 +43,8 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.View.OnFocusChangeListener;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
@@ -229,7 +228,7 @@ public class OriginActivity extends FragmentActivity {
 			public void afterTextChanged(Editable s) {
 				Log.v(TAG, "afterTextChanged()");
 				
-				//TODO this is janky and should be moved to execute only when the origin field has lost focus.
+				//TODO this is janky and should be moved
 				if (s != null && s.length() > 0) {
 					if (addressModel.getOrigin() == null || !s.toString().equals(addressModel.getOrigin().getExtras().getString("formatted_address"))) {
 						RoutyAddress newOrigin = new RoutyAddress(Locale.getDefault());
@@ -240,7 +239,37 @@ public class OriginActivity extends FragmentActivity {
 						addressModel.setOrigin(newOrigin);
 					}
 				} else {
+					Log.v(TAG, "origin text field was empty, nulling out the origin");
+					if (addressModel == null) {
+						Log.v(TAG, "addressModel is null");
+					}
 					addressModel.setOrigin(null);
+				}
+			}
+		});
+		originAddressField.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (!hasFocus && !addressModel.isOriginValid()) {
+					//Validate the origin
+					Editable originText = ((EditText) v).getEditableText();
+					String locationQuery = null;
+					if (originText != null) {
+						locationQuery = originText.toString();
+					}
+					
+					if (locationQuery != null && locationQuery.length() > 0) {
+						validateAddress(locationQuery, null, null, new ValidateAddressCallback() {
+
+							@Override
+							public void onAddressValidated(RoutyAddress validatedAddress) {
+								addressModel.setOrigin(validatedAddress);
+								refreshOriginLayout();
+							}
+							
+						});
+					}
 				}
 			}
 		});

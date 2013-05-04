@@ -33,14 +33,15 @@ public class AddressModel {
 	}
 
 	public void setOrigin(RoutyAddress origin) {
-		Log.v(TAG, "setting origin to " + (origin.getExtras().getString("formatted_address") == null ? origin.getExtras().getString("address_string") : origin.getExtras().getString("formatted_address")));
-		Log.v(TAG, "origin status is " + origin.getStatus().toString());
+		if (origin != null) {
+			Log.v(TAG, "setting origin to " + (origin.getExtras().getString("formatted_address") == null ? origin.getExtras().getString("address_string") : origin.getExtras().getString("formatted_address")));
+			Log.v(TAG, "origin status is " + origin.getStatus().toString());
+		}
 		this.origin = origin;
 	}
 	
 	public boolean isOriginValid() {
-		return origin != null && origin.getExtras() != null && AddressStatus.VALID.toString().equals(origin.getExtras().getString("validation_status"));
-		
+		return origin != null && origin.isValid();
 	}
 	
 	public void addDestination(RoutyAddress destination) {
