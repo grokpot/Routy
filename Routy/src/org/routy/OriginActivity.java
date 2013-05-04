@@ -97,12 +97,11 @@ public class OriginActivity extends FragmentActivity {
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
 		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
 		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
-		bindInputFields();
 		
 		loadSavedData();
-		
-		refreshOriginLayout();
+		bindInputFields();
 		refreshDestinationLayout();
+		refreshOriginLayout();
 		
 		showNoobInstructions();
 	}
@@ -230,10 +229,11 @@ public class OriginActivity extends FragmentActivity {
 				
 				//TODO this is janky and should be moved
 				if (s != null && s.length() > 0) {
-					if (addressModel.getOrigin() == null || !s.toString().equals(addressModel.getOrigin().getExtras().getString("formatted_address"))) {
+					if (addressModel.getOrigin() == null || !s.toString().equals(addressModel.getOrigin().getAddressString())) {
 						RoutyAddress newOrigin = new RoutyAddress(Locale.getDefault());
 						newOrigin.setExtras(new Bundle());
-						newOrigin.getExtras().putString("address_string", s.toString());
+//						newOrigin.getExtras().putString("address_string", s.toString());
+						newOrigin.setAddressString(s.toString());
 //						newOrigin.getExtras().putString("validation_status", AddressStatus.NOT_VALIDATED.toString());
 						newOrigin.setNotValidated();
 						addressModel.setOrigin(newOrigin);
@@ -252,6 +252,7 @@ public class OriginActivity extends FragmentActivity {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus && !addressModel.isOriginValid()) {
+					Log.v(TAG, "origin field lost focus");
 					//Validate the origin
 					Editable originText = ((EditText) v).getEditableText();
 					String locationQuery = null;
@@ -311,11 +312,8 @@ public class OriginActivity extends FragmentActivity {
 	private void refreshOriginLayout() {
 		//Fill in the display/activity with data from the model
 		if (/*addressModel.isOriginValid()*/ addressModel.getOrigin() != null) {
-			if (addressModel.getOrigin().isValid()) {
-				originAddressField.setText(addressModel.getOrigin().getExtras().getString("formatted_address"));
-			} else {
-				originAddressField.setText(addressModel.getOrigin().getExtras().getString("address_string"));
-			}
+			originAddressField.setText(addressModel.getOrigin().getAddressString());
+			originAddressField.requestFocus();
 		}
 	}
 
@@ -405,8 +403,8 @@ public class OriginActivity extends FragmentActivity {
 						result.setExtras(new Bundle());
 					}
 					
-					result.getExtras().putString("formatted_address", place.getFormattedAddress());
-//					result.getExtras().putString("validation_status", AddressStatus.VALID.toString());
+//					result.getExtras().putString("formatted_address", place.getFormattedAddress());
+					result.setAddressString(place.getFormattedAddress());
 					result.setValid();
 					
 					c.onAddressValidated(result);
@@ -461,8 +459,9 @@ public class OriginActivity extends FragmentActivity {
 								origin.setExtras(new Bundle());
 							}
 							
-							String addressStr = origin.getExtras().getString("formatted_address");
-//							origin.getExtras().putString("validation_status", AddressStatus.VALID.toString());
+//							String addressStr = origin.getExtras().getString("formatted_address");
+							
+							String addressStr = origin.getAddressString();
 							origin.setValid();
 							addressModel.setOrigin(origin);
 							originAddressField.setText(addressStr);		//TODO this should be a call to refreshOriginLayout()
@@ -508,8 +507,39 @@ public class OriginActivity extends FragmentActivity {
 	 * @param v
 	 */
 	public void routeIt() {
+		Log.v(TAG, "route requested");
+		//TODO Change this method to use the AddressModel instead of depending on the layout
 		
-		Log.v(TAG, "validating the origin before calculating route");
+		//XXX DEBUGGING ONLY -- NEED TO REMOVE
+		if (addressModel.getOrigin() != null) {
+			Log.v(TAG, "origin: " + addressModel.getOrigin().getAddressString());
+			if (addressModel.getOrigin().isValid()) {
+				Log.v(TAG, "origin is valid");
+			} else {
+				Log.v(TAG, "origin is not valid");
+			}
+		}
+		
+		if (addressModel.hasDestinations()) {
+			Log.v(TAG, "there are " + addressModel.getDestinations().size() + " destinations");
+			for (RoutyAddress dest : addressModel.getDestinations()) {
+				Log.v(TAG, "destination: " + dest.getAddressString() + " is " + dest.getStatus().toString());
+			}
+		}
+		//XXX END DEBUGGING
+		
+		//Validate the origin if necessary
+		/*if (addressModel.getOrigin() != null) {
+			Log.v(TAG, "origin: " + addressModel.getOrigin().getExtras().getString("formatted_address"));
+			if (addressModel.getOrigin().isValid()) {
+				Log.v(TAG, "origin is valid");
+			} else {
+				Log.v(TAG, "origin is not valid");
+			}
+		}*/
+		
+		
+		/*Log.v(TAG, "validating the origin before calculating route");
 		if (addressModel.getOrigin() != null) {
 			RoutyAddress origin = addressModel.getOrigin();
 			
@@ -531,7 +561,7 @@ public class OriginActivity extends FragmentActivity {
 		}
 		
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
-
+		
 		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);
@@ -604,7 +634,7 @@ public class OriginActivity extends FragmentActivity {
 						startActivity(resultsIntent);
 					}
 				}.execute(new RouteRequest(addressModel.getOrigin(), validAddresses, false, 
-						routeOptimized/* ? RouteOptimizePreference.PREFER_DISTANCE : RouteOptimizePreference.PREFER_DURATION*/));
+						routeOptimized ? RouteOptimizePreference.PREFER_DISTANCE : RouteOptimizePreference.PREFER_DURATION));
 			}
 		} else {
 			// No destinations entered
@@ -612,7 +642,7 @@ public class OriginActivity extends FragmentActivity {
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, volume, volume, 1, 0, 1);
 			showErrorDialog("Please enter at least one destination to continue.");
-		}
+		}*/
 
 	}
 	
@@ -741,7 +771,7 @@ public class OriginActivity extends FragmentActivity {
 		if (addressModel.getOrigin() == null) {
 			Log.v(TAG, "pausing with no origin");
 		} else {
-			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getExtras().getString("formatted_address"));
+			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getAddressString());
 		}
 		
 		saveOrigin();

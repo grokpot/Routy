@@ -29,7 +29,7 @@ public class Util {
 	 * @param addresses
 	 * @return
 	 */
-	public static String addressListToJSON(List<? extends Address> addresses) {
+	public static String addressListToJSON(List<RoutyAddress> addresses) {
 		if (addresses == null) {
 			return null;
 		}
@@ -46,7 +46,7 @@ public class Util {
 			jWriter.name("persisted_addresses");
 			jWriter.beginArray();
 			
-			for (Address a : addresses) {
+			for (RoutyAddress a : addresses) {
 				writeAddress(jWriter, a);
 			}
 			
@@ -66,7 +66,7 @@ public class Util {
 	}
 	
 	
-	public static String writeAddressToJson(Address address) {
+	public static String writeAddressToJson(RoutyAddress address) {
 		StringWriter sWriter = new StringWriter();
 		JsonWriter jWriter = new JsonWriter(sWriter);
 		
@@ -91,7 +91,7 @@ public class Util {
 	 * @param jWriter
 	 * @param address
 	 */
-	static void writeAddress(JsonWriter jWriter, Address address) {
+	static void writeAddress(JsonWriter jWriter, RoutyAddress address) {
 		try {
 			jWriter.beginObject();
 			jWriter.name("persisted_address");
@@ -112,7 +112,7 @@ public class Util {
 				jWriter.nullValue();
 			}
 			
-			Bundle extras = address.getExtras();
+			/*Bundle extras = address.getExtras();
 			if (extras != null) {
 				String formattedAddress = extras.getString("formatted_address");
 				
@@ -127,7 +127,9 @@ public class Util {
 				
 				//NEW valid status field
 				jWriter.name("validation_status").value(extras.getString("validation_status", AddressStatus.NOT_VALIDATED.toString()));
-			}
+			}*/
+			jWriter.name("address_string").value(address.getAddressString());
+			jWriter.name("validation_status").value(address.getStatus().toString());
 			jWriter.endObject();
 			
 			jWriter.endObject();
@@ -215,21 +217,30 @@ public class Util {
 							//DO NOTHING
 							jReader.skipValue();
 						}
-					} else if (name.equalsIgnoreCase("formatted_address")) {
+					} /*else if (name.equalsIgnoreCase("formatted_address")) {
 						if (address.getExtras() == null) {
 							address.setExtras(new Bundle());
 						}
 						address.getExtras().putString("formatted_address", jReader.nextString());
-					} else if (name.equalsIgnoreCase("validation_status")) {
-						if (address.getExtras() == null) {
+					}*/ else if (name.equalsIgnoreCase("validation_status")) {
+						String status = jReader.nextString();
+						if (AddressStatus.VALID.toString().equals(status)) {
+							address.setValid();
+						} else if (AddressStatus.INVALID.toString().equals(status)) {
+							address.setInvalid();
+						} else {
+							address.setNotValidated();
+						}
+						/*if (address.getExtras() == null) {
 							address.setExtras(new Bundle());
 						}
-						address.getExtras().putString("validation_status", jReader.nextString());
+						address.getExtras().putString("validation_status", jReader.nextString());*/
 					} else if (name.equalsIgnoreCase("address_string")) {
-						if (address.getExtras() == null) {
+						address.setAddressString(jReader.nextString());
+						/*if (address.getExtras() == null) {
 							address.setExtras(new Bundle());
 						}
-						address.getExtras().putString("address_string", jReader.nextString());
+						address.getExtras().putString("address_string", jReader.nextString());*/
 					} else {
 						jReader.skipValue();
 					}
@@ -305,8 +316,8 @@ public class Util {
 		return drawable;
 	}
 	
-	public static void formatAddress(Address result) {
-		Bundle extras = new Bundle();
+	public static void formatAddress(RoutyAddress result) {
+//		Bundle extras = new Bundle();
 		StringBuffer formattedAddress = new StringBuffer();
 		
 		if (result.getMaxAddressLineIndex() > -1) {
@@ -322,12 +333,9 @@ public class Util {
 			formattedAddress.append(result.getLongitude());
 		}
 		
-		extras.putString("formatted_address", formattedAddress.toString());
-		result.setExtras(extras);
-		
-		if (result.getExtras() == null) {
-			Log.e(TAG, "result extras is null");
-		}
+		/*extras.putString("formatted_address", formattedAddress.toString());
+		result.setExtras(extras);*/
+		result.setAddressString(formattedAddress.toString());
 	}
 	
 	

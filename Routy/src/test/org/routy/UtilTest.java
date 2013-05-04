@@ -24,7 +24,7 @@ public class UtilTest extends AndroidTestCase {
 	}
 	
 	public void testAddressToJson() {
-		Address dummy = new Address(Locale.getDefault());
+		RoutyAddress dummy = new RoutyAddress(Locale.getDefault());
 		dummy.setFeatureName("Dummy Address");
 		dummy.setLatitude(30.12345);
 		dummy.setLongitude(-97.12345);
@@ -47,7 +47,7 @@ public class UtilTest extends AndroidTestCase {
 	}
 	
 	public void testAddressToJsonExternal() {
-		Address dummy = new Address(Locale.getDefault());
+		RoutyAddress dummy = new RoutyAddress(Locale.getDefault());
 		dummy.setFeatureName("Dummy Address");
 		dummy.setLatitude(30.12345);
 		dummy.setLongitude(-97.12345);
@@ -62,7 +62,7 @@ public class UtilTest extends AndroidTestCase {
 	}
 	
 	public void testAddressListToJson() {
-		Address dummy1 = new Address(Locale.getDefault());
+		RoutyAddress dummy1 = new RoutyAddress(Locale.getDefault());
 		dummy1.setFeatureName("Dummy Address");
 		dummy1.setLatitude(30.12345);
 		dummy1.setLongitude(-97.12345);
@@ -71,7 +71,7 @@ public class UtilTest extends AndroidTestCase {
 		extras.putString("formatted_address", "Formatted, pretty Dummy Address");
 		dummy1.setExtras(extras);
 		
-		Address dummy2 = new Address(Locale.getDefault());
+		RoutyAddress dummy2 = new RoutyAddress(Locale.getDefault());
 		dummy2.setFeatureName("Dummy Address TWO");
 		dummy2.setLatitude(31.54321);
 		dummy2.setLongitude(-98.54321);
@@ -80,7 +80,7 @@ public class UtilTest extends AndroidTestCase {
 		extras2.putString("formatted_address", "Another pretty Dummy Address");
 		dummy2.setExtras(extras2);
 		
-		List<Address> addresses = new ArrayList<Address>();
+		List<RoutyAddress> addresses = new ArrayList<RoutyAddress>();
 		addresses.add(dummy1);
 		addresses.add(dummy2);
 		

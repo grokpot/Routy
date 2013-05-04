@@ -2,6 +2,7 @@ package org.routy.service;
 
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -199,11 +200,14 @@ public class AddressService {
 						Log.v(TAG, "got an address for the location using geocoder");
 						return result;
 					} else {
+						List<RoutyAddress> routyAddrs = new ArrayList<RoutyAddress>();
 						for (Address a : results) {
-							Util.formatAddress(a);
+							RoutyAddress r = new RoutyAddress(a);
+							Util.formatAddress(r);
+							routyAddrs.add(r);
 						}
 						Log.v(TAG, "ambiguous address returned from geocoder");
-						throw new AmbiguousAddressException(results);
+						throw new AmbiguousAddressException(routyAddrs);
 					}
 				}
 			} catch (IOException e) {

@@ -34,7 +34,7 @@ public class AddressModel {
 
 	public void setOrigin(RoutyAddress origin) {
 		if (origin != null) {
-			Log.v(TAG, "setting origin to " + (origin.getExtras().getString("formatted_address") == null ? origin.getExtras().getString("address_string") : origin.getExtras().getString("formatted_address")));
+			Log.v(TAG, "setting origin to " + origin.getAddressString());
 			Log.v(TAG, "origin status is " + origin.getStatus().toString());
 		}
 		this.origin = origin;

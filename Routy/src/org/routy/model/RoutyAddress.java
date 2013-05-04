@@ -7,6 +7,7 @@ import android.location.Address;
 public class RoutyAddress extends Address {
 
 	private AddressStatus status;
+	private String addressString;
 	
 	public RoutyAddress(Locale locale) {
 		super(locale);
@@ -46,6 +47,14 @@ public class RoutyAddress extends Address {
 	
 	public AddressStatus getStatus() {
 		return status;
+	}
+
+	public String getAddressString() {
+		return addressString;
+	}
+
+	public void setAddressString(String addressString) {
+		this.addressString = addressString;
 	}
 
 	public void setValid() {
