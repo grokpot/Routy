@@ -102,6 +102,7 @@ public class OriginActivity extends FragmentActivity {
 		bindInputFields();
 		refreshDestinationLayout();
 		refreshOriginLayout();
+		originAddressField.requestFocus();
 		
 		showNoobInstructions();
 	}
@@ -176,7 +177,7 @@ public class OriginActivity extends FragmentActivity {
 				}
 				
 				if (s != null && s.length() > 0) {
-					validateAddress(s.toString(), null, null, new ValidateAddressCallback() {
+					validateAddress(s.toString(), lat, lng, new ValidateAddressCallback() {
 						
 						@Override
 						public void onAddressValidated(RoutyAddress validatedAddress) {
@@ -313,7 +314,6 @@ public class OriginActivity extends FragmentActivity {
 		//Fill in the display/activity with data from the model
 		if (/*addressModel.isOriginValid()*/ addressModel.getOrigin() != null) {
 			originAddressField.setText(addressModel.getOrigin().getAddressString());
-			originAddressField.requestFocus();
 		}
 	}
 
@@ -508,30 +508,6 @@ public class OriginActivity extends FragmentActivity {
 	 */
 	public void routeIt() {
 		Log.v(TAG, "route requested");
-		//TODO Change this method to use the AddressModel instead of depending on the layout
-		
-		//XXX DEBUGGING ONLY -- NEED TO REMOVE
-		if (addressModel.getOrigin() != null) {
-			Log.v(TAG, "origin: " + addressModel.getOrigin().getAddressString());
-			if (addressModel.getOrigin().isValid()) {
-				Log.v(TAG, "origin is valid");
-			} else {
-				Log.v(TAG, "origin is not valid");
-			}
-		}
-		
-		if (addressModel.hasDestinations()) {
-			Log.v(TAG, "there are " + addressModel.getDestinations().size() + " destinations");
-			for (RoutyAddress dest : addressModel.getDestinations()) {
-				Log.v(TAG, "destination: " + dest.getAddressString() + " is " + dest.getStatus().toString());
-			}
-		}
-		//XXX END DEBUGGING
-		
-		
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(click, volume, volume, 1, 0, 1);
 		
 		if (!addressModel.getOrigin().isValid()) {
 			//Validate the origin before continuing
@@ -546,6 +522,10 @@ public class OriginActivity extends FragmentActivity {
 		assert addressModel.getOrigin().isValid();
 		
 		if (addressModel.hasDestinations()) {
+			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+			sounds.play(click, volume, volume, 1, 0, 1);
+			
 			for (int i = 0; i < addressModel.getDestinations().size(); i++) {
 				RoutyAddress dest = addressModel.getDestinations().get(i);
 				if (!dest.isValid()) {
@@ -576,124 +556,12 @@ public class OriginActivity extends FragmentActivity {
 			}.execute(new RouteRequest(addressModel.getOrigin(), addressModel.getDestinations(), false, routeOptimized));
 		} else {
 			Log.e(TAG, "trying to build a route with no destinations!");
-			//TODO Show an error message here
-		}
-		
-		
-		
-		//Validate the origin if necessary
-		/*if (addressModel.getOrigin() != null) {
-			Log.v(TAG, "origin: " + addressModel.getOrigin().getExtras().getString("formatted_address"));
-			if (addressModel.getOrigin().isValid()) {
-				Log.v(TAG, "origin is valid");
-			} else {
-				Log.v(TAG, "origin is not valid");
-			}
-		}*/
-		
-		
-		/*Log.v(TAG, "validating the origin before calculating route");
-		if (addressModel.getOrigin() != null) {
-			RoutyAddress origin = addressModel.getOrigin();
-			
-			if (!origin.isValid()) {
-				String locationQuery = origin.getExtras().getString("address_string");
-				if (locationQuery == null || locationQuery.length() == 0) {
-					showErrorDialog(getResources().getString(R.string.no_origin_address_error));
-				} else {
-					validateAddress(locationQuery, null, null, new ValidateAddressCallback() {
-						@Override
-						public void onAddressValidated(RoutyAddress validatedAddress) {
-							addressModel.setOrigin(validatedAddress);
-							originAddressField.setText(validatedAddress.getExtras().getString("formatted_address"));	//TODO should be a call to refreshOriginLayout()
-							routeIt();
-						}
-					});
-				}
-			}
-		}
-		
-		Log.v(TAG, "Validate destinations and calculate route if they're good.");
-		
-		
-
-		// Go through the list until you find one that is INVALID or NOT_VALIDATED
-		List<Address> validAddresses = new ArrayList<Address>();
-		boolean hasDestinations = false;
-		boolean hasError = false;
-		DestinationRowView row = null;
-		for (int i = 0; i < destLayout.getChildCount(); i++) {
-			row = (DestinationRowView) destLayout.getChildAt(i);
-
-			if (row.getAddressString() != null && row.getAddressString().length() > 0) {
-				if (row.getStatus() == DestinationRowView.INVALID || row.getStatus() == DestinationRowView.NOT_VALIDATED) {
-					hasDestinations = true;
-					hasError = true;
-					Log.v(TAG, "row id=" + row.getUUID() + " has valid status=" + row.getStatus());
-					break;
-				} else {
-					hasDestinations = true;
-					validAddresses.add(row.getAddress());
-				}
-			}
-		}
-
-		if (hasDestinations) {
-			// If you encountered an "error" take steps to validate it.  When it's done validating, call acceptDestinations again.
-			if (hasError && row != null) {
-				Log.v(TAG, "The destinations list has a row (id=" + row.getUUID() + ") in need of validation.");
-				// Validate "row"
-				final DestinationRowView r = row;
-				new GooglePlacesQueryTask(context) {
-
-					@Override
-					public void onResult(GooglePlace place) {
-						if (place != null && place.getAddress() != null) {
-							r.setAddress(place.getAddress());
-							r.setValid();
-							routeIt();
-						} else {
-							r.setInvalid();
-
-							// TODO Show an error message: couldn't match the query string to a place or address
-						}
-					}
-					
-					@Override
-					public void onFailure(Throwable t) {
-						showErrorDialog("Routy couldn't understand \"" + r.getAddressString() + "\".  Please try something a little different.");		// TODO extract to strings.xml
-					}
-
-					@Override
-					public void onNoSelection() {
-						// Doing nothing leaves it NOT_VALIDATED
-					}
-				}.execute(new GooglePlacesQuery(row.getAddressString(), addressModel.getOrigin().getLatitude(), addressModel.getOrigin().getLongitude()));
-			} else {
-				Log.v(TAG, "All destinations have been validated.");
-
-				// If everything is valid, move on to the Results screen
-				new CalculateRouteTask(this) {
-
-					@Override
-					public void onRouteCalculated(Route route) {
-						// Call ResultsActivity activity
-						Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-						resultsIntent.putExtra("addresses", (ArrayList<Address>) route.getAddresses());
-						resultsIntent.putExtra("distance", route.getTotalDistance());
-						resultsIntent.putExtra("optimize_for", routeOptimized);
-						startActivity(resultsIntent);
-					}
-				}.execute(new RouteRequest(addressModel.getOrigin(), validAddresses, false, 
-						routeOptimized ? RouteOptimizePreference.PREFER_DISTANCE : RouteOptimizePreference.PREFER_DURATION));
-			}
-		} else {
 			// No destinations entered
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, volume, volume, 1, 0, 1);
 			showErrorDialog("Please enter at least one destination to continue.");
-		}*/
+		}
 
 	}
 	
@@ -812,6 +680,19 @@ public class OriginActivity extends FragmentActivity {
 		}
 	}
 	
+	private void saveDestinations() {
+		Log.v(TAG, "saving destinations list");
+		if (addressModel.hasDestinations()) {
+			String json = addressModel.getDestinationsJSON();
+			Log.v(TAG, "Destinations JSON: " + json);
+			
+			SharedPreferences.Editor ed = originActivityPrefs.edit();
+			ed.putString(SAVED_DESTS_JSON_KEY, json);
+			ed.commit();
+		} else if (originActivityPrefs == null) {
+			Log.e(TAG, "originActivityPrefs null while trying to save destinations");
+		}
+	}
 	
 	@Override
 	public void onDestroy() {
@@ -826,6 +707,7 @@ public class OriginActivity extends FragmentActivity {
 		}
 		
 		saveOrigin();
+		saveDestinations();
 	}
 	
 	
