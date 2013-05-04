@@ -3,28 +3,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/gradient">
+    
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:baselineAligned="true"
+        android:gravity="center_horizontal|center_vertical">
 
     <ImageView
-           android:id="@+id/imageView1"
-           android:contentDescription="@string/biglogodesc"
-           android:layout_width="fill_parent"
-           android:layout_height="fill_parent"
-           android:layout_alignParentLeft="true"
-           android:layout_alignParentTop="true"
-           android:layout_marginBottom="60dp"
-           android:src="@drawable/hisplashwhite"/>
+        android:id="@+id/imageView1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:adjustViewBounds="true"
+        android:contentDescription="@string/biglogodesc"
+        android:src="@drawable/hisplashwhite" />
+
+    <ImageView 
+        android:id="@+id/imageView2"
+        android:contentDescription="@string/poweredbygoogledesc"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:src="@drawable/poweredbysmall"/>
     
     <TextView
                 android:id="@+id/textview_origin_purpose"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_above="@+id/progressbar_splash_loading"
-                android:layout_marginBottom="30dp"
+                android:textSize="20sp"
                 android:text="@string/origin_purpose"
                 android:textColor="@color/White"
-                android:textSize="20dp"
                 android:textStyle="bold|italic" />
+    
+    </LinearLayout>
     
     <ProgressBar 
         android:id="@+id/progressbar_splash_loading" 
