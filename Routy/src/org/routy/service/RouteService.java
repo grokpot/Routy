@@ -8,6 +8,7 @@ import org.routy.exception.RoutyException;
 import org.routy.model.Distance;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
+import org.routy.model.RoutyAddress;
 
 import android.location.Address;
 import android.util.Log;
@@ -24,8 +25,8 @@ public class RouteService {
 	private final String TAG = "RouteService";
 	
 	private DistanceMatrixService distanceService;
-	private Address origin;
-	private List<Address> destinations;
+	private RoutyAddress origin;
+	private List<RoutyAddress> destinations;
 	private RouteOptimizePreference preference;
 	private boolean sensor;
 	
@@ -34,7 +35,7 @@ public class RouteService {
 	List<List<Integer>> possibleRoutes;
 	
 	
-	public RouteService(Address origin, List<Address> destinations, RouteOptimizePreference preference, boolean sensor) throws RoutyException, IOException {
+	public RouteService(RoutyAddress origin, List<RoutyAddress> destinations, RouteOptimizePreference preference, boolean sensor) throws RoutyException, IOException {
 		this.distanceService = new DistanceMatrixService();
 		this.origin = origin;
 		this.destinations = destinations;
@@ -157,7 +158,7 @@ public class RouteService {
 		Log.v(TAG, "Getting distance from each destination to the others");
 		List<Distance> distsFromDest = null;
 		for (int i = 0; i < destinations.size(); i++) {
-			List<Address> otherDests = new ArrayList<Address>(destinations);
+			List<RoutyAddress> otherDests = new ArrayList<RoutyAddress>(destinations);
 			otherDests.remove(i);
 			Log.v(TAG, "otherDests size=" + otherDests.size());
 			

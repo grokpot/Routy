@@ -12,6 +12,7 @@ import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.model.AppProperties;
 import org.routy.model.Distance;
+import org.routy.model.RoutyAddress;
 
 import android.location.Address;
 import android.util.Log;
@@ -35,7 +36,7 @@ public class DistanceMatrixService {
 	 * @throws RoutyException 
 	 * @throws Exception
 	 */
-	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor) throws RoutyException, IOException {
+	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
 		return getClosestDestination(origin, destinations, sensor, PREFER_DISTANCE);
 	}
 	
@@ -50,7 +51,7 @@ public class DistanceMatrixService {
 	 * @throws RoutyException
 	 * @throws IOException 
 	 */
-	public Address getClosestDestination(final Address origin, final List<Address> destinations, boolean sensor, int preference) throws RoutyException, IOException {
+	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor, int preference) throws RoutyException, IOException {
 		int idx = 0;
 		int best = -1;
 		
@@ -89,7 +90,7 @@ public class DistanceMatrixService {
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
 	 * 							read from the URL
 	 */
-	public List<Distance> getDistanceMatrix(final Address origin, final List<Address> destinations, boolean sensor) throws RoutyException, IOException {
+	public List<Distance> getDistanceMatrix(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
 		// Get the JSON string response from the webservice
 		String jsonResp = getJSONResponse(origin, destinations, sensor);
 		Log.v(TAG, "jsonResp: " + jsonResp);
@@ -145,7 +146,7 @@ public class DistanceMatrixService {
 	 * 							read from the URL
 	 * @throws RoutyException	if the generated URL was invalid 
 	 */
-	private String getJSONResponse(Address origin, List<Address> destinations, boolean sensor) throws RoutyException, IOException {
+	private String getJSONResponse(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
 		// Add origin
 		StringBuilder url = new StringBuilder(AppProperties.G_DISTANCE_MATRIX_URL);
 		url.append("origins=");
@@ -156,7 +157,7 @@ public class DistanceMatrixService {
 		// Add destinations
 		boolean first = true;
 		url.append("&destinations=");
-		for (Address dest : destinations) {
+		for (RoutyAddress dest : destinations) {
 			if (first) {
 				first = false;
 			} else {

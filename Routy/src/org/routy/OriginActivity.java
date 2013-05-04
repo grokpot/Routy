@@ -528,6 +528,59 @@ public class OriginActivity extends FragmentActivity {
 		}
 		//XXX END DEBUGGING
 		
+		
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+		sounds.play(click, volume, volume, 1, 0, 1);
+		
+		if (!addressModel.getOrigin().isValid()) {
+			//Validate the origin before continuing
+			validateAddress(addressModel.getOrigin().getAddressString(), null, null, new ValidateAddressCallback() {
+				@Override
+				public void onAddressValidated(RoutyAddress validatedAddress) {
+					addressModel.setOrigin(validatedAddress);
+				}
+			});
+		}
+		
+		assert addressModel.getOrigin().isValid();
+		
+		if (addressModel.hasDestinations()) {
+			for (int i = 0; i < addressModel.getDestinations().size(); i++) {
+				RoutyAddress dest = addressModel.getDestinations().get(i);
+				if (!dest.isValid()) {
+					//Validate the destination
+					final int idx = i;
+					validateAddress(dest.getAddressString(), addressModel.getOrigin().getLatitude(), addressModel.getOrigin().getLongitude(), new ValidateAddressCallback() {
+						
+						@Override
+						public void onAddressValidated(RoutyAddress validatedAddress) {
+							addressModel.setDestinationAt(idx, validatedAddress);
+						}
+					});
+					
+					assert addressModel.getDestinations().get(i).isValid();
+				}
+			}
+			
+			new CalculateRouteTask(this) {
+				@Override
+				public void onRouteCalculated(Route route) {
+					// Call ResultsActivity activity
+					Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
+					resultsIntent.putExtra("addresses", (ArrayList<Address>) route.getAddresses());
+					resultsIntent.putExtra("distance", route.getTotalDistance());
+					resultsIntent.putExtra("optimize_for", routeOptimized);
+					startActivity(resultsIntent);
+				}
+			}.execute(new RouteRequest(addressModel.getOrigin(), addressModel.getDestinations(), false, routeOptimized));
+		} else {
+			Log.e(TAG, "trying to build a route with no destinations!");
+			//TODO Show an error message here
+		}
+		
+		
+		
 		//Validate the origin if necessary
 		/*if (addressModel.getOrigin() != null) {
 			Log.v(TAG, "origin: " + addressModel.getOrigin().getExtras().getString("formatted_address"));
@@ -562,9 +615,7 @@ public class OriginActivity extends FragmentActivity {
 		
 		Log.v(TAG, "Validate destinations and calculate route if they're good.");
 		
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(click, volume, volume, 1, 0, 1);
+		
 
 		// Go through the list until you find one that is INVALID or NOT_VALIDATED
 		List<Address> validAddresses = new ArrayList<Address>();

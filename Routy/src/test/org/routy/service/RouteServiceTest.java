@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
+import org.routy.model.RoutyAddress;
 
 import android.location.Address;
 import android.location.Geocoder;
@@ -17,7 +18,7 @@ public class RouteServiceTest extends AndroidTestCase {
 
 	private final String TAG = "RouteProviderTest";
 	private Geocoder geocoder;
-	private List<Address> destinations;
+	private List<RoutyAddress> destinations;
 	private RouteService routeProvider;
 	
 	
@@ -91,13 +92,13 @@ public class RouteServiceTest extends AndroidTestCase {
 	}
 	
 	
-	private RouteService getRouteProvider(List<Address> destinations) {
+	private RouteService getRouteProvider(List<RoutyAddress> destinations) {
 		// Create an origin address to work with
-		Address origin = null;
+		RoutyAddress origin = null;
 		try {
             List<Address> origins = geocoder.getFromLocationName("600 West Martin Luther King Junior Boulevard, Austin, TX", 1);
             if (origins != null && origins.size() > 0) {
-            	origin = origins.get(0);
+            	origin = new RoutyAddress(origins.get(0));
             }
     	} catch (Exception e) {
     		System.err.println("Error geocoding origin address.");
@@ -124,53 +125,53 @@ public class RouteServiceTest extends AndroidTestCase {
 	}
 
 
-	private List<Address> getDestinationAddresses() throws IOException {
-		List<Address> destinations = new ArrayList<Address>();
+	private List<RoutyAddress> getDestinationAddresses() throws IOException {
+		List<RoutyAddress> destinations = new ArrayList<RoutyAddress>();
         
-        Address dest1 = null;
+		RoutyAddress dest1 = null;
         List<Address> destBuffer = geocoder.getFromLocationName("300 West Martin Luther King Junior Boulevard, Austin, TX", 1);
         if (destBuffer != null && destBuffer.size() > 0) {
-        	dest1 = destBuffer.get(0);
+        	dest1 = new RoutyAddress(destBuffer.get(0));
         	destinations.add(dest1);
         	Log.d(TAG, "dest1: " + dest1.getAddressLine(0) + " - " + dest1.getLatitude() + ", " + dest1.getLongitude());
         } else {
         	Log.e(TAG, "Couldn't reverse geocode dest1");
         }
         
-        Address dest2 = null;
+        RoutyAddress dest2 = null;
         destBuffer = geocoder.getFromLocationName("2902 Medical Arts Street, Austin, TX", 1);
         if (destBuffer != null && destBuffer.size() > 0) {
-        	dest2 = destBuffer.get(0);
+        	dest2 = new RoutyAddress(destBuffer.get(0));
         	destinations.add(dest2);
         	Log.d(TAG, "dest2: " + dest2.getAddressLine(0) + " - " + dest2.getLatitude() + ", " + dest2.getLongitude());
         } else {
         	Log.e(TAG, "Couldn't reverse geocode dest2");
         }
         
-        Address dest3 = null;
+        RoutyAddress dest3 = null;
         destBuffer = geocoder.getFromLocationName("500 North IH 35, Austin, TX", 1);
         if (destBuffer != null && destBuffer.size() > 0) {
-        	dest3 = destBuffer.get(0);
+        	dest3 = new RoutyAddress(destBuffer.get(0));
         	destinations.add(dest3);
         	Log.d(TAG, "dest3: " + dest3.getAddressLine(0) + " - " + dest3.getLatitude() + ", " + dest3.getLongitude());
         } else {
         	Log.e(TAG, "Couldn't reverse geocode dest3");
         }
         
-        Address dest4 = null;
+        RoutyAddress dest4 = null;
         destBuffer = geocoder.getFromLocationName("125 East 11th Street, Austin, TX", 1);
         if (destBuffer != null && destBuffer.size() > 0) {
-        	dest4 = destBuffer.get(0);
+        	dest4 = new RoutyAddress(destBuffer.get(0));
         	destinations.add(dest4);
         	Log.d(TAG, "dest4: " + dest4.getAddressLine(0) + " - " + dest4.getLatitude() + ", " + dest4.getLongitude());
         } else {
         	Log.e(TAG, "Couldn't reverse geocode dest4");
         }
         
-        Address dest5 = null;
+        RoutyAddress dest5 = null;
         destBuffer = geocoder.getFromLocationName("1308 East 4th Street, Austin, TX", 1);
         if (destBuffer != null && destBuffer.size() > 0) {
-        	dest5 = destBuffer.get(0);
+        	dest5 = new RoutyAddress(destBuffer.get(0));
         	destinations.add(dest5);
         	Log.d(TAG, "dest5: " + dest5.getAddressLine(0) + " - " + dest5.getLatitude() + ", " + dest5.getLongitude());
         } else {

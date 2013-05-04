@@ -6,8 +6,8 @@ import android.location.Address;
 
 public class RouteRequest {
 
-	private Address origin;
-	private List<Address> destinations;
+	private RoutyAddress origin;
+	private List<RoutyAddress> destinations;
 	private boolean sensor;
 	private RouteOptimizePreference preference;
 	
@@ -17,11 +17,11 @@ public class RouteRequest {
 	 * @param destinations
 	 * @param sensor
 	 */
-	public RouteRequest(Address origin, List<Address> destinations, boolean sensor) {
+	public RouteRequest(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor) {
 		this(origin, destinations, sensor, RouteOptimizePreference.PREFER_DISTANCE);
 	}
 	
-	public RouteRequest(Address origin, List<Address> destinations, boolean sensor, RouteOptimizePreference optimizePreference) {
+	public RouteRequest(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor, RouteOptimizePreference optimizePreference) {
 		super();
 		this.origin = origin;
 		this.destinations = destinations;
@@ -29,23 +29,23 @@ public class RouteRequest {
 		this.preference = optimizePreference;
 	}
 
-	public Address getOrigin() {
+	public RoutyAddress getOrigin() {
 		return origin;
 	}
 
-	public void setOrigin(Address origin) {
+	public void setOrigin(RoutyAddress origin) {
 		this.origin = origin;
 	}
 
-	public List<Address> getDestinations() {
+	public List<RoutyAddress> getDestinations() {
 		return destinations;
 	}
 
-	public void setDestinations(List<Address> destinations) {
+	public void setDestinations(List<RoutyAddress> destinations) {
 		this.destinations = destinations;
 	}
 	
-	public void addDestination(Address destination) { 
+	public void addDestination(RoutyAddress destination) { 
 		this.destinations.add(destination);
 	}
 
