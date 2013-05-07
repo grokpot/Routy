@@ -19,14 +19,24 @@
 
     <Button
         android:id="@+id/button_results_segment"
-        android:layout_width="wrap_content"
+        style="?android:attr/borderlessButtonStyle"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="left"
-        android:layout_marginLeft="25dp"
-        android:background="@drawable/resultbutton"
         android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
+        android:paddingBottom="8dp"
+        android:paddingRight="10dp"
+        android:paddingLeft="5dp"
+        android:paddingTop="8dp"
+        android:background="@drawable/orange_button"
+        android:drawableLeft="@drawable/result_arrow_bw_short"
+        android:drawableRight="@drawable/result_map"
+        android:text="@string/view_segment"
         android:textColor="@color/White"
+        android:textSize="18dp"
         android:textStyle="bold" />
 
 </LinearLayout>
