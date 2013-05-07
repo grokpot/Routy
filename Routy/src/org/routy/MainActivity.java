@@ -1,12 +1,20 @@
 package org.routy;
 
+import org.routy.exception.GpsNotEnabledException;
 import org.routy.fragment.TwoButtonDialog;
+import org.routy.listener.FindUserLocationListener;
+import org.routy.listener.ReverseGeocodeListener;
 import org.routy.model.AppProperties;
+import org.routy.model.RoutyAddress;
+import org.routy.model.UserLocationModel;
 import org.routy.service.InternetService;
+import org.routy.task.FindUserLocationTask;
+import org.routy.task.ReverseGeocodeTask;
 
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.location.Location;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -33,16 +41,18 @@ public class MainActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 		
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-    volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
 		setContentView(R.layout.activity_main);
 
 		mContext = this;
 		
 		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
-    bad = sounds.load(this, R.raw.routybad, 1);
+		bad = sounds.load(this, R.raw.routybad, 1);
     
-		initErrorDialog();
+//		initErrorDialog();
+		
+		startUserLocationTask();
 
 		new Handler().postDelayed(new Runnable() {
 
@@ -61,9 +71,9 @@ public class MainActivity extends FragmentActivity {
 		if (!InternetService.deviceHasInternetConnection(mContext)) {
 			Log.v(TAG, "No internet connection.");
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-      volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, volume, volume, 1, 0, 1);
-			initErrorDialog();
+			initErrorDialog(getResources().getString(R.string.no_internet_error));
 			noInternetErrorDialog.show(MainActivity.this.getSupportFragmentManager(), TAG);
 		} else {
 			Log.v(TAG, "Found an internet connection.");
@@ -84,8 +94,8 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	
-	private void initErrorDialog() {
-		noInternetErrorDialog = new TwoButtonDialog(getResources().getString(R.string.error_message_title), getResources().getString(R.string.no_internet_error), new String[] {"Try Again", "", "Quit"}) {
+	private void initErrorDialog(String errorMsg) {
+		noInternetErrorDialog = new TwoButtonDialog(getResources().getString(R.string.error_message_title), errorMsg, new String[] {"Try Again", "", "Quit"}) {
 			
 			@Override
 			public void onRightButtonClicked(DialogInterface dialog, int which) {
@@ -101,6 +111,41 @@ public class MainActivity extends FragmentActivity {
 				MainActivity.this.finish();
 			}
 		};
+	}
+	
+	
+	private void startUserLocationTask() {
+		Log.v(TAG, "starting device location");
+		new FindUserLocationTask(this, false, new FindUserLocationListener() {
+			
+			@Override
+			public void onUserLocationFound(Location userLocation) {
+				Log.v(TAG, "got device location");
+				new ReverseGeocodeTask(mContext, true, false, new ReverseGeocodeListener() {
+					
+					@Override
+					public void onResult(RoutyAddress address) {
+						if (address != null) {
+							RoutyAddress userLoc = address;
+							if (userLoc.getExtras() == null) {
+								userLoc.setExtras(new Bundle());
+							}
+							UserLocationModel.getSingleton().setUserLocation(userLoc);
+						}
+					}
+				}).execute(userLocation);
+			}
+			
+			@Override
+			public void onTimeout(GpsNotEnabledException e) {
+				//DO NOTHING -- user will just have to try again by tapping "Find Me"
+			}
+			
+			@Override
+			public void onFailure(Throwable t) {
+				//DO NOTHING -- user will just have to try again by tapping "Find Me"
+			}
+		}).execute(0);
 	}
 	
 	
