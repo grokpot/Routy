@@ -1,20 +1,14 @@
 package org.routy.task;
 
-import java.util.Locale;
-
-import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.listener.FindUserLocationListener;
 import org.routy.model.AppProperties;
-import org.routy.service.AddressService;
 import org.routy.service.LocationService;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -38,8 +32,6 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	private FindUserLocationListener listener;
 	private LocationManager locManager;
 	private LocationService locService;
-	private AddressService addressService;
-//	private Address address;
 	private Location location;
 	
 	private ProgressDialog progressDialog;
@@ -50,8 +42,6 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 		this.context = context;
 		this.showDialogs = showDialogs;
 		this.listener = listener;
-		this.addressService = new AddressService(new Geocoder(context, Locale.getDefault()), false);
-//		this.address = null;
 		this.location = null;
 		
 		locManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -62,7 +52,6 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	@Override
 	protected void onPreExecute() {
 		super.onPreExecute();
-//		Log.v(TAG, "preExecute -- address is " + (address==null?"null":"not null"));
 		
 		// Build and display the loading spinner
 		if (showDialogs) {
@@ -98,15 +87,8 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	protected Location doInBackground(Integer... params) {
 		Log.v(TAG, "doInBackground()");
 		
-		/*while (address == null && !isCancelled()) {
-//			Log.v(TAG, "looping");
-		}
-		
-		Log.v(TAG, "out of the loop");
-		return address;*/
-		
 		while (location == null && !isCancelled()) {
-//			Log.v(TAG, "looping");
+//			loop
 		}
 		
 		Log.v(TAG, "out of the loop");
@@ -124,19 +106,6 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 		locService.stop();
 	}
 	
-	
-	/*@Override
-	protected void onPostExecute(Address userLocation) {
-		Log.v(TAG, "postExecute() -- got user location");
-		if (progressDialog.isShowing()) {
-			progressDialog.cancel();
-		}
-		if (userLocation.getExtras() == null) {
-			Log.e(TAG, "userLocation address extras is null");
-		}
-		listener.onUserLocationFound(userLocation);
-	}*/
-	
 	@Override
 	protected void onPostExecute(Location location) {
 		Log.v(TAG, "postExecute() -- got user location");
@@ -153,18 +122,6 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 			public void onLocationResult(Location result) {
 				Log.v(TAG, "got a location result");
 				location = result;
-				/*try {
-					address = addressService.getAddressForCoordinates(result.getLatitude(), result.getLongitude());
-					
-				} catch (AmbiguousAddressException e) {
-					address = e.getFirstAddress();
-				} catch (Exception e) {
-					// Display an error to the user...it was already logged
-					Log.e(TAG, "Error reverse geocoding user's location.");
-					progressDialog.cancel();
-					listener.onFailure(e);
-					cancel(true);
-				}*/
 			}
 
 
