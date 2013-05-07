@@ -443,11 +443,11 @@ public class OriginActivity extends FragmentActivity {
 	 * Kicks off a {@link FindUserLocationTask} to try and obtain the user's location.
 	 */
 	void locate() {
-		new FindUserLocationTask(this, new FindUserLocationListener() {
+		new FindUserLocationTask(this, true, new FindUserLocationListener() {
 			
 			@Override
 			public void onUserLocationFound(Location userLocation) {
-				new ReverseGeocodeTask(context, true, new ReverseGeocodeListener() {
+				new ReverseGeocodeTask(context, true, true, new ReverseGeocodeListener() {
 					
 					@Override
 					public void onResult(RoutyAddress address) {
