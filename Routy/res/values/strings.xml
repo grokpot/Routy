@@ -44,17 +44,15 @@
     <string name="origin_failed_validate">Bad origin address.</string>
     
     <!-- Origin Screen Stuff -->
-    <string name="origin_hint">Enter a starting address or place</string>
     <string name="origin_prompt">Origin</string>
     <string name="find_user_prompt">…or Find Me!</string>
     <string name="clear_screen">Clear</string>
     <string name="please_wait">Looking</string>
     <string name="stop_locating">Stop</string>
     <string name="goto_destinations">Next</string>
-    
     <string name="title_activity_destination">DestinationActivity</string>
     <string name="title_activity_results">ResultsActivity</string>
-    <string name="destination_prompt">ex: \'403 6th St.\' or \'Torchy\'s Tacos\'</string>
+    <string name="destination_prompt">eg. 403 6th St. or Torchy\'s Tacos</string>
     <string name="destination_remove">Remove</string>
     <string name="route_it">Route it!</string>
     <string name="origin_modify">Go back and choose a new origin</string>

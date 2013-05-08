@@ -7,17 +7,17 @@
     android:fillViewport="true" >
 
     <fragment 
-            xmlns:map="http://schemas.android.com/apk/res" 
-            class="com.google.android.gms.maps.MapFragment"
-            android:id="@+id/mapfrag_results"  
-            android:layout_width="match_parent" 
-            android:layout_height="300dp" 
-            android:layout_margin="10dp" 
-            map:mapType="normal"
-            map:uiZoomControls="false" 
-            map:uiZoomGestures="false"
-            map:uiScrollGestures="true"
-            map:cameraTilt="30" />
+		xmlns:map="http://schemas.android.com/apk/res" 
+		class="com.google.android.gms.maps.MapFragment"
+		android:id="@+id/mapfrag_results"  
+		android:layout_width="match_parent" 
+		android:layout_height="300dp" 
+		android:layout_margin="10dp" 
+		map:mapType="normal"
+		map:uiZoomControls="false" 
+		map:uiZoomGestures="false"
+		map:uiScrollGestures="true"
+		map:cameraTilt="30" />
     
     <ScrollView
         android:id="@+id/scrollview_results_wrapper"
@@ -42,16 +42,16 @@
 	            android:id="@+id/results_textview_header"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
-	            
 	            android:layout_centerHorizontal="true"
 	            android:layout_marginLeft="20dp"
 	            android:layout_marginRight="20dp"
 	            android:layout_marginTop="15dp"
-	            android:gravity="center_horizontal"
+	            android:gravity="center_vertical|center_horizontal"
 	            android:text="@string/results_header"
 	            android:textColor="@color/ShitGold"
-	            android:textSize="23dp"
-	            android:textStyle="bold|italic" />
+	            android:textSize="26dp"
+	            android:textStyle="bold|italic"
+	            android:typeface="normal" />
 	
 	        <LinearLayout
 	            android:id="@+id/linearlayout_results"
