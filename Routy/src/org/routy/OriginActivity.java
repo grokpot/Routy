@@ -95,7 +95,7 @@ public class OriginActivity extends FragmentActivity {
 		
 		originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
-		routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
+		routeOptimized = RouteOptimizePreference.PREFER_DURATION;
 		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
 		
 		loadSavedData();
