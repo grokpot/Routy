@@ -27,6 +27,7 @@ import org.routy.task.ReverseGeocodeTask;
 import org.routy.view.DestinationEntryRow;
 import org.routy.view.DestinationRowView;
 
+import android.app.ActionBar;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -103,6 +104,7 @@ public class OriginActivity extends FragmentActivity {
 		refreshDestinationLayout();
 		refreshOriginLayout();
 		originAddressField.requestFocus();
+
 		
 		showNoobInstructions();
 	}

@@ -1,6 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
-        android:orderInCategory="100"
-        android:showAsAction="never" />
+        android:showAsAction="always" />
+    
+  <item android:id="@+id/add_option"
+    android:title="Add Item"
+    android:showAsAction="ifRoom"/>
+  <item android:id="@+id/reset_option"
+    android:title="Reset Me"
+    android:icon="@drawable/result_map"
+    android:showAsAction="ifRoom|withText"/>
+  <item android:id="@+id/about_option"
+    android:title="About Me"
+    android:icon="@drawable/result_map" />
 </menu>
