@@ -25,13 +25,11 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:gravity="center_horizontal|center_vertical"
-                android:paddingBottom="10dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
                 android:text="@string/origin_welcome"
                 android:textColor="@color/ShitGold"
                 android:textSize="26dp"
-                android:textStyle="bold|italic" />
+                android:textStyle="bold|italic"
+                android:typeface="normal" />
 
             <EditText
                 android:id="@+id/origin_address_field"
@@ -41,7 +39,7 @@
                 android:ellipsize="start"
                 android:ems="10"
                 android:gravity="center"
-                android:hint="@string/origin_hint"
+                android:hint="@string/destination_prompt"
                 android:scrollHorizontally="true"
                 android:singleLine="true"
                 android:textColor="@color/White"
@@ -84,7 +82,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:gravity="center_horizontal"
+                android:gravity="center_vertical|center_horizontal"
                 android:text="@string/destination_question"
                 android:textColor="@color/ShitGold"
                 android:textSize="26dp"
