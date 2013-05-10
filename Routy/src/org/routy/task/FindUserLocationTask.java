@@ -116,7 +116,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	}
 	
 	private void initLocationService() {
-		locService = new LocationService(locManager, AppProperties.LOCATION_ACCURACY_THRESHOLD_M) {
+		locService = new LocationService(locManager, AppProperties.USER_LOCATION_ACCURACY_THRESHOLD_M) {
 
 			@Override
 			public void onLocationResult(Location result) {

@@ -14,6 +14,7 @@ import org.routy.listener.FindUserLocationListener;
 import org.routy.listener.ReverseGeocodeListener;
 import org.routy.model.AddressModel;
 import org.routy.model.AppProperties;
+import org.routy.model.DeviceLocationModel;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.model.Route;
@@ -435,10 +436,53 @@ public class OriginActivity extends FragmentActivity {
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
 
-		locate();
+		Location deviceLocation = getGoodDeviceLocation();
+		if (deviceLocation != null) {
+			// Reverse geocode the lat/lng in DeviceLocationModel
+			new ReverseGeocodeTask(context, true, true, new ReverseGeocodeListener() {
+				@Override
+				public void onResult(RoutyAddress address) {
+					loadReverseGeocodedOrigin(address);
+				}
+			}).execute(deviceLocation);
+		} else {
+			locate();
+		}
 	}
 	
 	
+	private Location getGoodDeviceLocation() {
+		// TODO Check accuracy, check time
+		Location deviceLocation = DeviceLocationModel.getSingleton().getDeviceLocation();
+		if (deviceLocation == null) {
+			return null;
+		}
+		
+		if ((deviceLocation.getTime() > (System.currentTimeMillis() - 300000)) && (deviceLocation.getAccuracy() <= AppProperties.USER_LOCATION_ACCURACY_THRESHOLD_M)) {
+			return deviceLocation;
+		}
+		
+		return null;
+	}
+	
+	
+	private void loadReverseGeocodedOrigin(RoutyAddress address) {
+		if (address != null) {
+			Log.v(TAG, "got user location: " + address.getAddressLine(0));
+			
+			RoutyAddress origin = address;
+			if (origin.getExtras() == null) {
+				origin.setExtras(new Bundle());
+			}
+			
+			String addressStr = origin.getAddressString();
+			origin.setValid();
+			addressModel.setOrigin(origin);
+			originAddressField.setText(addressStr);		//TODO this should be a call to refreshOriginLayout()
+		}
+	}
+
+
 	/**
 	 * Kicks off a {@link FindUserLocationTask} to try and obtain the user's location.
 	 */
@@ -451,21 +495,7 @@ public class OriginActivity extends FragmentActivity {
 					
 					@Override
 					public void onResult(RoutyAddress address) {
-						if (address != null) {
-							Log.v(TAG, "got user location: " + address.getAddressLine(0));
-							
-							RoutyAddress origin = address;
-							if (origin.getExtras() == null) {
-								origin.setExtras(new Bundle());
-							}
-							
-//							String addressStr = origin.getExtras().getString("formatted_address");
-							
-							String addressStr = origin.getAddressString();
-							origin.setValid();
-							addressModel.setOrigin(origin);
-							originAddressField.setText(addressStr);		//TODO this should be a call to refreshOriginLayout()
-						}
+						loadReverseGeocodedOrigin(address);
 					}
 				}).execute(userLocation);
 			}

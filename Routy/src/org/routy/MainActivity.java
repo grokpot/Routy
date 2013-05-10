@@ -1,15 +1,11 @@
 package org.routy;
 
-import org.routy.exception.GpsNotEnabledException;
 import org.routy.fragment.TwoButtonDialog;
-import org.routy.listener.FindUserLocationListener;
-import org.routy.listener.ReverseGeocodeListener;
+import org.routy.listener.FindDeviceLocationListener;
 import org.routy.model.AppProperties;
-import org.routy.model.RoutyAddress;
-import org.routy.model.UserLocationModel;
+import org.routy.model.DeviceLocationModel;
 import org.routy.service.InternetService;
-import org.routy.task.FindUserLocationTask;
-import org.routy.task.ReverseGeocodeTask;
+import org.routy.task.FindDeviceLocationTask;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -52,7 +48,7 @@ public class MainActivity extends FragmentActivity {
     
 //		initErrorDialog();
 		
-		startUserLocationTask();
+		startDeviceLocationTask();
 
 		new Handler().postDelayed(new Runnable() {
 
@@ -114,11 +110,17 @@ public class MainActivity extends FragmentActivity {
 	}
 	
 	
-	private void startUserLocationTask() {
+	private void startDeviceLocationTask() {
 		Log.v(TAG, "starting device location");
-		new FindUserLocationTask(this, false, new FindUserLocationListener() {
-			
+		new FindDeviceLocationTask(this, new FindDeviceLocationListener() {
+
 			@Override
+			public void onDeviceFound(Location deviceLocation) {
+				// TODO Store the device's location in DeviceLocationModel
+				DeviceLocationModel.getSingleton().setDeviceLocation(deviceLocation);
+			}
+			
+			/*@Override
 			public void onUserLocationFound(Location userLocation) {
 				Log.v(TAG, "got device location");
 				new ReverseGeocodeTask(mContext, true, false, new ReverseGeocodeListener() {
@@ -144,8 +146,8 @@ public class MainActivity extends FragmentActivity {
 			@Override
 			public void onFailure(Throwable t) {
 				//DO NOTHING -- user will just have to try again by tapping "Find Me"
-			}
-		}).execute(0);
+			}*/
+		}).execute();
 	}
 	
 	
