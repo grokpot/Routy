@@ -1,7 +1,6 @@
 package org.routy;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
@@ -28,7 +27,7 @@ import org.routy.task.ReverseGeocodeTask;
 import org.routy.view.DestinationEntryRow;
 import org.routy.view.DestinationRowView;
 
-import android.app.ActionBar;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -39,7 +38,6 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -47,20 +45,17 @@ import android.view.Menu;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
-import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Switch;
 
-public class OriginActivity extends FragmentActivity {
+public class OriginActivity extends Activity {
 
 	private static final String TAG = "OriginActivity";
 	private static final int ENABLE_GPS_REQUEST = 1;
 	private final String SAVED_DESTS_JSON_KEY = "saved_destination_json";
 	private final String SAVED_ORIGIN_JSON_KEY = "saved_origin_json";
 
-	private FragmentActivity context;
+	private Activity context;
 	private AddressModel addressModel;
 
 	private EditText originAddressField;
@@ -76,7 +71,6 @@ public class OriginActivity extends FragmentActivity {
 	private int click;
 	private AudioManager audioManager;
 	private float volume;
-	private Switch preferenceSwitch;
 	RouteOptimizePreference routeOptimized;
 
 	@Override
@@ -84,7 +78,6 @@ public class OriginActivity extends FragmentActivity {
 		super.onCreate(savedInstanceState);
 
 		Log.v(TAG, "onCreate()");
-		
 		setContentView(R.layout.activity_origin);
 		
 		// Audio stuff
@@ -98,7 +91,6 @@ public class OriginActivity extends FragmentActivity {
 		originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
 		routeOptimized = RouteOptimizePreference.PREFER_DURATION;
-		preferenceSwitch = (Switch) findViewById(R.id.toggleDistDur);
 		
 		loadSavedData();
 		bindInputFields();
@@ -106,8 +98,14 @@ public class OriginActivity extends FragmentActivity {
 		refreshOriginLayout();
 		originAddressField.requestFocus();
 
-		
 		showNoobInstructions();
+	}
+	
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.menu_origin, menu);
+		return true;
 	}
 
 
@@ -193,15 +191,6 @@ public class OriginActivity extends FragmentActivity {
 				}
 			}
 		};
-		//TODO Don't need this...for now.  If the user taps on a different row outside of the entry layout, we don't necessarily need to validate it yet.
-		/*destEntryRow.setOnFocusChangeListener(new OnFocusChangeListener() {
-			
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				// TODO Auto-generated method stub
-				
-			}
-		});*/
 		destLayout.addView(destEntryRow, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		destEntryRow.focusOnEntryField();
 	}
@@ -278,13 +267,6 @@ public class OriginActivity extends FragmentActivity {
 				}
 			}
 		});
-		
-		preferenceSwitch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-			@Override
-			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-				onToggleClicked(isChecked);
-			}
-		});
 	}
 
 
@@ -333,7 +315,8 @@ public class OriginActivity extends FragmentActivity {
 				dialog.dismiss();
 			}
 		};
-		dialog.show(context.getSupportFragmentManager(), TAG);
+//		dialog.show(context.getSupportFragmentManager(), TAG);
+		dialog.show(context.getFragmentManager(), TAG);
 	}
 	
 	
@@ -368,13 +351,6 @@ public class OriginActivity extends FragmentActivity {
 	}
 
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_origin, menu);
-		return true;
-	}
-	
-	
 	/**
 	 * Validates an address string.
 	 * 
@@ -392,7 +368,7 @@ public class OriginActivity extends FragmentActivity {
 			}
 			
 			// use GooglePlacesQueryTask to do this...
-			new GooglePlacesQueryTask(this) {
+			new GooglePlacesQueryTask(context) {
 				
 				@Override
 				public void onResult(GooglePlace place) {	//TODO get rid of GooglePlace object and just use Address?  Something unified.
@@ -625,7 +601,7 @@ public class OriginActivity extends FragmentActivity {
 				dialog.dismiss();
 			}
 		};
-		dialog.show(context.getSupportFragmentManager(), TAG);
+		dialog.show(context.getFragmentManager(), TAG);
 	}
 
 
@@ -654,7 +630,7 @@ public class OriginActivity extends FragmentActivity {
 				showErrorDialog(getResources().getString(R.string.locating_fail_error));
 			}
 		};
-		dialog.show(context.getSupportFragmentManager(), TAG);
+		dialog.show(context.getFragmentManager(), TAG);
 	}
 	
 	

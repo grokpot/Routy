@@ -1,10 +1,10 @@
-<ScrollView xmlns:tools="http://schemas.android.com/tools"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/origin_layout"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:background="@drawable/gradient"
-    android:fillViewport="true"
-    android:padding="10dp" xmlns:android="http://schemas.android.com/apk/res/android">
+    android:padding="10dp" >
 
     <RelativeLayout
         android:layout_width="fill_parent"
@@ -45,7 +45,7 @@
                 android:textColor="@color/White"
                 android:textColorHint="@color/LightGrey" >
 
-                <requestFocus />
+                <!-- <requestFocus /> -->
             </EditText>
 
             <Button
@@ -64,7 +64,7 @@
                 android:paddingTop="8dp"
                 android:text="@string/find_user_prompt"
                 android:textColor="@color/White"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
         </LinearLayout>
 
@@ -97,42 +97,12 @@
                 android:orientation="vertical" >
             </LinearLayout>
 
-            <!-- <Button
-                android:id="@+id/button_destination_add_new"
-                style="?android:attr/borderlessButtonStyle"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="10dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/orange_button"
-                android:drawableLeft="@drawable/poswhiteonly"
-                android:gravity="center"
-                android:onClick="onAddDestinationClicked"
-                android:paddingBottom="8dp"
-                android:paddingLeft="15dp"
-                android:paddingTop="8dp"
-                android:text="@string/destination_add"
-                android:textColor="@color/White"
-                android:textSize="18dp"
-                android:textStyle="bold" /> -->
-
             <LinearLayout
                 android:id="@+id/LinearLayout_destinations_buttons"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="35dp"
                 android:orientation="vertical" >
-
-                <Switch
-                    android:id="@+id/toggleDistDur"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal"
-                    android:switchTextAppearance="@style/Toggle"
-                    android:textOff="@string/by_dist"
-                    android:textOn="@string/by_dur"
-                    android:visibility="gone" />
             </LinearLayout>
 
             <ImageButton

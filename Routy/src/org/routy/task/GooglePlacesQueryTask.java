@@ -9,6 +9,7 @@ import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.service.GooglePlacesService;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.support.v4.app.FragmentActivity;
@@ -18,23 +19,23 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 
 	private final String TAG = "GooglePlacesQueryTask";
 	
-	private FragmentActivity fragmentActivity;
+	private Activity activity;
 	private ProgressDialog progressDialog;
 	
 	public abstract void onResult(GooglePlace place);
 	public abstract void onFailure(Throwable t);
 	public abstract void onNoSelection();
 	
-	public GooglePlacesQueryTask(FragmentActivity fragmentActivity) {
+	public GooglePlacesQueryTask(Activity context) {
 		super();
 		
-		this.fragmentActivity = fragmentActivity;
+		this.activity = context;
 	}
 	
 	
 	@Override
 	protected void onPreExecute() {
-		progressDialog = new ProgressDialog(fragmentActivity);
+		progressDialog = new ProgressDialog(activity);
 		progressDialog.setTitle("Hang Tight!");
 		progressDialog.setMessage("Checking that address or place name...");
 		progressDialog.setCancelable(false);
@@ -98,7 +99,7 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 	 * @param results
 	 */
 	private void showMultiResultsPickerDialog(List<GooglePlace> results) {
-		final PlacesListAdapter adapter = new PlacesListAdapter(fragmentActivity, results);
+		final PlacesListAdapter adapter = new PlacesListAdapter(activity, results);
 		new ListPickerDialog("Did you mean...", adapter) {
 			
 			@Override
@@ -112,6 +113,6 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 			}
 			
 			
-		}.show(fragmentActivity.getSupportFragmentManager(), TAG);
+		}.show(activity.getFragmentManager(), TAG);
 	}
 }

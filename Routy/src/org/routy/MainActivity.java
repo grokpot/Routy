@@ -7,6 +7,7 @@ import org.routy.model.DeviceLocationModel;
 import org.routy.service.InternetService;
 import org.routy.task.FindDeviceLocationTask;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -15,11 +16,10 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.Menu;
 
-public class MainActivity extends FragmentActivity {
+public class MainActivity extends Activity {
 
 	private final String TAG = "MainActivity";
 
@@ -39,6 +39,7 @@ public class MainActivity extends FragmentActivity {
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
+		getActionBar().hide();
 		setContentView(R.layout.activity_main);
 
 		mContext = this;
@@ -46,8 +47,6 @@ public class MainActivity extends FragmentActivity {
 		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
 		bad = sounds.load(this, R.raw.routybad, 1);
     
-//		initErrorDialog();
-		
 		startDeviceLocationTask();
 
 		new Handler().postDelayed(new Runnable() {
@@ -70,7 +69,7 @@ public class MainActivity extends FragmentActivity {
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, volume, volume, 1, 0, 1);
 			initErrorDialog(getResources().getString(R.string.no_internet_error));
-			noInternetErrorDialog.show(MainActivity.this.getSupportFragmentManager(), TAG);
+			noInternetErrorDialog.show(MainActivity.this.getFragmentManager(), TAG);
 		} else {
 			Log.v(TAG, "Found an internet connection.");
 
@@ -119,41 +118,14 @@ public class MainActivity extends FragmentActivity {
 				// TODO Store the device's location in DeviceLocationModel
 				DeviceLocationModel.getSingleton().setDeviceLocation(deviceLocation);
 			}
-			
-			/*@Override
-			public void onUserLocationFound(Location userLocation) {
-				Log.v(TAG, "got device location");
-				new ReverseGeocodeTask(mContext, true, false, new ReverseGeocodeListener() {
-					
-					@Override
-					public void onResult(RoutyAddress address) {
-						if (address != null) {
-							RoutyAddress userLoc = address;
-							if (userLoc.getExtras() == null) {
-								userLoc.setExtras(new Bundle());
-							}
-							UserLocationModel.getSingleton().setUserLocation(userLoc);
-						}
-					}
-				}).execute(userLocation);
-			}
-			
-			@Override
-			public void onTimeout(GpsNotEnabledException e) {
-				//DO NOTHING -- user will just have to try again by tapping "Find Me"
-			}
-			
-			@Override
-			public void onFailure(Throwable t) {
-				//DO NOTHING -- user will just have to try again by tapping "Find Me"
-			}*/
 		}).execute();
 	}
 	
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
+		super.onCreateOptionsMenu(menu);
+//		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return false;
 	}
 }

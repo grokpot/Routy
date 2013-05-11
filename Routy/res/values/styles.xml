@@ -1,8 +1,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     
-    <style name="Toggle" parent="android:Theme.Holo.NoActionBar">
+    <style name="Toggle" parent="android:Theme.Holo">
         <item name ="android:textStyle">normal</item>
-        <item name ="android:textSize">18dp</item>
+        <item name ="android:textSize">18sp</item>
     </style>
 
 </resources>

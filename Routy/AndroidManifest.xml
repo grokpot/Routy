@@ -53,15 +53,14 @@
             android:screenOrientation="portrait" >
             <intent-filter android:label="@string/app_name" >
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".OriginActivity"
-            android:label="@string/title_activity_origin" 
+            android:label="@string/title_activity_origin"
             android:screenOrientation="portrait"
-         	android:windowSoftInputMode="stateHidden">
+         	android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
             android:name=".DestinationActivity"
