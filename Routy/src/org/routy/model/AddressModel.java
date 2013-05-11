@@ -100,7 +100,9 @@ public class AddressModel {
 
 	public void removeDestination(int indexInLayout) {
 		if (indexInLayout >= 0 && indexInLayout < destinations.size()) {
+			Log.v(TAG, "removing destination #" + indexInLayout);
 			destinations.remove(indexInLayout);
+			Log.v(TAG, "model has " + destinations.size() + " destinations");
 		}
 	}
 

@@ -690,15 +690,19 @@ public class OriginActivity extends Activity {
 	
 	private void saveDestinations() {
 		Log.v(TAG, "saving destinations list");
-		if (addressModel.hasDestinations()) {
-			String json = addressModel.getDestinationsJSON();
+		if (originActivityPrefs == null) {
+			Log.e(TAG, "originActivityPrefs null while trying to save destinations");
+		} else {
+			String json = "";
+			if (addressModel.hasDestinations()) {
+				json = addressModel.getDestinationsJSON();
+			}
+			
 			Log.v(TAG, "Destinations JSON: " + json);
 			
 			SharedPreferences.Editor ed = originActivityPrefs.edit();
 			ed.putString(SAVED_DESTS_JSON_KEY, json);
 			ed.commit();
-		} else if (originActivityPrefs == null) {
-			Log.e(TAG, "originActivityPrefs null while trying to save destinations");
 		}
 	}
 	

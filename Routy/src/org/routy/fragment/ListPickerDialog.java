@@ -62,7 +62,7 @@ public abstract class ListPickerDialog extends DialogFragment {
 
 		AlertDialog dialog = builder.create();
 		dialog.setCanceledOnTouchOutside(true);
-		dialog.setOnDismissListener(onDismissListener);
+//		dialog.setOnDismissListener(onDismissListener);
 		
 		return dialog;
 	}
@@ -79,8 +79,16 @@ public abstract class ListPickerDialog extends DialogFragment {
 	@Override
 	public void onCancel(DialogInterface dialog) {
 		super.onCancel(dialog);
-		
+		Log.v(TAG, "Place picker dialog cancelled.");
 		onCancelled();
+	}
+	
+	
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		super.onDismiss(dialog);
+		Log.v(TAG, "Place picker dialog dismissed.");
+//		onCancelled();
 	}
 	
 	
@@ -94,12 +102,12 @@ public abstract class ListPickerDialog extends DialogFragment {
 	};
 	
 	
-	private DialogInterface.OnDismissListener onDismissListener = new DialogInterface.OnDismissListener() {
+	/*private DialogInterface.OnDismissListener onDismissListener = new DialogInterface.OnDismissListener() {
 		
 		@Override
 		public void onDismiss(DialogInterface dialog) {
 			Log.v(TAG, "Place picker dialog dismissed.");
 			onCancelled();
 		}
-	};
+	};*/
 }
