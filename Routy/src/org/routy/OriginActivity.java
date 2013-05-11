@@ -522,6 +522,7 @@ public class OriginActivity extends Activity {
 		
 		if (addressModel.getOrigin() == null || addressModel.getOrigin().getAddressString().length() == 0) {
 			Log.v(TAG, "no origin");
+			showErrorDialog("Please tell Routy where your trip begins.");
 		} else if (!addressModel.getOrigin().isValid()) {
 			//Validate the origin before continuing
 			validateAddress(addressModel.getOrigin().getAddressString(), null, null, new ValidateAddressCallback() {
@@ -529,13 +530,18 @@ public class OriginActivity extends Activity {
 				public void onAddressValidated(RoutyAddress validatedAddress) {
 					addressModel.setOrigin(validatedAddress);
 					refreshOriginLayout();
+					
+					prepareDestinations();
 				}
 			});
+		} else {
+			prepareDestinations();
 		}
-		
-		Log.v(TAG, "out");
-		assert addressModel.getOrigin().isValid();
-		
+	}
+
+
+	private void prepareDestinations() {
+		//IT NEEDS TO WAIT UNTIL THERE'S A VALID ORIGIN TO DO THIS.
 		if (addressModel.hasDestinations()) {
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
@@ -558,17 +564,7 @@ public class OriginActivity extends Activity {
 				}
 			}
 			
-			new CalculateRouteTask(this) {
-				@Override
-				public void onRouteCalculated(Route route) {
-					// Call ResultsActivity activity
-					Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-					resultsIntent.putExtra("addresses", (ArrayList<Address>) route.getAddresses());
-					resultsIntent.putExtra("distance", route.getTotalDistance());
-					resultsIntent.putExtra("optimize_for", routeOptimized);
-					startActivity(resultsIntent);
-				}
-			}.execute(new RouteRequest(addressModel.getOrigin(), addressModel.getDestinations(), false, routeOptimized));
+			generateRouteAndGo();
 		} else {
 			Log.e(TAG, "trying to build a route with no destinations!");
 			// No destinations entered
@@ -577,7 +573,21 @@ public class OriginActivity extends Activity {
 			sounds.play(bad, volume, volume, 1, 0, 1);
 			showErrorDialog("Please enter at least one destination to continue.");
 		}
+	}
 
+
+	private void generateRouteAndGo() {
+		new CalculateRouteTask(this) {
+			@Override
+			public void onRouteCalculated(Route route) {
+				// Call ResultsActivity activity
+				Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
+				resultsIntent.putExtra("addresses", (ArrayList<Address>) route.getAddresses());
+				resultsIntent.putExtra("distance", route.getTotalDistance());
+				resultsIntent.putExtra("optimize_for", routeOptimized);
+				startActivity(resultsIntent);
+			}
+		}.execute(new RouteRequest(addressModel.getOrigin(), addressModel.getDestinations(), false, routeOptimized));
 	}
 	
 	

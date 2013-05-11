@@ -90,9 +90,7 @@ public abstract class DestinationEntryRow extends LinearLayout {
 		
 		LinearLayout destEntryRowView = (LinearLayout) findViewById(R.id.destination_entry_row);
 		
-		secondary = new EditText(getContext());
-		secondary.setHint(getResources().getString(R.string.destination_prompt));
-		destEntryRowView.addView(secondary, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+		secondary = (EditText) findViewById(R.id.secondary_entry_field);
 		hideSecondaryDestField();
 	}
 	

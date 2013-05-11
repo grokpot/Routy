@@ -20,4 +20,18 @@
 	    android:textColor="@color/White"
 	    android:textColorHint="@color/LightGrey" />
     
+    <EditText
+	    android:id="@+id/secondary_entry_field"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_gravity="center_horizontal"
+	    android:ellipsize="start"
+	    android:ems="10"
+	    android:gravity="center"
+	    android:hint="@string/destination_prompt"
+	    android:scrollHorizontally="true"
+	    android:singleLine="true"
+	    android:textColor="@color/White"
+	    android:textColorHint="@color/LightGrey" />
+    
 </LinearLayout>
