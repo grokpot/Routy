@@ -726,10 +726,10 @@ public class OriginActivity extends Activity {
 	}
 	
 	
-	@Override
+	/*@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		return false;
-	}
+		return ;
+	}*/
 	
 	
 	@Override
