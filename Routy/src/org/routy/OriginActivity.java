@@ -359,15 +359,24 @@ public class OriginActivity extends Activity {
 	 * 
 	 * @param c		the callback that is called when validation is successful
 	 */
-	public void validateAddress(final String locationQuery, final Double centerLat, final Double centerLng, final ValidateAddressCallback c) {
+	public void validateAddress(final String locationQuery, Double centerLat, Double centerLng, final ValidateAddressCallback c) {
 		if (locationQuery != null && locationQuery.length() > 0) {
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(click, volume, volume, 1, 0, 1);  
 
+			Double lat = centerLat;
+			Double lng = centerLng;
 			Log.v(TAG, "validating address -- query: " + locationQuery);
-			if (centerLat != null && centerLng != null) {
+			if (lat != null && lng != null) {
 				Log.v(TAG, "searching around center @ " + centerLat + "," + centerLng);
+			} else {
+				Location deviceLocation = getGoodDeviceLocation();
+				if (deviceLocation != null) {
+					lat = deviceLocation.getLatitude();
+					lng = deviceLocation.getLongitude();
+					Log.v(TAG, "searching around device centered @" + lat + "," + lng);
+				}
 			}
 			
 			// use GooglePlacesQueryTask to do this...
@@ -401,7 +410,7 @@ public class OriginActivity extends Activity {
 				public void onNoSelection() {
 					//Do nothing?
 				}
-			}.execute(new GooglePlacesQuery(locationQuery, centerLat, centerLng));
+			}.execute(new GooglePlacesQuery(locationQuery, lat, lng));
 		}
 	}
 
