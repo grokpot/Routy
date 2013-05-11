@@ -38,10 +38,9 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 		progressDialog = new ProgressDialog(activity);
 		progressDialog.setTitle("Hang Tight!");
 		progressDialog.setMessage("Checking that address or place name...");
-		progressDialog.setCancelable(false);
+		progressDialog.setCancelable(true);
 		progressDialog.setCanceledOnTouchOutside(false);
 		progressDialog.setIndeterminate(true);
-		progressDialog.setCancelable(false);
 		progressDialog.show();
 	}
 	
@@ -87,6 +86,7 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 	
 	@Override
 	protected void onCancelled(List<GooglePlace> results) {
+		this.cancel(true);
 		if (progressDialog.isShowing()) {
 			progressDialog.cancel();
 		}

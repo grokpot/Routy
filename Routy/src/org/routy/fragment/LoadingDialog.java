@@ -2,13 +2,16 @@ package org.routy.fragment;
 
 import org.routy.R;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 
 // TODO Create an abstract method to interact with the dialog's progress
+@SuppressLint("ValidFragment")
 public class LoadingDialog extends DialogFragment {
 
 	private final String TAG = "LoadingDialog";
@@ -57,5 +60,16 @@ public class LoadingDialog extends DialogFragment {
 		dialog.setProgressNumberFormat(null);
 		
 		return dialog;
+	}
+	
+	
+	@Override
+	public void onCancel(DialogInterface dialog) {
+		super.onCancel(dialog);
+	}
+	
+	@Override
+	public void onDismiss(DialogInterface dialog) {
+		super.onDismiss(dialog);
 	}
 }

@@ -520,16 +520,20 @@ public class OriginActivity extends Activity {
 	public void routeIt() {
 		Log.v(TAG, "route requested");
 		
-		if (!addressModel.getOrigin().isValid()) {
+		if (addressModel.getOrigin() == null || addressModel.getOrigin().getAddressString().length() == 0) {
+			Log.v(TAG, "no origin");
+		} else if (!addressModel.getOrigin().isValid()) {
 			//Validate the origin before continuing
 			validateAddress(addressModel.getOrigin().getAddressString(), null, null, new ValidateAddressCallback() {
 				@Override
 				public void onAddressValidated(RoutyAddress validatedAddress) {
 					addressModel.setOrigin(validatedAddress);
+					refreshOriginLayout();
 				}
 			});
 		}
 		
+		Log.v(TAG, "out");
 		assert addressModel.getOrigin().isValid();
 		
 		if (addressModel.hasDestinations()) {
