@@ -104,8 +104,11 @@ public class OriginActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		super.onCreateOptionsMenu(menu);
+		Log.v(TAG, "menu has " + menu.size() + " items BEFORE");
 		getMenuInflater().inflate(R.menu.menu_origin, menu);
-		return true;
+		Log.v(TAG, "menu has " + menu.size() + " items AFTER");
+		return super.onCreateOptionsMenu(menu);
 	}
 
 
