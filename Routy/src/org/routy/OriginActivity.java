@@ -42,6 +42,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
@@ -109,6 +110,17 @@ public class OriginActivity extends Activity {
 		getMenuInflater().inflate(R.menu.menu_origin, menu);
 		Log.v(TAG, "menu has " + menu.size() + " items AFTER");
 		return super.onCreateOptionsMenu(menu);
+	}
+	
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch(item.getItemId()){
+		case R.id.item_settings:
+			startActivity(new Intent(this, PreferencesActivity.class));
+			return true;
+		}
+		return false;
 	}
 
 
