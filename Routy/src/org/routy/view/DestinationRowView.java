@@ -43,6 +43,7 @@ public abstract class DestinationRowView extends LinearLayout {
 	 */
 	public abstract void onRemoveClicked(int indexInLayout, UUID id);
 	public abstract void onFocusLost(int indexInLayout, UUID id, Editable s);
+//	public abstract void onFocusGained(int indexInLayout);
 	public abstract void destinationTextChanged(int indexInLayout, Editable s);
 //	public abstract void onTextEntered();
 //	public abstract void onFieldEmptied();

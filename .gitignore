@@ -1,3 +1,8 @@
+Routy/project.properties
+Routy/.classpath
+Routy/.project
+Routy/gen/*
+
 *.class
 
 # Package Files #

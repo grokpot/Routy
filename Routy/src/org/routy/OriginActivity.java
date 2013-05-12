@@ -58,21 +58,17 @@ public class OriginActivity extends Activity {
 
 	private Activity context;
 	private AddressModel addressModel;
-
 	private EditText originAddressField;
 	private LinearLayout destLayout;
-
-	// shared prefs for origin and destination persistence
 	private SharedPreferences originActivityPrefs;
-
-
 	private SoundPool sounds;
 	private int bad;
 	private int speak;
 	private int click;
 	private AudioManager audioManager;
 	private float volume;
-	RouteOptimizePreference routeOptimized;
+	private RouteOptimizePreference routeOptimized;
+	private boolean userIsNoob;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -99,6 +95,7 @@ public class OriginActivity extends Activity {
 		refreshOriginLayout();
 		originAddressField.requestFocus();
 
+		userIsNoob = originActivityPrefs.getBoolean("noob_cookie", true);
 		showNoobInstructions();
 	}
 	
@@ -173,6 +170,15 @@ public class OriginActivity extends Activity {
 			public void destinationTextChanged(int indexInLayout, Editable s) {
 				addressModel.getDestinations().get(indexInLayout).setNotValidated();
 			}
+
+			/*@Override
+			public void onFocusGained(int indexInLayout) {
+				Log.v(TAG, "dest entry row got focus");
+				//If noob and origin is null, show warning message
+				if (!addressModel.isOriginValid() || addressModel.getOrigin().getAddressString().length() == 0) {
+					showNoobDialog(getResources().getString(R.string.no_origin_address_error));
+				}
+			}*/
 		};
 		
 		destLayout.addView(newRow, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -205,6 +211,15 @@ public class OriginActivity extends Activity {
 					});
 				}
 			}
+
+			@Override
+			public void onFocusGained() {
+				//If this is the first destination they're entering and there's no origin, warn the user.
+				if (!addressModel.hasDestinations() && (!addressModel.isOriginValid() || addressModel.getOrigin().getAddressString().length() == 0)) {
+					showNoobDialog(getResources().getString(R.string.origin_not_entered_error));
+				}
+			}
+			
 		};
 		destLayout.addView(destEntryRow, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 		destEntryRow.focusOnEntryField();
@@ -235,14 +250,11 @@ public class OriginActivity extends Activity {
 			public void afterTextChanged(Editable s) {
 				Log.v(TAG, "afterTextChanged()");
 				
-				//TODO this is janky and should be moved
 				if (s != null && s.length() > 0) {
 					if (addressModel.getOrigin() == null || !s.toString().equals(addressModel.getOrigin().getAddressString())) {
 						RoutyAddress newOrigin = new RoutyAddress(Locale.getDefault());
 						newOrigin.setExtras(new Bundle());
-//						newOrigin.getExtras().putString("address_string", s.toString());
 						newOrigin.setAddressString(s.toString());
-//						newOrigin.getExtras().putString("validation_status", AddressStatus.NOT_VALIDATED.toString());
 						newOrigin.setNotValidated();
 						addressModel.setOrigin(newOrigin);
 					}
@@ -259,25 +271,27 @@ public class OriginActivity extends Activity {
 			
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				if (!hasFocus && !addressModel.isOriginValid()) {
-					Log.v(TAG, "origin field lost focus");
-					//Validate the origin
-					Editable originText = ((EditText) v).getEditableText();
-					String locationQuery = null;
-					if (originText != null) {
-						locationQuery = originText.toString();
-					}
-					
-					if (locationQuery != null && locationQuery.length() > 0) {
-						validateAddress(locationQuery, null, null, new ValidateAddressCallback() {
+				if (!hasFocus) {
+					if (!addressModel.isOriginValid()) {
+						Log.v(TAG, "origin field lost focus");
+						//Validate the origin
+						Editable originText = ((EditText) v).getEditableText();
+						String locationQuery = null;
+						if (originText != null) {
+							locationQuery = originText.toString();
+						}
+						
+						if (locationQuery != null && locationQuery.length() > 0) {
+							validateAddress(locationQuery, null, null, new ValidateAddressCallback() {
 
-							@Override
-							public void onAddressValidated(RoutyAddress validatedAddress) {
-								addressModel.setOrigin(validatedAddress);
-								refreshOriginLayout();
-							}
-							
-						});
+								@Override
+								public void onAddressValidated(RoutyAddress validatedAddress) {
+									addressModel.setOrigin(validatedAddress);
+									refreshOriginLayout();
+								}
+								
+							});
+						}
 					}
 				}
 			}
@@ -312,7 +326,7 @@ public class OriginActivity extends Activity {
 	 */
 	private void refreshOriginLayout() {
 		//Fill in the display/activity with data from the model
-		if (/*addressModel.isOriginValid()*/ addressModel.getOrigin() != null) {
+		if (addressModel.getOrigin() != null) {
 			originAddressField.setText(addressModel.getOrigin().getAddressString());
 		}
 	}
@@ -323,17 +337,15 @@ public class OriginActivity extends Activity {
 	 * 
 	 * @param message
 	 */
-	private void showNoobDialog() {
-		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.origin_noob_title), getResources().getString(R.string.origin_noob_instructions)) {
+	private void showNoobDialog(String noobMessage) {
+		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.origin_noob_title), noobMessage) {
 			@Override
 			public void onButtonClicked(DialogInterface dialog, int which) {
 				dialog.dismiss();
 			}
 		};
-//		dialog.show(context.getSupportFragmentManager(), TAG);
 		dialog.show(context.getFragmentManager(), TAG);
 	}
-	
 	
 	/**
 	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
@@ -341,16 +353,15 @@ public class OriginActivity extends Activity {
 	private void userAintANoobNomore() {
 		//TODO: combine these, combine the noob messages
 		SharedPreferences.Editor ed = originActivityPrefs.edit();
-		ed.putBoolean("noob_cookie", true);
+		ed.putBoolean("noob_cookie", false);
 		ed.commit();	
 	}
 	
 	
 	private void showNoobInstructions() {		
 		// First-time user dialog cookie
-		boolean noobCookie = originActivityPrefs.getBoolean("noob_cookie", false);
-		if (!noobCookie){
-			showNoobDialog();
+		if (userIsNoob){
+			showNoobDialog(getResources().getString(R.string.origin_noob_instructions));
 			userAintANoobNomore();
 		}
 	}
