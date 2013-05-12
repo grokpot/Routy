@@ -1,17 +1,12 @@
 <resources>
 
     <string name="app_name">Routy</string>
-    <string name="hello_world">Hello world!</string>
     <string name="menu_settings">Settings</string>
     <string name="menu_about">About</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_origin">Routy</string>
     
     <!-- Instructions -->
-    <!-- <string name="origin_noob_instructions">Welcome to Routy - the best way to find the most efficient route between
-        different destinations. Enter a starting address or click Find me! to get your current location. 
-        Once we have your origin set up we can work on entering all of your destinations. Click Next when
-        you\'re done!</string> -->
     <string name="origin_noob_instructions">Welcome to Routy - use it for road trips, errands, or just for fun!\n\nEnter a starting address or click \&quot;Find me!\&quot;</string>
     <string name="origin_not_entered_error">Routy needs a starting address - please click Find me! or enter an origin.\n\nYou can always change it later!</string>
     <string name="destination_noob_instructions">Now enter addresses, places, or interesections in any order. You can also choose between a shorter route or a faster time.\n\nWhen you\'re ready, click \"Route it!\" to see the results! If you change your mind, just press back.</string>
@@ -30,7 +25,6 @@
     <string name="error_message_title">Ruh-Roh!</string>
     <string name="default_error_message">Something went wrong, but don\'t worry, it wasn\'t your fault.</string>
     <string name="no_internet_error">Routy needs an internet connection to do work&#8230;</string>
-    <string name="no_origin_address_error">Routy needs an starting location.  Please enter one or click Find Me and Routy will locate you!</string>
     <string name="bad_origin_address_error">Routy couldn\'t understand the address for your origin.  Could you try again?</string>
     <string name="no_location_provider_error">Routy needs WI-FI or GPS to locate you.  Please try again when you have one of these turned on.</string>
     <string name="locating_fail_error">Well that\'s no good&#8230; Routy couldn\'t find your location. Try typing it in!</string>
@@ -58,10 +52,6 @@
     <string name="route_it">Route it!</string>
     <string name="origin_modify">Go back and choose a new origin</string>
     <string name="destination_add">Add a destination</string>
-    <string name="test_destination_1">5119 Burnet Road, Austin, TX</string>
-    <string name="test_destination_2">1 University Station, Austin, TX</string>
-    <string name="test_destination_3">1000 East 41st Street, Austin, TX</string>
-    <string name="route_it_button">To see your route click here and</string>
     <string name="destination_toggle_instructions">Shorter route or faster time?</string>
     <string name="by_dur">Faster time</string>
     <string name="by_dist">Shorter route</string>
@@ -75,7 +65,6 @@
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
     <string name="no">No</string>
-    <string name="destination_add_short">+</string>
     <string name="destination_remove_short">-</string>
     <string name="origin_logo">Routy Origin Logo</string>
     <string name="origin_name">Welcome to Routy -</string>
@@ -91,7 +80,7 @@
     <string name="destination_noob_title">Choose your destinations</string>
     <string name="results_noob_title">Your optimal route</string>
     <string name="destination_subtext">Enter an address or place (Any order)</string>
-    <string name="origin_purpose">...the right route for many places.</string>
+    <string name="origin_purpose">&#8230;the right route for many places.</string>
     <string name="poweredbygoogledesc">Routy is powered by Google!</string>
     <string name="title_activity_preferenes">PreferencesActivity</string>
 </resources>
