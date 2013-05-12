@@ -31,6 +31,7 @@
     <string name="enable_gps_prompt">Routy noticed your GPS is not enabled, would you like to enable it so he can try locating you again?</string>
     <string name="default_loading_message">Hang tight!</string>
     <string name="default_listpicker_title">Please select one&#8230;</string>
+    <string name="about_text">Routy was developed by Jeff Tran, Ryan Prater, and Eric Thompson. Mike Scott provided some serious guidance/advice/inspiration.\n\nA few features are Powered by Google.\n\nIf you want to get in touch with us, please send a message to GoRouty@gmail.com</string>
     
     <!-- Toasts -->
     <string name="validated">Addresses validated!</string>
