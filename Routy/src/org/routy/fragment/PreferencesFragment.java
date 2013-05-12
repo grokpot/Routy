@@ -1,11 +1,14 @@
 package org.routy.fragment;
 
+import java.net.URISyntaxException;
+
 import org.routy.R;
 import org.routy.model.PreferencesModel;
 import org.routy.model.RouteOptimizePreference;
 
 import android.app.FragmentManager;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
@@ -30,10 +33,23 @@ public class PreferencesFragment extends PreferenceFragment {
 	    Preference myPref = (Preference) findPreference("pref_about");
 	    myPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
-				OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.about_title), getResources().getString(R.string.about_text)) {
+				TwoButtonDialog dialog = new TwoButtonDialog(getResources().getString(R.string.about_title), getResources().getString(R.string.about_text), new String[]{"Close", null, "Contact"}) {
 					@Override
-					public void onButtonClicked(DialogInterface dialog, int which) {
+					public void onRightButtonClicked(DialogInterface dialog, int which) {
 						dialog.dismiss();
+					}
+
+					@Override
+					public void onLeftButtonClicked(DialogInterface dialog, int which) {
+						// Send feedback
+						try {
+							Intent intent = Intent.parseUri("mailto:GoRouty@gmail.com?subject=Routy%20App%20Feedback", Intent.URI_INTENT_SCHEME);
+							getActivity().startActivity(intent);
+						} catch (URISyntaxException e) {
+							Log.e(TAG, "couldn't start mail activity to send feedback");
+							e.printStackTrace();
+						}
+						    
 					}
 				};
 				dialog.show(fragmentManager, TAG);
@@ -47,11 +63,9 @@ public class PreferencesFragment extends PreferenceFragment {
 				SharedPreferences defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getActivity().getApplicationContext());
 				Editor e = defaultSharedPrefs.edit();
 				e.putBoolean("routy_noob", true);
-//				e.putBoolean("entry_noob", true);
 				e.putBoolean("results_noob", true);
 				e.commit();
 				PreferencesModel.getSingleton().setRoutyNoob(true);
-//				PreferencesModel.getSingleton().setEntryNoob(true);
 				PreferencesModel.getSingleton().setResultsNoob(true);
 				return true;
 			}
