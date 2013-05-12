@@ -67,6 +67,15 @@ public class PreferencesFragment extends PreferenceFragment {
 				e.commit();
 				PreferencesModel.getSingleton().setRoutyNoob(true);
 				PreferencesModel.getSingleton().setResultsNoob(true);
+				
+				OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.pref_instructions_reset), getResources().getString(R.string.pref_instructions_reset_text)) {
+					@Override
+					public void onButtonClicked(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				};
+				dialog.show(fragmentManager, TAG);
+				
 				return true;
 			}
 	    });
