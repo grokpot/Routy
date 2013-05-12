@@ -59,7 +59,7 @@
         <activity
             android:name=".OriginActivity"
             android:label="@string/title_activity_origin" 
-            android:screenOrientation="portrait" 
+            android:screenOrientation="portrait"
          	android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
