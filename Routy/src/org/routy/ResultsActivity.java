@@ -324,8 +324,8 @@ public class ResultsActivity extends Activity {
 	}
 
 
-	/*@Override
+	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
 		return false;
-	}*/
+	}
 }

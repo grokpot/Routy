@@ -2,7 +2,4 @@
     <item android:id="@+id/item_settings"
         android:title="@string/menu_settings" 
         android:showAsAction="always" />
-	<item android:id="@+id/about_option"
-	    android:title="@string/menu_about"
-	    android:icon="@drawable/result_map" />
 </menu>
