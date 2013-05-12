@@ -2,6 +2,8 @@ Routy/project.properties
 Routy/.classpath
 Routy/.project
 Routy/gen/*
+Routy/.settings
+R.java
 
 *.class
 
