@@ -94,4 +94,7 @@
     <string name="origin_purpose">...the right route for many places.</string>
     <string name="poweredbygoogledesc">Routy is powered by Google!</string>
     <string name="title_activity_preferenes">PreferencesActivity</string>
+    <string name="about_title">About Routy</string>
+    <string name="about_text">Routy is an awesome app. Use the fuck out of it.</string>
+    <string name="pref_route_calculation">Route</string>
 </resources>

@@ -4,15 +4,18 @@
     android:layout_height="wrap_content" >
 
 	<PreferenceCategory
-	  android:summary="Route Calculation"
-	  android:title="Route Calculation" >
-	 <EditTextPreference
-	    android:key="username"
-	    android:summary="Please enter your login username"
-	    android:title="Username" />
+		android:title="Preferences" >
+	  	<SwitchPreference
+			android:key="pref_switch"
+	      	android:title="@string/pref_route_calculation"
+	      	android:switchTextOff="@string/by_dist"
+	      	android:switchTextOn="@string/by_dur"  />
 	</PreferenceCategory>
  
-	<Preference
-	    android:key="pref_about"
-	    android:title="About"/>
+	<PreferenceCategory
+		android:title="About" >
+		<Preference
+		    android:key="pref_about"
+		    android:title="About Routy"/>
+	</PreferenceCategory>
 </PreferenceScreen>
