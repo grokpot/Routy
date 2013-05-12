@@ -64,7 +64,7 @@ public abstract class DestinationEntryRow extends LinearLayout {
 			public void onFocusChange(View v, boolean hasFocus) {
 				EditText e = (EditText) v;
 				if (!hasFocus) {
-					onEntryConfirmed(e.getEditableText());
+//					onEntryConfirmed(e.getEditableText());
 				} else {
 					onFocusGained();
 				}
@@ -95,6 +95,16 @@ public abstract class DestinationEntryRow extends LinearLayout {
 		//LinearLayout destEntryRowView = (LinearLayout) findViewById(R.id.destination_entry_row);
 		
 		secondary = (EditText) findViewById(R.id.secondary_entry_field);
+		secondary.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				// TODO Auto-generated method stub
+				if (hasFocus) {
+					onEntryConfirmed(primary.getEditableText());
+				}
+			}
+		});
 		hideSecondaryDestField();
 	}
 	
@@ -110,5 +120,9 @@ public abstract class DestinationEntryRow extends LinearLayout {
 	
 	public void focusOnEntryField() {
 		primary.requestFocus();
+	}
+	
+	public Editable getEntryFieldEditable() {
+		return primary.getEditableText();
 	}
 }

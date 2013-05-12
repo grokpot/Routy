@@ -105,7 +105,9 @@ public class AddressModel {
 	}
 
 	public void setDestinationAt(int indexInLayout, RoutyAddress validatedAddress) {
-		if (indexInLayout >= 0 && indexInLayout < destinations.size() && validatedAddress != null) {
+		if (indexInLayout == 0 && destinations.size() == 0) {
+			destinations.add(validatedAddress);
+		} else if (indexInLayout > 0 && indexInLayout < destinations.size() && validatedAddress != null) {
 			destinations.set(indexInLayout, validatedAddress);
 		}
 	}
