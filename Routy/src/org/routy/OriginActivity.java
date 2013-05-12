@@ -330,7 +330,15 @@ public class OriginActivity extends Activity {
 	
 	private void validateOrigin(String locationQuery, ValidateAddressCallback callback) {
 		if (locationQuery != null && locationQuery.length() > 0) {
-			validateAddress(locationQuery, null, null, callback);
+			Double lat = null;
+			Double lng = null;
+			Location deviceLocation = getGoodDeviceLocation();
+			if (deviceLocation != null) {
+				lat = deviceLocation.getLatitude();
+				lng = deviceLocation.getLongitude();
+			}
+			
+			validateAddress(locationQuery, lat, lng, callback);
 		}
 	}
 	
