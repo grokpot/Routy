@@ -19,8 +19,8 @@ public class PreferencesFragment extends PreferenceFragment {
 	    final FragmentManager fragmentManager = getFragmentManager();;
 	    addPreferencesFromResource(R.xml.preferences);
 	    
-	    Preference about = (Preference) findPreference("pref_about");
-	    about.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+	    Preference myPref = (Preference) findPreference("pref_about");
+	    myPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
 				OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.about_title), getResources().getString(R.string.about_text)) {
 					@Override
@@ -29,13 +29,6 @@ public class PreferencesFragment extends PreferenceFragment {
 					}
 				};
 				dialog.show(fragmentManager, TAG);
-				return true;
-			}
-	    });
-	    
-	    Preference reset_instructions = (Preference) findPreference("pref_about");
-	    reset_instructions.setOnPreferenceClickListener(new OnPreferenceClickListener() {
-			public boolean onPreferenceClick(Preference preference) {
 				return true;
 			}
 	    });
