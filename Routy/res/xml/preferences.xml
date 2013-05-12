@@ -6,10 +6,10 @@
 	<PreferenceCategory
 		android:title="@string/pref_route_calculation" >
 		<SwitchPreference
-			android:key="pref_switch"
+			android:key="route_mode"
 	      	android:title="@string/pref_route_calculation_shortest"
 	      	android:switchTextOff="@string/by_dist"
-	      	android:switchTextOn="@string/by_dur"  />
+	      	android:switchTextOn="@string/by_dur" />
 	</PreferenceCategory>
  
 	<PreferenceCategory

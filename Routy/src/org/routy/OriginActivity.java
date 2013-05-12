@@ -16,6 +16,7 @@ import org.routy.model.AppProperties;
 import org.routy.model.DeviceLocationModel;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
+import org.routy.model.PreferencesModel;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
@@ -72,8 +73,8 @@ public class OriginActivity extends Activity {
 	private int click;
 	private AudioManager audioManager;
 	private float volume;
-	private RouteOptimizePreference routeOptimized;
-	private boolean userIsNoob;
+//	private RouteOptimizePreference routeOptimized;
+//	private boolean userIsNoob;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -92,7 +93,7 @@ public class OriginActivity extends Activity {
 		
 		originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
-		routeOptimized = RouteOptimizePreference.PREFER_DURATION;
+//		routeOptimized = RouteOptimizePreference.PREFER_DURATION;
 		
 		loadSavedData();
 		bindInputFields();
@@ -100,7 +101,7 @@ public class OriginActivity extends Activity {
 		refreshOriginLayout();
 		originAddressField.requestFocus();
 
-		userIsNoob = originActivityPrefs.getBoolean("noob_cookie", true);
+//		userIsNoob = PreferencesModel.getSingleton().isUserIsNoob();
 		showNoobInstructions();
 	}
 	
@@ -400,19 +401,18 @@ public class OriginActivity extends Activity {
 	/**
 	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
 	 */
-	private void userAintANoobNomore() {
+	/*private void userAintANoobNomore() {
 		//TODO: combine these, combine the noob messages
 		SharedPreferences.Editor ed = originActivityPrefs.edit();
 		ed.putBoolean("noob_cookie", false);
 		ed.commit();	
-	}
+	}*/
 	
 	
 	private void showNoobInstructions() {		
 		// First-time user dialog cookie
-		if (userIsNoob){
+		if (PreferencesModel.getSingleton().isRoutyNoob()){
 			showNoobDialog(getResources().getString(R.string.origin_noob_instructions));
-			userAintANoobNomore();
 		}
 	}
 
@@ -667,21 +667,10 @@ public class OriginActivity extends Activity {
 				Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
 				resultsIntent.putExtra("addresses", (ArrayList<Address>) route.getAddresses());
 				resultsIntent.putExtra("distance", route.getTotalDistance());
-				resultsIntent.putExtra("optimize_for", routeOptimized);
+				resultsIntent.putExtra("optimize_for", PreferencesModel.getSingleton().getRouteOptimizeMode());
 				startActivity(resultsIntent);
 			}
-		}.execute(new RouteRequest(addressModel.getOrigin(), addressModel.getDestinations(), false, routeOptimized));
-	}
-	
-	
-	public void onToggleClicked(boolean on) {
-		Log.v(TAG, "route optimize preference changed!");
-		if (on) {
-			routeOptimized = RouteOptimizePreference.PREFER_DURATION;
-		} 
-		else {
-			routeOptimized = RouteOptimizePreference.PREFER_DISTANCE;
-		}
+		}.execute(new RouteRequest(addressModel.getOrigin(), addressModel.getDestinations(), false, PreferencesModel.getSingleton().getRouteOptimizeMode()));
 	}
 	
 	

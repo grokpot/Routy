@@ -4,6 +4,8 @@ import org.routy.fragment.TwoButtonDialog;
 import org.routy.listener.FindDeviceLocationListener;
 import org.routy.model.AppProperties;
 import org.routy.model.DeviceLocationModel;
+import org.routy.model.PreferencesModel;
+import org.routy.model.RouteOptimizePreference;
 import org.routy.service.InternetService;
 import org.routy.task.FindDeviceLocationTask;
 
@@ -11,11 +13,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 
@@ -25,6 +29,7 @@ public class MainActivity extends Activity {
 
 	private Context mContext;
 	private TwoButtonDialog noInternetErrorDialog;
+	private SharedPreferences defaultSharedPrefs;
 	
 	private SoundPool sounds;
 	private int bad;
@@ -48,6 +53,9 @@ public class MainActivity extends Activity {
 		bad = sounds.load(this, R.raw.routybad, 1);
     
 		startDeviceLocationTask();
+		
+		defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		loadPreferencesModel();
 
 		new Handler().postDelayed(new Runnable() {
 
@@ -60,6 +68,20 @@ public class MainActivity extends Activity {
 	}
 	
 	
+	private void loadPreferencesModel() {
+		if (!defaultSharedPrefs.getBoolean("route_mode", false)) {
+			PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DISTANCE);
+		} else {
+			PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DURATION);
+		}
+		
+		PreferencesModel.getSingleton().setRoutyNoob(defaultSharedPrefs.getBoolean("routy_noob", true));
+		defaultSharedPrefs.edit().putBoolean("routy_noob", false).commit();
+		
+		PreferencesModel.getSingleton().setResultsNoob(defaultSharedPrefs.getBoolean("results_noob", true));
+	}
+
+
 	private void checkForInternetAndContinue() {
 		Log.v(TAG, "Checking for internet connection...");
 		

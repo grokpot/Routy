@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.routy.model.PreferencesModel;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
 import org.routy.view.ResultsSegmentView;
@@ -31,6 +32,7 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.ViewGroup;
@@ -95,10 +97,10 @@ public class ResultsActivity extends Activity {
 		
 		resultsActivityPrefs = getSharedPreferences("results_prefs", MODE_PRIVATE);
 		// First-time user dialog cookie
-		boolean noobCookie = resultsActivityPrefs.getBoolean("noob_cookie", false);
-		if (!noobCookie){
+//		boolean noobCookie = resultsActivityPrefs.getBoolean("noob_cookie", false);
+		if (PreferencesModel.getSingleton().isResultsNoob()){
 			showNoobDialog();
-			userAintANoob();
+			userAintANoobNoMore();
 		}
 	}
 	
@@ -117,10 +119,12 @@ public class ResultsActivity extends Activity {
 	/**
 	 *  If the user sees the first-time instruction dialog, they won't see it again next time.
 	 */
-	private void userAintANoob() {
-		SharedPreferences.Editor ed = resultsActivityPrefs.edit();
-		ed.putBoolean("noob_cookie", true);
-		ed.commit();	
+	private void userAintANoobNoMore() {
+		SharedPreferences.Editor ed = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit();
+		ed.putBoolean("results_noob", false);
+		ed.commit();
+		
+		PreferencesModel.getSingleton().setResultsNoob(false);
 	}
 	
 	
