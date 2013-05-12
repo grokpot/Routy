@@ -67,6 +67,15 @@ public class PreferencesFragment extends PreferenceFragment {
 				e.commit();
 				PreferencesModel.getSingleton().setRoutyNoob(true);
 				PreferencesModel.getSingleton().setResultsNoob(true);
+				
+				OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.pref_instructions_reset), getResources().getString(R.string.pref_instructions_reset_text)) {
+					@Override
+					public void onButtonClicked(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				};
+				dialog.show(fragmentManager, TAG);
+				
 				return true;
 			}
 	    });
@@ -81,9 +90,9 @@ public class PreferencesFragment extends PreferenceFragment {
 					Log.v(TAG, "route mode changed to " + mode);
 					
 					if (!mode) {
-						PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DISTANCE);
-					} else {
 						PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DURATION);
+					} else {
+						PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DISTANCE);
 					}
 				}
 				return true;

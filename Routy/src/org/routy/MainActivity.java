@@ -70,9 +70,9 @@ public class MainActivity extends Activity {
 	
 	private void loadPreferencesModel() {
 		if (!defaultSharedPrefs.getBoolean("route_mode", false)) {
-			PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DISTANCE);
-		} else {
 			PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DURATION);
+		} else {
+			PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DISTANCE);
 		}
 		
 		PreferencesModel.getSingleton().setRoutyNoob(defaultSharedPrefs.getBoolean("routy_noob", true));
