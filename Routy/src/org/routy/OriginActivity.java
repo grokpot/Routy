@@ -613,13 +613,13 @@ public class OriginActivity extends Activity {
 					addressModel.setOrigin(validatedAddress);
 					refreshOriginLayout();
 					
-//					prepareEntryRow();
-					prepareDestinations();
+					prepareEntryRow();
+//					prepareDestinations();
 				}
 			});
 		} else {
-//			prepareEntryRow();
-			prepareDestinations();
+			prepareEntryRow();
+//			prepareDestinations();
 		}
 	}
 	
