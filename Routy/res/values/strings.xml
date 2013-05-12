@@ -77,7 +77,7 @@
     <!-- Content Descriptions -->
     <string name="routeitdesc">The button to route it!</string>
     <string name="biglogodesc">A big routy logo!</string>
-    <string name="origin_noob_title">Set your origin</string>
+    <string name="origin_noob_title">Routy</string>
     <string name="destination_noob_title">Choose your destinations</string>
     <string name="results_noob_title">Your optimal route</string>
     <string name="destination_subtext">Enter an address or place (Any order)</string>
