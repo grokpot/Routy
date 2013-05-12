@@ -16,7 +16,7 @@ public class RouteRequest {
 	 * @param sensor
 	 */
 	public RouteRequest(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor) {
-		this(origin, destinations, sensor, RouteOptimizePreference.PREFER_DISTANCE);
+		this(origin, destinations, sensor, RouteOptimizePreference.PREFER_DURATION);
 	}
 	
 	public RouteRequest(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor, RouteOptimizePreference optimizePreference) {
