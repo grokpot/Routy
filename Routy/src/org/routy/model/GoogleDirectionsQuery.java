@@ -4,7 +4,7 @@ import com.google.android.maps.GeoPoint;
 
 public class GoogleDirectionsQuery {
 
-	private final String TAG = "GoogleDirectionsQuery";
+	//private final String TAG = "GoogleDirectionsQuery";
 	
 	private GeoPoint origin;
 	private GeoPoint destination;

@@ -10,13 +10,12 @@ import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
 public abstract class DestinationEntryRow extends LinearLayout {
 
-	private final String TAG = "DestinationEntryRow";
+	//private final String TAG = "DestinationEntryRow";
 	
 	/**
 	 * Invoked when user changes focus from the primary entry row to 
@@ -93,7 +92,7 @@ public abstract class DestinationEntryRow extends LinearLayout {
 			}
 		});
 		
-		LinearLayout destEntryRowView = (LinearLayout) findViewById(R.id.destination_entry_row);
+		//LinearLayout destEntryRowView = (LinearLayout) findViewById(R.id.destination_entry_row);
 		
 		secondary = (EditText) findViewById(R.id.secondary_entry_field);
 		hideSecondaryDestField();

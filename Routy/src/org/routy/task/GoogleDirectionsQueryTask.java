@@ -11,7 +11,7 @@ import android.os.AsyncTask;
 
 public abstract class GoogleDirectionsQueryTask extends AsyncTask<GoogleDirectionsQuery, Void, GoogleDirections> {
 	
-	private final String TAG = "GoogleDirectionsQueryTask";
+	//private final String TAG = "GoogleDirectionsQueryTask";
 	
 	private Context context;
 	private GoogleDirectionsQueryListener listener;

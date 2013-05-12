@@ -7,6 +7,7 @@ import org.routy.model.RoutyAddress;
 
 import android.location.Address;
 
+@SuppressWarnings("serial")
 public class AmbiguousAddressException extends Exception {
 
 	private List<? extends Address> addresses;

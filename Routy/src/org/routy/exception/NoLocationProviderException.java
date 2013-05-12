@@ -1,5 +1,6 @@
 package org.routy.exception;
 
+@SuppressWarnings("serial")
 public class NoLocationProviderException extends Exception {
 
 	public NoLocationProviderException(String message) {

@@ -8,13 +8,12 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
-import android.widget.TextView;
 
 public abstract class RoutyAlertDialog extends DialogFragment {
 
 	private String mTitle;
 	private String mMessage;
-	private TextView mTextView;
+	//private TextView mTextView;
 	private String[] mButtonLabels;
 	
 	private String rightButtonLabel;

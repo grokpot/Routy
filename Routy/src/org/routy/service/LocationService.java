@@ -1,18 +1,10 @@
 package org.routy.service;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-
-import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.NoLocationProviderException;
-import org.routy.exception.RoutyException;
 import org.routy.model.AppProperties;
-
-import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;

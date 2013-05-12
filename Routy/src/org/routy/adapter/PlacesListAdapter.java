@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 public class PlacesListAdapter extends BaseAdapter {
 
-	private final String TAG = "PlacesListAdapter";
+	//private final String TAG = "PlacesListAdapter";
 	
 	private Context mContext;
 	private List<GooglePlace> mPlaces;

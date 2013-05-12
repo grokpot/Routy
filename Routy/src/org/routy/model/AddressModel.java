@@ -2,12 +2,10 @@ package org.routy.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import org.routy.Util;
-import org.routy.callback.ValidateAddressCallback;
 
-import android.location.Address;
+
 import android.util.Log;
 
 public class AddressModel {

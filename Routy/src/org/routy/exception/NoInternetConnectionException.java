@@ -1,5 +1,6 @@
 package org.routy.exception;
 
+@SuppressWarnings("serial")
 public class NoInternetConnectionException extends Exception {
 
 	public NoInternetConnectionException() {

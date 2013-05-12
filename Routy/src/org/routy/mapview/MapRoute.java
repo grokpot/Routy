@@ -8,8 +8,8 @@ import com.google.android.maps.GeoPoint;
 
 public class MapRoute {
 
-	private GeoPoint startPoint 	= null;
-	private GeoPoint endPoint 		= null;
+	//private GeoPoint startPoint 	= null;
+	//private GeoPoint endPoint 		= null;
 	private ArrayList<GeoPoint> geoPoints = new ArrayList<GeoPoint>();
 	private Handler haRoute 		= new Handler();
 	
@@ -21,8 +21,8 @@ public class MapRoute {
 	private RouteListener routeListener = null;
 
 	public MapRoute(GeoPoint startPoint, GeoPoint endPoint){
-	    this.startPoint	= startPoint;
-	    this.endPoint 	= endPoint;
+	    //this.startPoint	= startPoint;
+	    //this.endPoint 	= endPoint;
 	}
 
 	public void getPoints(RouteListener routeListener){
@@ -47,12 +47,13 @@ public class MapRoute {
 	private Runnable ruFetch = new Runnable(){
 	    @Override
       public void run(){
+	      /*
 	        String szUrl = "http://maps.googleapis.com/maps/api/directions/xml";
 	        szUrl += "?origin=" + (startPoint.getLatitudeE6()/1e6) + "," + (startPoint.getLongitudeE6()/1e6);
 	        szUrl += "&destination=" + (endPoint.getLatitudeE6()/1e6) + "," + (endPoint.getLongitudeE6()/1e6);
 	        szUrl += "&sensor=true";
 
-	        /*HttpClient oHttp = HttpClient.getInstance();
+	        HttpClient oHttp = HttpClient.getInstance();
 	        String szXml = oHttp.doGet(szUrl,"");
 
 	        try{

@@ -19,7 +19,6 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -27,7 +26,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.media.AudioManager;
 import android.media.SoundPool;
@@ -35,7 +33,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -66,7 +63,8 @@ public class ResultsActivity extends Activity {
 	AudioManager audioManager;
 	float volume;
 
-	@Override
+	@SuppressWarnings({ "unchecked" })
+  @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_results);
@@ -162,7 +160,7 @@ public class ResultsActivity extends Activity {
 			}
 		}
 		
-		Drawable drawable 	= this.getResources().getDrawable(R.drawable.pin1);
+		//Drawable drawable = this.getResources().getDrawable(R.drawable.pin1);
 	}
 	
 	

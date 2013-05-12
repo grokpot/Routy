@@ -10,7 +10,6 @@ import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RoutyAddress;
 
-import android.location.Address;
 import android.util.Log;
 
 /**

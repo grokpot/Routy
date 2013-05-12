@@ -10,7 +10,7 @@ import com.google.android.maps.GeoPoint;
  */
 public class Step {
 
-	private final String TAG = "Step";
+	//private final String TAG = "Step";
 	
 	private GeoPoint start;
 	private GeoPoint end;

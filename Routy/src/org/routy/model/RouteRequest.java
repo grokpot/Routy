@@ -2,8 +2,6 @@ package org.routy.model;
 
 import java.util.List;
 
-import android.location.Address;
-
 public class RouteRequest {
 
 	private RoutyAddress origin;

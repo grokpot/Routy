@@ -12,7 +12,6 @@ import org.routy.service.GooglePlacesService;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery, Void, List<GooglePlace>> {

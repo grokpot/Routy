@@ -9,12 +9,10 @@ import java.util.Locale;
 
 import org.routy.model.AddressStatus;
 import org.routy.model.RoutyAddress;
-import org.routy.view.DestinationRowView;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
-import android.os.Bundle;
 import android.util.JsonReader;
 import android.util.JsonToken;
 import android.util.JsonWriter;
