@@ -78,6 +78,11 @@
             android:label="@string/title_activity_results" 
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".PreferencesActivity"
+            android:label="@string/title_activity_results" 
+            android:screenOrientation="portrait" >
+        </activity>
     </application>
 
 </manifest>

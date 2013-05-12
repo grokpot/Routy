@@ -93,4 +93,5 @@
     <string name="destination_subtext">Enter an address or place (Any order)</string>
     <string name="origin_purpose">...the right route for many places.</string>
     <string name="poweredbygoogledesc">Routy is powered by Google!</string>
+    <string name="title_activity_preferenes">PreferencesActivity</string>
 </resources>
