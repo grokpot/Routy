@@ -613,11 +613,13 @@ public class OriginActivity extends Activity {
 					addressModel.setOrigin(validatedAddress);
 					refreshOriginLayout();
 					
-					prepareEntryRow();
+//					prepareEntryRow();
+					prepareDestinations();
 				}
 			});
 		} else {
-			prepareEntryRow();
+//			prepareEntryRow();
+			prepareDestinations();
 		}
 	}
 	
@@ -638,7 +640,9 @@ public class OriginActivity extends Activity {
 				
 				@Override
 				public void onAddressValidated(RoutyAddress validatedAddress) {
-					addressModel.setDestinationAt(idx, validatedAddress);
+					Log.v(TAG, "validated entry row was at " + idx);
+//					addressModel.setDestinationAt(idx, validatedAddress);
+					addressModel.addDestination(validatedAddress);
 					refreshDestinationLayout();
 					prepareDestinations();
 				}

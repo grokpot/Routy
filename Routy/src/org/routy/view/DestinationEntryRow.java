@@ -8,10 +8,14 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 public abstract class DestinationEntryRow extends LinearLayout {
 
@@ -89,6 +93,16 @@ public abstract class DestinationEntryRow extends LinearLayout {
 				} else {
 					hideSecondaryDestField();
 				}
+			}
+		});
+		primary.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					onEntryConfirmed(primary.getEditableText());
+				}
+				return true;
 			}
 		});
 		
