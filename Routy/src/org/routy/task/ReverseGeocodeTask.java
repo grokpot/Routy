@@ -65,10 +65,8 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 			} catch (AmbiguousAddressException e) {
 				return e.getFirstAddress();
 			} catch (RoutyException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

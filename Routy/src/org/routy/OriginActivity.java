@@ -131,11 +131,9 @@ public class OriginActivity extends Activity {
 	 * Takes the destination list in the model and displays it appropriately in the OriginActivity
 	 */
 	private void refreshDestinationLayout() {
-		// TODO Auto-generated method stub
 		assert destLayout != null;
 		destLayout.removeAllViews();
 		
-		//TODO Draw a new row for each destination
 		if (addressModel.hasDestinations()) {
 			for (int i = 0; i < addressModel.getDestinations().size(); i++) {
 				addDestinationRow(addressModel.getDestinations().get(i), i);
@@ -154,7 +152,6 @@ public class OriginActivity extends Activity {
 			
 			@Override
 			public void onRemoveClicked(int indexInLayout, UUID id) {
-				// TODO Auto-generated method stub
 				addressModel.removeDestination(indexInLayout);
 				refreshDestinationLayout();
 			}
@@ -515,7 +512,6 @@ public class OriginActivity extends Activity {
 	
 	
 	private Location getGoodDeviceLocation() {
-		// TODO Check accuracy, check time
 		Location deviceLocation = DeviceLocationModel.getSingleton().getDeviceLocation();
 		if (deviceLocation == null) {
 			return null;

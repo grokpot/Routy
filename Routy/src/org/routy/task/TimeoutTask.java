@@ -17,7 +17,6 @@ public abstract class TimeoutTask extends AsyncTask<Long, Void, Void> {
 	
 	@Override
 	protected Void doInBackground(Long... params) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
