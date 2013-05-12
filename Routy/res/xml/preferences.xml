@@ -11,6 +11,13 @@
 	      	android:switchTextOff="@string/by_dist"
 	      	android:switchTextOn="@string/by_dur"  />
 	</PreferenceCategory>
+	
+	<PreferenceCategory
+		android:title="@string/pref_reset_instruction_header" >
+		<Preference
+			android:key="pref_reset_instruction_text"
+	      	android:title="@string/pref_reset_instruction_title" />
+	</PreferenceCategory>
  
 	<PreferenceCategory
 		android:title="@string/pref_about_header" >
