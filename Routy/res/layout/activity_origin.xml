@@ -114,9 +114,10 @@
                 android:layout_marginTop="20dp"
                 android:background="@drawable/green_button"
                 android:baselineAlignBottom="true"
+                android:scaleType="fitCenter"
                 android:contentDescription="@string/routeitdesc"
                 android:onClick="acceptDestinations"
-                android:src="@drawable/routeitwhitewithbox" />
+                android:src="@drawable/routeitnobox" />
         </LinearLayout>
     </RelativeLayout>
 
