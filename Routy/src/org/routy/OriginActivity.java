@@ -272,8 +272,8 @@ public class OriginActivity extends Activity {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus) {
+					Log.v(TAG, "origin field lost focus");
 					if (!addressModel.isOriginValid()) {
-						Log.v(TAG, "origin field lost focus");
 						//Validate the origin
 						Editable originText = ((EditText) v).getEditableText();
 						String locationQuery = null;
@@ -288,8 +288,9 @@ public class OriginActivity extends Activity {
 								public void onAddressValidated(RoutyAddress validatedAddress) {
 									addressModel.setOrigin(validatedAddress);
 									refreshOriginLayout();
+									
+									showDestinationsNoobMessage();
 								}
-								
 							});
 						}
 					}
@@ -298,6 +299,12 @@ public class OriginActivity extends Activity {
 		});
 	}
 
+	
+	private void showDestinationsNoobMessage() {
+		if (!addressModel.hasDestinations()) {
+			showNoobDialog(getResources().getString(R.string.destination_noob_instructions));
+		}
+	}
 
 	private void initializeAudio() {
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
@@ -402,11 +409,10 @@ public class OriginActivity extends Activity {
 				}
 			}
 			
-			// use GooglePlacesQueryTask to do this...
 			new GooglePlacesQueryTask(context) {
 				
 				@Override
-				public void onResult(GooglePlace place) {	//TODO get rid of GooglePlace object and just use Address?  Something unified.
+				public void onResult(GooglePlace place) {
 					// make an Address out of the Google place
 					RoutyAddress result = new RoutyAddress(Locale.getDefault());
 					result.setFeatureName(place.getName() != null ? place.getName() : "");
@@ -417,7 +423,6 @@ public class OriginActivity extends Activity {
 						result.setExtras(new Bundle());
 					}
 					
-//					result.getExtras().putString("formatted_address", place.getFormattedAddress());
 					result.setAddressString(place.getFormattedAddress());
 					result.setValid();
 					
@@ -456,6 +461,7 @@ public class OriginActivity extends Activity {
 				@Override
 				public void onResult(RoutyAddress address) {
 					loadReverseGeocodedOrigin(address);
+					showDestinationsNoobMessage();
 				}
 			}).execute(deviceLocation);
 		} else {
@@ -509,6 +515,7 @@ public class OriginActivity extends Activity {
 					@Override
 					public void onResult(RoutyAddress address) {
 						loadReverseGeocodedOrigin(address);
+						showDestinationsNoobMessage();
 					}
 				}).execute(userLocation);
 			}
