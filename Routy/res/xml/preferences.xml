@@ -4,18 +4,18 @@
     android:layout_height="wrap_content" >
 
 	<PreferenceCategory
-		android:title="Preferences" >
-	  	<SwitchPreference
+		android:title="@string/pref_route_calculation" >
+		<SwitchPreference
 			android:key="pref_switch"
-	      	android:title="@string/pref_route_calculation"
+	      	android:title="@string/pref_route_calculation_shortest"
 	      	android:switchTextOff="@string/by_dist"
 	      	android:switchTextOn="@string/by_dur"  />
 	</PreferenceCategory>
  
 	<PreferenceCategory
-		android:title="About" >
+		android:title="@string/pref_about_header" >
 		<Preference
 		    android:key="pref_about"
-		    android:title="About Routy"/>
+		    android:title="@string/pref_about_title"/>
 	</PreferenceCategory>
 </PreferenceScreen>

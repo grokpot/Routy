@@ -53,8 +53,8 @@
     <string name="origin_modify">Go back and choose a new origin</string>
     <string name="destination_add">Add a destination</string>
     <string name="destination_toggle_instructions">Shorter route or faster time?</string>
-    <string name="by_dur">Faster time</string>
-    <string name="by_dist">Shorter route</string>
+    <string name="by_dur">time</string>
+    <string name="by_dist">distance</string>
     
     <!-- Route Screen Stuff -->
     <string name="view_segment">Get Directions</string>
@@ -85,5 +85,8 @@
     <string name="title_activity_preferenes">PreferencesActivity</string>
     <string name="about_title">About Routy</string>
     <string name="about_text">Routy is an awesome app. Use the fuck out of it.</string>
-    <string name="pref_route_calculation">Route</string>
+    <string name="pref_route_calculation">Calculate route by:</string>
+    <string name="pref_route_calculation_shortest">shortest</string>
+    <string name="pref_about_title">About Routy</string>
+    <string name="pref_about_header">Comments / Complaints / Love:</string>
 </resources>
