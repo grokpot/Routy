@@ -116,14 +116,12 @@ public class MainActivity extends Activity {
 			
 			@Override
 			public void onRightButtonClicked(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				dialog.dismiss();
 				checkForInternetAndContinue();
 			}
 			
 			@Override
 			public void onLeftButtonClicked(DialogInterface dialog, int which) {
-				// TODO Auto-generated method stub
 				dialog.dismiss();
 				MainActivity.this.finish();
 			}

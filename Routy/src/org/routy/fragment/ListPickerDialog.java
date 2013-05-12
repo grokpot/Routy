@@ -54,7 +54,6 @@ public abstract class ListPickerDialog extends DialogFragment {
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		// TODO
 		AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 		builder.setTitle(mTitle);
 		builder.setAdapter(mAdapter, pickerListener);
