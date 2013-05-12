@@ -3,21 +3,16 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
 
- <PreferenceCategory
-   android:summary="Username and password information"
-   android:title="Login information" >
-  <EditTextPreference
-     android:key="username"
-     android:summary="Please enter your login username"
-     android:title="Username" />
- </PreferenceCategory>
+	<PreferenceCategory
+	  android:summary="Route Calculation"
+	  android:title="Route Calculation" >
+	 <EditTextPreference
+	    android:key="username"
+	    android:summary="Please enter your login username"
+	    android:title="Username" />
+	</PreferenceCategory>
  
- <PreferenceCategory
-   android:summary="This is a summary about about"
-   android:title="About" >
-  <CheckBoxPreference
-     android:key="checkBox"
-     android:summary="On/Off"
-     android:title="Keep me logged in" />
- </PreferenceCategory>
+	<Preference
+	    android:key="pref_about"
+	    android:title="About"/>
 </PreferenceScreen>
