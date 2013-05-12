@@ -24,6 +24,7 @@ public abstract class DestinationEntryRow extends LinearLayout {
 	 * @param s		the {@link Editable} from the primary entry row
 	 */
 	public abstract void onEntryConfirmed(Editable s);
+	public abstract void onFocusGained();
 	
 	private EditText primary;
 	private EditText secondary;
@@ -63,7 +64,11 @@ public abstract class DestinationEntryRow extends LinearLayout {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				EditText e = (EditText) v;
-				onEntryConfirmed(e.getEditableText());
+				if (!hasFocus) {
+					onEntryConfirmed(e.getEditableText());
+				} else {
+					onFocusGained();
+				}
 			}
 		});
 		primary.addTextChangedListener(new TextWatcher() {
