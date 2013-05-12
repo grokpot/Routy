@@ -41,13 +41,17 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.EditorInfo;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 public class OriginActivity extends Activity {
 
@@ -59,6 +63,7 @@ public class OriginActivity extends Activity {
 	private Activity context;
 	private AddressModel addressModel;
 	private EditText originAddressField;
+	private DestinationEntryRow destEntryRow;
 	private LinearLayout destLayout;
 	private SharedPreferences originActivityPrefs;
 	private SoundPool sounds;
@@ -170,15 +175,6 @@ public class OriginActivity extends Activity {
 			public void destinationTextChanged(int indexInLayout, Editable s) {
 				addressModel.getDestinations().get(indexInLayout).setNotValidated();
 			}
-
-			/*@Override
-			public void onFocusGained(int indexInLayout) {
-				Log.v(TAG, "dest entry row got focus");
-				//If noob and origin is null, show warning message
-				if (!addressModel.isOriginValid() || addressModel.getOrigin().getAddressString().length() == 0) {
-					showNoobDialog(getResources().getString(R.string.no_origin_address_error));
-				}
-			}*/
 		};
 		
 		destLayout.addView(newRow, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -186,7 +182,7 @@ public class OriginActivity extends Activity {
 
 
 	private void displayDestinationEntryRow() {
-		DestinationEntryRow destEntryRow = new DestinationEntryRow(this) {
+		DestinationEntryRow entryRow = new DestinationEntryRow(this) {
 			
 			@Override
 			public void onEntryConfirmed(Editable s) {
@@ -216,13 +212,18 @@ public class OriginActivity extends Activity {
 			public void onFocusGained() {
 				//If this is the first destination they're entering and there's no origin, warn the user.
 				if (!addressModel.hasDestinations() && (!addressModel.isOriginValid() || addressModel.getOrigin().getAddressString().length() == 0)) {
+					Log.v(TAG, "blegh");
 					showNoobDialog(getResources().getString(R.string.origin_not_entered_error));
 				}
 			}
 			
 		};
-		destLayout.addView(destEntryRow, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-		destEntryRow.focusOnEntryField();
+		destEntryRow = entryRow;
+		destLayout.addView(entryRow, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+		
+		if (addressModel.hasDestinations()) {
+			entryRow.focusOnEntryField();
+		}
 	}
 
 
@@ -281,24 +282,66 @@ public class OriginActivity extends Activity {
 							locationQuery = originText.toString();
 						}
 						
-						if (locationQuery != null && locationQuery.length() > 0) {
-							validateAddress(locationQuery, null, null, new ValidateAddressCallback() {
+						validateOrigin(locationQuery, new ValidateAddressCallback() {
 
-								@Override
-								public void onAddressValidated(RoutyAddress validatedAddress) {
-									addressModel.setOrigin(validatedAddress);
-									refreshOriginLayout();
-									
-									showDestinationsNoobMessage();
-								}
-							});
-						}
+							@Override
+							public void onAddressValidated(RoutyAddress validatedAddress) {
+								addressModel.setOrigin(validatedAddress);
+								refreshOriginLayout();
+								
+								showDestinationsNoobMessage();
+							}
+						});
 					}
 				}
 			}
 		});
+		originAddressField.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_NEXT) {
+					//Validate the origin
+					Editable originText = ((EditText) v).getEditableText();
+					String locationQuery = null;
+					if (originText != null) {
+						locationQuery = originText.toString();
+					}
+					
+					if (locationQuery != null && locationQuery.length() > 0) {
+						validateOrigin(locationQuery,  new ValidateAddressCallback() {
+
+							@Override
+							public void onAddressValidated(RoutyAddress validatedAddress) {
+								addressModel.setOrigin(validatedAddress);
+								refreshOriginLayout();
+								
+								showDestinationsNoobMessage();
+								destEntryRow.focusOnEntryField();
+							}
+						});
+					}
+				}
+				return true;
+			}
+		});
 	}
 
+	
+	private void validateOrigin(String locationQuery, ValidateAddressCallback callback) {
+		if (locationQuery != null && locationQuery.length() > 0) {
+			Double lat = null;
+			Double lng = null;
+			Location deviceLocation = getGoodDeviceLocation();
+			if (deviceLocation != null) {
+				lat = deviceLocation.getLatitude();
+				lng = deviceLocation.getLongitude();
+			}
+			
+			validateAddress(locationQuery, lat, lng, callback);
+		}
+	}
+	
 	
 	private void showDestinationsNoobMessage() {
 		if (!addressModel.hasDestinations()) {
@@ -462,6 +505,7 @@ public class OriginActivity extends Activity {
 				public void onResult(RoutyAddress address) {
 					loadReverseGeocodedOrigin(address);
 					showDestinationsNoobMessage();
+					destEntryRow.focusOnEntryField();
 				}
 			}).execute(deviceLocation);
 		} else {
