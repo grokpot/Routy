@@ -90,9 +90,9 @@ public class PreferencesFragment extends PreferenceFragment {
 					Log.v(TAG, "route mode changed to " + mode);
 					
 					if (!mode) {
-						PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DISTANCE);
-					} else {
 						PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DURATION);
+					} else {
+						PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DISTANCE);
 					}
 				}
 				return true;

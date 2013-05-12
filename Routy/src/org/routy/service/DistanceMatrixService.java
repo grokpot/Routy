@@ -37,7 +37,7 @@ public class DistanceMatrixService {
 	 * @throws Exception
 	 */
 	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
-		return getClosestDestination(origin, destinations, sensor, PREFER_DISTANCE);
+		return getClosestDestination(origin, destinations, sensor, PREFER_DURATION);
 	}
 	
 	
