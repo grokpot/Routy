@@ -128,7 +128,7 @@ public abstract class DestinationRowView extends LinearLayout {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus) {
-					Log.v(TAG, "onFocusChange (lost focus) from row with id=" + id);
+//					Log.v(TAG, "onFocusChange (lost focus) from row with id=" + id);
 					if (!ignoreOnFocusLostCallback) {
 						EditText e = (EditText) v;
 						onFocusLost(indexInLayout, id, e.getEditableText());
@@ -146,7 +146,7 @@ public abstract class DestinationRowView extends LinearLayout {
 			
 			@Override
 			public void onClick(View v) {
-				Log.v(TAG, "onRemoveClicked from row with id=" + id);
+//				Log.v(TAG, "onRemoveClicked from row with id=" + id);
 				onRemoveClicked(indexInLayout, id);
 			}
 		});
@@ -171,7 +171,7 @@ public abstract class DestinationRowView extends LinearLayout {
 	
 	
 	public void clearValidationStatus() {
-		Log.v(TAG, "clearing validation status");
+//		Log.v(TAG, "clearing validation status");
 		editText.setTextColor(getResources().getColor(R.color.White));
 		status = DestinationRowView.NOT_VALIDATED;
 	}

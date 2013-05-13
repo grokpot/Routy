@@ -65,7 +65,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 				public void onClick(DialogInterface dialog, int which) {
 					progressDialog.cancel();
 					
-					Log.v(TAG, "progress dialog cancelled");
+//					Log.v(TAG, "progress dialog cancelled");
 					FindUserLocationTask.this.cancel(true);
 				}
 			});
@@ -85,20 +85,20 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 
 	@Override
 	protected Location doInBackground(Integer... params) {
-		Log.v(TAG, "doInBackground()");
+//		Log.v(TAG, "doInBackground()");
 		
 		while (location == null && !isCancelled()) {
 //			loop
 		}
 		
-		Log.v(TAG, "out of the loop");
+//		Log.v(TAG, "out of the loop");
 		return location;
 	}
 	
 	
 	@Override
 	protected void onCancelled(Location location) {
-		Log.v(TAG, "onCancelled called");
+//		Log.v(TAG, "onCancelled called");
 		
 		if (showDialogs) {
 			progressDialog.cancel();
@@ -108,7 +108,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	
 	@Override
 	protected void onPostExecute(Location location) {
-		Log.v(TAG, "postExecute() -- got user location");
+//		Log.v(TAG, "postExecute() -- got user location");
 		if (showDialogs && progressDialog.isShowing()) {
 			progressDialog.cancel();
 		}
@@ -120,18 +120,18 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 
 			@Override
 			public void onLocationResult(Location result) {
-				Log.v(TAG, "got a location result");
+//				Log.v(TAG, "got a location result");
 				location = result;
 			}
 
 
 			@Override
 			public void onLocationSearchTimeout() {
-				Log.v(TAG, "onLocationSearchTimeout");
+//				Log.v(TAG, "onLocationSearchTimeout");
 				GpsNotEnabledException e = null;
 				
 				if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-					Log.i(TAG, "GPS was not enabled");
+//					Log.i(TAG, "GPS was not enabled");
 					e = new GpsNotEnabledException("GPS is not enabled.");
 				}
 				

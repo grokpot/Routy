@@ -78,7 +78,7 @@ public class OriginActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		Log.v(TAG, "onCreate()");
+//		Log.v(TAG, "onCreate()");
 		setContentView(R.layout.activity_origin);
 		
 		// Audio stuff
@@ -106,9 +106,9 @@ public class OriginActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		super.onCreateOptionsMenu(menu);
-		Log.v(TAG, "menu has " + menu.size() + " items BEFORE");
+//		Log.v(TAG, "menu has " + menu.size() + " items BEFORE");
 		getMenuInflater().inflate(R.menu.menu_origin, menu);
-		Log.v(TAG, "menu has " + menu.size() + " items AFTER");
+//		Log.v(TAG, "menu has " + menu.size() + " items AFTER");
 		return super.onCreateOptionsMenu(menu);
 	}
 	
@@ -128,7 +128,7 @@ public class OriginActivity extends Activity {
 	 * Takes the destination list in the model and displays it appropriately in the OriginActivity
 	 */
 	private void refreshDestinationLayout() {
-		Log.v(TAG, "refreshing dest layout with " + addressModel.getDestinations().size() + " dests");
+//		Log.v(TAG, "refreshing dest layout with " + addressModel.getDestinations().size() + " dests");
 		assert destLayout != null;
 		destLayout.removeAllViews();
 		
@@ -159,7 +159,7 @@ public class OriginActivity extends Activity {
 			@Override
 			public void onFocusLost(final int indexInLayout, UUID id, Editable s) {
 				if (indexInLayout < addressModel.getDestinations().size() && !addressModel.getDestinations().get(indexInLayout).isValid()) {
-					Log.v(TAG, "validating address addDestinationRow().onFocusLost()");
+//					Log.v(TAG, "validating address addDestinationRow().onFocusLost()");
 					validateAddress(s.toString(), null, null, new ValidateAddressCallback() {
 						@Override
 						public void onAddressValidated(RoutyAddress validatedAddress) {
@@ -194,12 +194,12 @@ public class OriginActivity extends Activity {
 				}
 				
 				if (s != null && s.length() > 0) {
-					Log.v(TAG, "validating address displayDestinationEntryRow().onEntryConfirmed()");
+//					Log.v(TAG, "validating address displayDestinationEntryRow().onEntryConfirmed()");
 					validateAddress(s.toString(), lat, lng, new ValidateAddressCallback() {
 						
 						@Override
 						public void onAddressValidated(RoutyAddress validatedAddress) {
-							Log.v(TAG, "new destination entered, validating");
+//							Log.v(TAG, "new destination entered, validating");
 							//Add the validated address to the model and re-draw the destination layout
 							addressModel.addDestination(validatedAddress);
 							refreshDestinationLayout();
@@ -212,7 +212,7 @@ public class OriginActivity extends Activity {
 			public void onFocusGained() {
 				//If this is the first destination they're entering and there's no origin, warn the user.
 				if (!addressModel.hasDestinations() && (!addressModel.isOriginValid() || addressModel.getOrigin().getAddressString().length() == 0)) {
-					Log.v(TAG, "blegh");
+//					Log.v(TAG, "blegh");
 					showNoobDialog(getResources().getString(R.string.origin_not_entered_error));
 				}
 			}
@@ -228,11 +228,11 @@ public class OriginActivity extends Activity {
 
 
 	private void loadSavedData() {
-		Log.v(TAG, "onCreate() -- loading model");
+//		Log.v(TAG, "onCreate() -- loading model");
 		String originJson = originActivityPrefs.getString(SAVED_ORIGIN_JSON_KEY, "");
-		Log.v(TAG, "Origin JSON: " + originJson);
+//		Log.v(TAG, "Origin JSON: " + originJson);
 		String destJson = originActivityPrefs.getString(SAVED_DESTS_JSON_KEY, "");
-		Log.v(TAG, "Destinations JSON: " + destJson);
+//		Log.v(TAG, "Destinations JSON: " + destJson);
 		addressModel.loadModel(originJson, destJson);
 	}
 
@@ -249,7 +249,7 @@ public class OriginActivity extends Activity {
 			
 			@Override
 			public void afterTextChanged(Editable s) {
-				Log.v(TAG, "afterTextChanged()");
+//				Log.v(TAG, "afterTextChanged()");
 				
 				if (s != null && s.length() > 0) {
 					if (addressModel.getOrigin() == null || !s.toString().equals(addressModel.getOrigin().getAddressString())) {
@@ -260,9 +260,9 @@ public class OriginActivity extends Activity {
 						addressModel.setOrigin(newOrigin);
 					}
 				} else {
-					Log.v(TAG, "origin text field was empty, nulling out the origin");
+//					Log.v(TAG, "origin text field was empty, nulling out the origin");
 					if (addressModel == null) {
-						Log.v(TAG, "addressModel is null");
+//						Log.v(TAG, "addressModel is null");
 					}
 					addressModel.setOrigin(null);
 				}
@@ -273,7 +273,7 @@ public class OriginActivity extends Activity {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				if (!hasFocus) {
-					Log.v(TAG, "origin field lost focus");
+//					Log.v(TAG, "origin field lost focus");
 					if (!addressModel.isOriginValid()) {
 						//Validate the origin
 						Editable originText = ((EditText) v).getEditableText();
@@ -363,7 +363,7 @@ public class OriginActivity extends Activity {
 			  if (sampleId == speak) {
 			    volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			    Log.v(TAG, "volume is: " + volume);
+//			    Log.v(TAG, "volume is: " + volume);
 			    soundPool.play(sampleId, volume, volume, 1, 0, 1);
 			  }
 			}
@@ -439,15 +439,15 @@ public class OriginActivity extends Activity {
 
 			Double lat = centerLat;
 			Double lng = centerLng;
-			Log.v(TAG, "validating address -- query: " + locationQuery);
+//			Log.v(TAG, "validating address -- query: " + locationQuery);
 			if (lat != null && lng != null) {
-				Log.v(TAG, "searching around center @ " + centerLat + "," + centerLng);
+//				Log.v(TAG, "searching around center @ " + centerLat + "," + centerLng);
 			} else {
 				Location deviceLocation = getGoodDeviceLocation();
 				if (deviceLocation != null) {
 					lat = deviceLocation.getLatitude();
 					lng = deviceLocation.getLongitude();
-					Log.v(TAG, "searching around device centered @" + lat + "," + lng);
+//					Log.v(TAG, "searching around device centered @" + lat + "," + lng);
 				}
 			}
 			
@@ -491,7 +491,7 @@ public class OriginActivity extends Activity {
 	 * @param view
 	 */
 	public void findUserLocation(View view) {
-		Log.v(TAG, "locating user");
+//		Log.v(TAG, "locating user");
 		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 		sounds.play(click, volume, volume, 1, 0, 1);  
@@ -531,7 +531,7 @@ public class OriginActivity extends Activity {
 	
 	private void loadReverseGeocodedOrigin(RoutyAddress address) {
 		if (address != null) {
-			Log.v(TAG, "got user location: " + address.getAddressLine(0));
+//			Log.v(TAG, "got user location: " + address.getAddressLine(0));
 			
 			RoutyAddress origin = address;
 			if (origin.getExtras() == null) {
@@ -566,21 +566,21 @@ public class OriginActivity extends Activity {
 			
 			@Override
 			public void onTimeout(GpsNotEnabledException e) {
-				Log.e(TAG, "getting user location timed out and gps was " + (e == null ? "not enabled" : "enabled"));
+//				Log.e(TAG, "getting user location timed out and gps was " + (e == null ? "not enabled" : "enabled"));
 				
 				showErrorDialog(getResources().getString(R.string.locating_fail_error));
 			}
 			
 			@Override
 			public void onFailure(Throwable t) {
-				Log.e(TAG, "failed getting user location");
+//				Log.e(TAG, "failed getting user location");
 				try {
 					throw t;
 				} catch (NoLocationProviderException e) {
-					Log.e(TAG, "GPS was disabled, going to ask the user to enable it and then try again");
+//					Log.e(TAG, "GPS was disabled, going to ask the user to enable it and then try again");
 					showEnableGpsDialog();
 				} catch (Throwable e) {
-					Log.e(TAG, "don't know why we couldn't obtain a location...");
+//					Log.e(TAG, "don't know why we couldn't obtain a location...");
 					showErrorDialog(getResources().getString(R.string.locating_fail_error));
 				}
 			}
@@ -601,13 +601,13 @@ public class OriginActivity extends Activity {
 	 * @param v
 	 */
 	public void routeIt() {
-		Log.v(TAG, "route requested");
+//		Log.v(TAG, "route requested");
 		
 		if (addressModel.getOrigin() == null || addressModel.getOrigin().getAddressString().length() == 0) {
-			Log.v(TAG, "no origin");
+//			Log.v(TAG, "no origin");
 			showErrorDialog("Please tell Routy where your trip begins.");
 		} else if (!addressModel.getOrigin().isValid()) {
-			Log.v(TAG, "validating origin routeIt()");
+//			Log.v(TAG, "validating origin routeIt()");
 			//Validate the origin before continuing
 			validateAddress(addressModel.getOrigin().getAddressString(), null, null, new ValidateAddressCallback() {
 				@Override
@@ -624,10 +624,10 @@ public class OriginActivity extends Activity {
 	
 	
 	private void prepareEntryRow() {
-		Log.v(TAG, "preparing entry row");
+//		Log.v(TAG, "preparing entry row");
 		//Validate the last entered destination
 		if (destEntryRow != null && destEntryRow.getEntryFieldEditable() != null && destEntryRow.getEntryFieldEditable().length() > 0) {
-			Log.v(TAG, "validating address prepareEntryRow()");
+//			Log.v(TAG, "validating address prepareEntryRow()");
 			final int idx = destLayout.indexOfChild(destEntryRow);
 			Double lat = null;
 			Double lng = null;
@@ -639,21 +639,21 @@ public class OriginActivity extends Activity {
 				
 				@Override
 				public void onAddressValidated(RoutyAddress validatedAddress) {
-					Log.v(TAG, "validated entry row was at " + idx);
+//					Log.v(TAG, "validated entry row was at " + idx);
 					addressModel.addDestination(validatedAddress);
 					refreshDestinationLayout();
 					prepareDestinations();
 				}
 			});
 		} else {
-			Log.v(TAG, "no entry row to validate");
+//			Log.v(TAG, "no entry row to validate");
 			prepareDestinations();
 		}
 	}
 
 
 	private void prepareDestinations() {
-		Log.v(TAG, "preparing destinations");
+//		Log.v(TAG, "preparing destinations");
 		if (addressModel.hasDestinations()) {
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
@@ -662,7 +662,7 @@ public class OriginActivity extends Activity {
 			for (int i = 0; i < addressModel.getDestinations().size(); i++) {
 				RoutyAddress dest = addressModel.getDestinations().get(i);
 				if (!dest.isValid()) {
-					Log.v(TAG, "validating address prepareDestinations()");
+//					Log.v(TAG, "validating address prepareDestinations()");
 					//Validate the destination
 					final int idx = i;
 					Double lat = null;
@@ -685,7 +685,7 @@ public class OriginActivity extends Activity {
 			
 			generateRouteAndGo();
 		} else {
-			Log.e(TAG, "trying to build a route with no destinations!");
+//			Log.e(TAG, "trying to build a route with no destinations!");
 			// No destinations entered
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
@@ -744,7 +744,7 @@ public class OriginActivity extends Activity {
 
 				//Show the "Location Services" settings page
 				Intent gpsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-				Log.v(TAG, "ENABLE_GPS_REQUEST = " + ENABLE_GPS_REQUEST);
+//				Log.v(TAG, "ENABLE_GPS_REQUEST = " + ENABLE_GPS_REQUEST);
 				context.startActivityForResult(gpsIntent, ENABLE_GPS_REQUEST);
 
 			}
@@ -763,7 +763,7 @@ public class OriginActivity extends Activity {
 	protected void onStart() {
 		super.onStart();
 		
-		Log.v(TAG, "onStart()");
+//		Log.v(TAG, "onStart()");
 	}
 
 	
@@ -783,7 +783,7 @@ public class OriginActivity extends Activity {
 	protected void onStop() {
 		super.onStop();
 		
-		Log.v(TAG, "onStop()");
+//		Log.v(TAG, "onStop()");
 	}
 
 
@@ -800,30 +800,30 @@ public class OriginActivity extends Activity {
 
 	private void saveOrigin() {
 		if (addressModel.getOrigin() != null && originActivityPrefs != null) {
-			Log.v(TAG, "saving Origin");
+//			Log.v(TAG, "saving Origin");
 			
 			String json = addressModel.getOriginJSON();
-			Log.v(TAG, "Origin JSON: " + json);
+//			Log.v(TAG, "Origin JSON: " + json);
 			
 			SharedPreferences.Editor ed = originActivityPrefs.edit();
 			ed.putString(SAVED_ORIGIN_JSON_KEY, json);
 			ed.commit();
 		} else if (originActivityPrefs == null) {
-			Log.e(TAG, "originActivityPrefs null while trying to save the origin");
+//			Log.e(TAG, "originActivityPrefs null while trying to save the origin");
 		}
 	}
 	
 	private void saveDestinations() {
-		Log.v(TAG, "saving destinations list");
+//		Log.v(TAG, "saving destinations list");
 		if (originActivityPrefs == null) {
-			Log.e(TAG, "originActivityPrefs null while trying to save destinations");
+//			Log.e(TAG, "originActivityPrefs null while trying to save destinations");
 		} else {
 			String json = "";
 			if (addressModel.hasDestinations()) {
 				json = addressModel.getDestinationsJSON();
 			}
 			
-			Log.v(TAG, "Destinations JSON: " + json);
+//			Log.v(TAG, "Destinations JSON: " + json);
 			
 			SharedPreferences.Editor ed = originActivityPrefs.edit();
 			ed.putString(SAVED_DESTS_JSON_KEY, json);
@@ -835,12 +835,12 @@ public class OriginActivity extends Activity {
 	public void onDestroy() {
 		super.onDestroy();
 		
-		Log.v(TAG, "onDestroy()");
+//		Log.v(TAG, "onDestroy()");
 		
 		if (addressModel.getOrigin() == null) {
-			Log.v(TAG, "pausing with no origin");
+//			Log.v(TAG, "pausing with no origin");
 		} else {
-			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getAddressString());
+//			Log.v(TAG, "pausing with origin: " + AddressModel.getSingleton().getOrigin().getAddressString());
 		}
 		
 		saveOrigin();

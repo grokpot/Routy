@@ -20,7 +20,7 @@ public class DeviceLocationModel {
 	}
 
 	public void setDeviceLocation(Location deviceLocation) {
-		Log.v(TAG, "setting device coordinates to: " + deviceLocation.getLatitude() + ", " + deviceLocation.getLongitude());
+//		Log.v(TAG, "setting device coordinates to: " + deviceLocation.getLatitude() + ", " + deviceLocation.getLongitude());
 		this.deviceLocation = deviceLocation;
 	}
 	

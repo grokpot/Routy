@@ -83,17 +83,17 @@ public class MainActivity extends Activity {
 
 
 	private void checkForInternetAndContinue() {
-		Log.v(TAG, "Checking for internet connection...");
+//		Log.v(TAG, "Checking for internet connection...");
 		
 		if (!InternetService.deviceHasInternetConnection(mContext)) {
-			Log.v(TAG, "No internet connection.");
+//			Log.v(TAG, "No internet connection.");
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, volume, volume, 1, 0, 1);
 			initErrorDialog(getResources().getString(R.string.no_internet_error));
 			noInternetErrorDialog.show(MainActivity.this.getFragmentManager(), TAG);
 		} else {
-			Log.v(TAG, "Found an internet connection.");
+//			Log.v(TAG, "Found an internet connection.");
 
 			gotoOriginScreen();
 		}
@@ -130,7 +130,7 @@ public class MainActivity extends Activity {
 	
 	
 	private void startDeviceLocationTask() {
-		Log.v(TAG, "starting device location");
+//		Log.v(TAG, "starting device location");
 		new FindDeviceLocationTask(this, new FindDeviceLocationListener() {
 
 			@Override

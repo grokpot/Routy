@@ -42,12 +42,12 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 	protected Route doInBackground(RouteRequest...requests) {
 		try {
 			if (requests.length == 0) {
-				Log.e(TAG, "CalculateRouteTask has no RouteRequest to process");
+//				Log.e(TAG, "CalculateRouteTask has no RouteRequest to process");
 				CalculateRouteTask.this.cancel(true);
 			} else {
 				RouteRequest request = requests[0];
 				
-				Log.v(TAG, "user prefers: " + (request.getPreference().equals(RouteOptimizePreference.PREFER_DISTANCE)?"distance":"") + (request.getPreference().equals(RouteOptimizePreference.PREFER_DURATION)?"duration":""));
+//				Log.v(TAG, "user prefers: " + (request.getPreference().equals(RouteOptimizePreference.PREFER_DISTANCE)?"distance":"") + (request.getPreference().equals(RouteOptimizePreference.PREFER_DURATION)?"duration":""));
 				RouteService routeService = new RouteService(request.getOrigin(), request.getDestinations(), request.getPreference(), false);
 				Route bestRoute = routeService.getBestRoute();
 				
@@ -56,7 +56,7 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 			
 			
 		} catch (Exception e) {
-			Log.e(TAG, "could not generate route");
+//			Log.e(TAG, "could not generate route");
 			CalculateRouteTask.this.cancel(true);
 		}
 		return null;
@@ -70,10 +70,10 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 		}
 		
 		if (result != null) {
-			Log.d(TAG, "Best route calculated.");
+//			Log.d(TAG, "Best route calculated.");
 			onRouteCalculated(result);
 		} else {
-			Log.e(TAG, "Best route returned was null.");
+//			Log.e(TAG, "Best route returned was null.");
 		}
 	}
 	
