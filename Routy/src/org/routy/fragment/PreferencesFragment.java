@@ -12,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -33,7 +34,17 @@ public class PreferencesFragment extends PreferenceFragment {
 	    Preference myPref = (Preference) findPreference("pref_about");
 	    myPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
-				TwoButtonDialog dialog = new TwoButtonDialog(getResources().getString(R.string.about_title), getResources().getString(R.string.about_text), new String[]{"Close", null, "Contact"}) {
+				String aboutText = getResources().getString(R.string.about_title);
+				
+				//Detect and add version number
+				try {
+					aboutText += " " + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+				} catch (NameNotFoundException e) {
+					Log.e(TAG, "problem getting the version number from the package");
+					//Do Nothing...it just won't show a version number
+				}
+				
+				TwoButtonDialog dialog = new TwoButtonDialog(aboutText, getResources().getString(R.string.about_text), new String[]{"Close", null, "Contact"}) {
 					@Override
 					public void onRightButtonClicked(DialogInterface dialog, int which) {
 						dialog.dismiss();
