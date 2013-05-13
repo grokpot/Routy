@@ -15,7 +15,7 @@
     <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG RYAN -->
     <!-- <string name="google_maps_v2_api_key_active">AIzaSyCJAxW49RPtHjdpFPjEQwrasgKilouXDZ0</string> --> <!-- DEBUG JEFF -->
     <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG ERIC -->
-	<string name="google_maps_v2_api_key_active"></string>
+    <string name="google_maps_v2_api_key_active">AIzaSyAiqDxNVMr7zIcn9uYIWhitDJ0TvLvEM80</string> <!-- DEBUG PRODUCTION -->
 
     <!-- 
     <string name="google_maps_api_key_debug_jeff">0jK_s6wBtEbASDAwZGnaF3zV7uykgMiIBcI8rzw</string>
@@ -44,7 +44,7 @@
     
     <!-- Origin Screen Stuff -->
     <string name="origin_prompt">Origin</string>
-    <string name="find_user_prompt">…or Find Me!</string>
+    <string name="find_user_prompt">Find Me!</string>
     <string name="clear_screen">Clear</string>
     <string name="please_wait">Looking</string>
     <string name="stop_locating">Stop</string>

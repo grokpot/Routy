@@ -57,7 +57,7 @@ public class Util {
 			
 			return json;
 		} catch (IOException e) {
-			Log.e(TAG, "couldn't encode the address list to a JSON string");
+//			Log.e(TAG, "couldn't encode the address list to a JSON string");
 		}
 		
 		return null;
@@ -76,7 +76,7 @@ public class Util {
 			jWriter.close();
 			sWriter.close();
 		} catch (IOException e) {
-			Log.e(TAG, "IOException closing writer(s)");
+//			Log.e(TAG, "IOException closing writer(s)");
 		}
 		
 		return output;
@@ -132,7 +132,7 @@ public class Util {
 			
 			jWriter.endObject();
 		} catch (IOException e) {
-			Log.e(TAG, e.getMessage() + " -- IOException");
+//			Log.e(TAG, e.getMessage() + " -- IOException");
 		}
 	}
 	
@@ -156,7 +156,7 @@ public class Util {
 			jReader.beginObject();
 			String rootName = jReader.nextName();
 			if (rootName.equalsIgnoreCase("persisted_addresses") && jReader.peek() != JsonToken.NULL) {
-				Log.v(TAG, "reading addresses array");
+//				Log.v(TAG, "reading addresses array");
 				jReader.beginArray();
 				
 				while (jReader.hasNext()) {
@@ -168,7 +168,7 @@ public class Util {
 			jReader.endObject();
 			
 		} catch (IOException e) {
-			Log.e(TAG, e.getMessage() + "-- IOException reading JSON address list");
+//			Log.e(TAG, e.getMessage() + "-- IOException reading JSON address list");
 		}
 		
 		return addresses;
@@ -193,12 +193,12 @@ public class Util {
 		try {
 			jReader.beginObject();
 			String persistedAddress = jReader.nextName();
-			Log.v(TAG, "persistedAddress=" + persistedAddress);
+//			Log.v(TAG, "persistedAddress=" + persistedAddress);
 			if (persistedAddress.equalsIgnoreCase("persisted_address")) {
 				jReader.beginObject();
 				while (jReader.hasNext()) {
 					String name = jReader.nextName();
-					Log.v(TAG, "reading name: " + name);
+//					Log.v(TAG, "reading name: " + name);
 					if (name.equalsIgnoreCase("feature_name")) {
 						address.setFeatureName(jReader.nextString());
 					} else if (name.equalsIgnoreCase("latitude")) {
@@ -249,7 +249,7 @@ public class Util {
 			
 			return address;
 		} catch (IOException e) {
-			Log.e(TAG, e.getMessage() + "-- IOException reading JSON address");
+//			Log.e(TAG, e.getMessage() + "-- IOException reading JSON address");
 		}
 		return null;
 	}

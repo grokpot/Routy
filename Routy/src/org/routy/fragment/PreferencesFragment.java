@@ -46,7 +46,7 @@ public class PreferencesFragment extends PreferenceFragment {
 							Intent intent = Intent.parseUri("mailto:GoRouty@gmail.com?subject=Routy%20App%20Feedback", Intent.URI_INTENT_SCHEME);
 							getActivity().startActivity(intent);
 						} catch (URISyntaxException e) {
-							Log.e(TAG, "couldn't start mail activity to send feedback");
+//							Log.e(TAG, "couldn't start mail activity to send feedback");
 							e.printStackTrace();
 						}
 						    
@@ -101,7 +101,7 @@ public class PreferencesFragment extends PreferenceFragment {
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
 				if (preference.getKey().equals("route_mode")) {
 					boolean mode = (Boolean) newValue;		// False = distance; True = time
-					Log.v(TAG, "route mode changed to " + mode);
+//					Log.v(TAG, "route mode changed to " + mode);
 					
 					if (!mode) {
 						PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DURATION);

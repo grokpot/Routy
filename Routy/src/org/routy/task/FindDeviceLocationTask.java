@@ -63,7 +63,7 @@ public class FindDeviceLocationTask extends AsyncTask<Void, Void, LatLng> {
 
 			@Override
 			public void onLocationResult(Location result) {
-				Log.v(TAG, "got a device location result");
+//				Log.v(TAG, "got a device location result");
 				location = result;
 			}
 

@@ -47,7 +47,7 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 				public void onClick(DialogInterface dialog, int which) {
 					progressDialog.cancel();
 					
-					Log.v(TAG, "progress dialog cancelled");
+//					Log.v(TAG, "progress dialog cancelled");
 					ReverseGeocodeTask.this.cancel(true);
 				}
 			});
@@ -75,7 +75,7 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 	
 	@Override
 	protected void onPostExecute(RoutyAddress address) {
-		Log.v(TAG, "postExecute() -- got user location");
+//		Log.v(TAG, "postExecute() -- got user location");
 		if (showDialogs && progressDialog.isShowing()) {
 			progressDialog.cancel();
 		}
@@ -85,7 +85,7 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 	
 	@Override
 	protected void onCancelled(RoutyAddress address) {
-		Log.v(TAG, "reverse geocoding cancelled");
+//		Log.v(TAG, "reverse geocoding cancelled");
 		if (showDialogs) {
 			progressDialog.cancel();
 		}

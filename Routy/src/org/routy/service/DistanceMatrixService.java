@@ -59,12 +59,12 @@ public class DistanceMatrixService {
 		
 		if (distances != null) {
 			for (int i = 0; i < distances.size(); i++) {
-				Log.d(TAG, "current distance: " + distances.get(i).getDistance());
+//				Log.d(TAG, "current distance: " + distances.get(i).getDistance());
 				if (preference == PREFER_DISTANCE && (best == -1 || distances.get(i).getDistance() < best)) {
 					best = distances.get(i).getDistance();
 					idx = i;
-					Log.d(TAG, "new best distance: " + distances.get(i).getDistance());
-					Log.d(TAG, "idx=" + idx);
+//					Log.d(TAG, "new best distance: " + distances.get(i).getDistance());
+//					Log.d(TAG, "idx=" + idx);
 				} else if (preference == PREFER_DURATION && (best == -1 || distances.get(i).getDuration() < best)) {
 					best = distances.get(i).getDuration();
 					idx = i;
@@ -93,12 +93,12 @@ public class DistanceMatrixService {
 	public List<Distance> getDistanceMatrix(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
 		// Get the JSON string response from the webservice
 		String jsonResp = getJSONResponse(origin, destinations, sensor);
-		Log.v(TAG, "jsonResp: " + jsonResp);
+//		Log.v(TAG, "jsonResp: " + jsonResp);
 		
 		try {
 			return parseJSONResponse(jsonResp);
 		} catch (JSONException e) {
-			Log.e(TAG, e.getMessage());
+//			Log.e(TAG, e.getMessage());
 			throw new RoutyException();
 		}
 	}
@@ -111,7 +111,7 @@ public class DistanceMatrixService {
 		
 		String status = response.getString("status");
 		if (status == null || !status.equalsIgnoreCase("ok")) {
-			Log.e(TAG, "got status=" + status + " from Google Distance Matrix API");
+//			Log.e(TAG, "got status=" + status + " from Google Distance Matrix API");
 			throw new RoutyException("Got a bad response from Google Distance Matrix API: status=" + status);
 		}
 
@@ -176,7 +176,7 @@ public class DistanceMatrixService {
 			url.append("false");
 		}
 		
-		Log.d(TAG, "DIST MAT URL: " + url.toString());
+//		Log.d(TAG, "DIST MAT URL: " + url.toString());
 		
 		return InternetService.getStringResponse(url.toString());
 	}
