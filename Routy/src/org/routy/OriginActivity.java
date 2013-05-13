@@ -504,7 +504,9 @@ public class OriginActivity extends Activity {
 				public void onResult(RoutyAddress address) {
 					loadReverseGeocodedOrigin(address);
 					showDestinationsNoobMessage();
-					destEntryRow.focusOnEntryField();
+					if (destEntryRow != null) {
+						destEntryRow.focusOnEntryField();
+					}
 				}
 			}).execute(deviceLocation);
 		} else {
@@ -612,14 +614,11 @@ public class OriginActivity extends Activity {
 				public void onAddressValidated(RoutyAddress validatedAddress) {
 					addressModel.setOrigin(validatedAddress);
 					refreshOriginLayout();
-					
 					prepareEntryRow();
-//					prepareDestinations();
 				}
 			});
 		} else {
 			prepareEntryRow();
-//			prepareDestinations();
 		}
 	}
 	
@@ -641,7 +640,6 @@ public class OriginActivity extends Activity {
 				@Override
 				public void onAddressValidated(RoutyAddress validatedAddress) {
 					Log.v(TAG, "validated entry row was at " + idx);
-//					addressModel.setDestinationAt(idx, validatedAddress);
 					addressModel.addDestination(validatedAddress);
 					refreshDestinationLayout();
 					prepareDestinations();
@@ -656,7 +654,6 @@ public class OriginActivity extends Activity {
 
 	private void prepareDestinations() {
 		Log.v(TAG, "preparing destinations");
-		//IT NEEDS TO WAIT UNTIL THERE'S A VALID ORIGIN TO DO THIS.
 		if (addressModel.hasDestinations()) {
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
