@@ -79,7 +79,7 @@ public abstract class ResultsSegmentView extends LinearLayout{
 			
 			@Override
 			public void onClick(View v) {
-				Log.v(TAG, "onSegmentClicked from row with id=" + id);
+//				Log.v(TAG, "onSegmentClicked from row with id=" + id);
 				onSegmentClicked(id, isLastAddress);
 			}
 		});

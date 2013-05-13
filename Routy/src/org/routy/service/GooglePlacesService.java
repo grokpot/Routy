@@ -104,33 +104,33 @@ public class GooglePlacesService {
 			// Check the status first
 			expr = "//PlaceSearchResponse/status";
 			String status = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
-			Log.v(TAG, "Google Places response status=" + status);
+//			Log.v(TAG, "Google Places response status=" + status);
 			
 			if (status.equalsIgnoreCase("ok")) {
 				// Get the data from the response and build GooglePlace objects
 				expr = "//PlaceSearchResponse/result";
 				NodeList xmlResults = (NodeList) xpath.evaluate(expr, root, XPathConstants.NODESET);
 				
-				Log.v(TAG, "Number of places results = " + xmlResults.getLength());
+//				Log.v(TAG, "Number of places results = " + xmlResults.getLength());
 				// Number of places results is capped
 				for (int i = 0; i < Math.min(xmlResults.getLength(), AppProperties.G_PLACES_MAX_RESULTS); i++) {
 					results.add(parseSingleResult(xmlResults.item(i)));
 				}
 				
 			} else {
-				Log.e(TAG, "BAD Google Places response status=" + status);
+//				Log.e(TAG, "BAD Google Places response status=" + status);
 				throw new RoutyException("Google Places API status=" + status);
 			}
 			
 		} catch (XPathExpressionException e) {
-			Log.e(TAG, "XPathExpressionException while trying to parse Google Places API response.");
+//			Log.e(TAG, "XPathExpressionException while trying to parse Google Places API response.");
 			throw new RoutyException("There was an internal problem looking up place names.");
 		}
 		
-		Log.v(TAG, results.size() + " results");
+//		Log.v(TAG, results.size() + " results");
 		
 		for (GooglePlace p : results) {
-			Log.v(TAG, p.getName() + " - " + p.getFormattedAddress());
+//			Log.v(TAG, p.getName() + " - " + p.getFormattedAddress());
 		}
 		
 		return results;
@@ -145,7 +145,7 @@ public class GooglePlacesService {
 	 * @throws XPathExpressionException
 	 */
 	private GooglePlace parseSingleResult(Node resultNode) throws XPathExpressionException {
-		Log.v(TAG, "Parsing a place result.");
+//		Log.v(TAG, "Parsing a place result.");
 		
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		String expr;
@@ -179,14 +179,14 @@ public class GooglePlacesService {
 		try {
 			// Get response from Google Places API call
 			URL u = new URL(url);
-			Log.v(TAG, "Google Places API: " + u.toExternalForm());
+//			Log.v(TAG, "Google Places API: " + u.toExternalForm());
 			String xmlResp = InternetService.getStringResponse(u.toExternalForm());
 			return xmlResp;
 		} catch (MalformedURLException e) {
-			Log.e(TAG, "Google Places URL [" + url + "] is malformed");
+//			Log.e(TAG, "Google Places URL [" + url + "] is malformed");
 			throw new RoutyException("There was an internal problem looking up place names.");
 		} catch (IOException e) {
-			Log.e(TAG, "IOException getting Google Places result: " + e.getMessage());
+//			Log.e(TAG, "IOException getting Google Places result: " + e.getMessage());
 			throw new RoutyException("There was an internal problem looking up place names.");
 		}
 	}

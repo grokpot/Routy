@@ -88,7 +88,7 @@ public class ResultsActivity extends Activity {
 		if (extras != null) {
 			int distance = (Integer) extras.get("distance");
 			addresses = (ArrayList<Address>) extras.get("addresses");
-			Log.v(TAG, "Results: " + addresses.size() + " addresses");
+//			Log.v(TAG, "Results: " + addresses.size() + " addresses");
 			route = new Route(addresses, distance);
 			routeOptimizePreference = (RouteOptimizePreference) extras.get("optimize_for");
 		}
@@ -154,13 +154,13 @@ public class ResultsActivity extends Activity {
 		points = new ArrayList<LatLng>();
 		
 		if (mMap == null) {
-			Log.e(TAG, "map service is not available");
+//			Log.e(TAG, "map service is not available");
 		} else {
 			try {
 				MapsInitializer.initialize(this);
 				buildResultsView();
 			} catch (Exception e) {
-				Log.e(TAG, "Error initializing Map -- " + e.getMessage());
+//				Log.e(TAG, "Error initializing Map -- " + e.getMessage());
 			}
 		}
 		
@@ -250,10 +250,10 @@ public class ResultsActivity extends Activity {
 	private void animateToAddress(int id) {
 		try {
 			LatLng target = points.get(id);
-			Log.v(TAG, "max zoom level is: " + mMap.getMaxZoomLevel());
+//			Log.v(TAG, "max zoom level is: " + mMap.getMaxZoomLevel());
 			mMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.builder().target(target).tilt(30).zoom(mMap.getMaxZoomLevel() - 3).build()));
 		} catch (IndexOutOfBoundsException e) {
-			Log.e(TAG, "Trying to animate to address with id=" + id + " but that's out of bounds.");
+//			Log.e(TAG, "Trying to animate to address with id=" + id + " but that's out of bounds.");
 		}
 		
 	}
@@ -280,7 +280,7 @@ public class ResultsActivity extends Activity {
 					+ startAddressLat + "," + startAddressLong
 					+ "&daddr=" + endAddressLat + ","
 					+ endAddressLong;
-			Log.d(TAG, "maps segment call URI: " + mapsCall);
+//			Log.d(TAG, "maps segment call URI: " + mapsCall);
 
 			// Open Google Maps App on the device
 			Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(mapsCall));

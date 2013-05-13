@@ -61,11 +61,11 @@ public abstract class LocationService {
 	 * @throws	NoInternetConnectionException if there are no location providers (network or GPS) enabled
 	 */
 	public void getCurrentLocation() throws NoLocationProviderException {
-		Log.v(TAG, "getting current location");
+//		Log.v(TAG, "getting current location");
 		
 		Location lastKnownLoc = getLastKnownLocation();
 		if (lastKnownLoc != null) {
-			Log.v(TAG, "Last known location was good...using it.");
+//			Log.v(TAG, "Last known location was good...using it.");
 			onLocationResult(lastKnownLoc);
 		} else {
 			startTimeMs = System.currentTimeMillis();
@@ -82,11 +82,11 @@ public abstract class LocationService {
 		        }
 		        
 		        if (networkEnabled) {
-		        	Log.v(TAG, "network enabled");
+//		        	Log.v(TAG, "network enabled");
 		        	manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
 		        }
 			} else {
-				Log.e(TAG, "No network or gps provider.");
+//				Log.e(TAG, "No network or gps provider.");
 				throw new NoLocationProviderException("No location providers enabled.");
 			}
 		}
@@ -152,39 +152,39 @@ public abstract class LocationService {
 		
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-			Log.v(TAG, provider + " provider status changed to " + status);
+//			Log.v(TAG, provider + " provider status changed to " + status);
 		}
 		
 		@Override
 		public void onProviderEnabled(String provider) {
-			Log.v(TAG, provider + " just enabled");
+//			Log.v(TAG, provider + " just enabled");
 		}
 		
 		@Override
 		public void onProviderDisabled(String provider) {
-			Log.v(TAG, provider + " just disabled");
+//			Log.v(TAG, provider + " just disabled");
 		}
 		
 		@Override
 		public void onLocationChanged(Location location) {
 			if ((System.currentTimeMillis() - startTimeMs) > AppProperties.LOCATION_FETCH_TIMEOUT_MS) {
-				Log.v(TAG, "Location fetching timing out.");
+//				Log.v(TAG, "Location fetching timing out.");
 				stop();
 				onLocationSearchTimeout();
 			} else {
-				Log.v(TAG, "location changed via " + location.getProvider());
+//				Log.v(TAG, "location changed via " + location.getProvider());
 				if (location.hasAccuracy()) {
-					Log.v(TAG, "location has accuracy: " + location.getAccuracy());
+//					Log.v(TAG, "location has accuracy: " + location.getAccuracy());
 				} else {
-					Log.v(TAG, "location has no accuracy.");
+//					Log.v(TAG, "location has no accuracy.");
 				}
 				
 				if (location.getAccuracy() <= accuracy) {
-					Log.v(TAG, "Got a good fix");
+//					Log.v(TAG, "Got a good fix");
 					stop();
 					onLocationResult(location);
 				} else {
-					Log.v(TAG, "Location has a bad accuracy: " + location.getAccuracy());
+//					Log.v(TAG, "Location has a bad accuracy: " + location.getAccuracy());
 				}
 			}
 		}
@@ -196,7 +196,7 @@ public abstract class LocationService {
 	 * (ie. un-registers {@link LocationListener} objects from the {@link LocationManager})
 	 */
 	public void stop() {
-		Log.v(TAG, "Stopping Location Service");
+//		Log.v(TAG, "Stopping Location Service");
 		manager.removeUpdates(listener);
 	}
 	

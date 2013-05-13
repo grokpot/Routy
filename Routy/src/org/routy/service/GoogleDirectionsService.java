@@ -53,7 +53,7 @@ public class GoogleDirectionsService {
 	
 	private GoogleDirections parseGoogleDirectionsResponse(String resp) throws IOException {
 		if (resp == null || resp.length() == 0) {
-			Log.e(TAG, "no Google Directions response to parse");
+//			Log.e(TAG, "no Google Directions response to parse");
 			return null;
 		}
 		
@@ -92,7 +92,7 @@ public class GoogleDirectionsService {
 				
 				return directions;
 			} else {
-				Log.e(TAG, "google directions error -- status=" + status);
+//				Log.e(TAG, "google directions error -- status=" + status);
 			}
 		} catch (XPathExpressionException e) {
 			throw new IOException("Failed parsing the Google Directions XML response.  Got an XPathExpressionException.");
@@ -124,7 +124,7 @@ public class GoogleDirectionsService {
 			url.append("&sensor=");
 			url.append(sensor ? "true" : "false");
 			
-			Log.v(TAG, "directions url: " + url.toString());
+//			Log.v(TAG, "directions url: " + url.toString());
 			return url.toString();
 		}
 	}

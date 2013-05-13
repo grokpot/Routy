@@ -49,14 +49,14 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 		// Use the GooglePlacesService to get the result(s)
 		if (params != null && params.length > 0) {
 			GooglePlacesQuery q = params[0];
-			Log.v(TAG, "Searching..." + q);		// XXX Possible injection point -- this is straight from the EditText the user inputs in some cases (Let Google worry about it?)
+//			Log.v(TAG, "Searching..." + q);		// XXX Possible injection point -- this is straight from the EditText the user inputs in some cases (Let Google worry about it?)
 			
 			GooglePlacesService gpSvc = new GooglePlacesService();
 			try {
 				List<GooglePlace> results = gpSvc.getPlacesForKeyword(q.getQuery(), q.getCenterLatitude(), q.getCenterLongitude(), q.getRadius());
 				return results;
 			} catch (RoutyException e) {
-				Log.e(TAG, "RoutyException trying to get Google Places results");
+//				Log.e(TAG, "RoutyException trying to get Google Places results");
 				onFailure(e);
 				GooglePlacesQueryTask.this.cancel(true);
 			}

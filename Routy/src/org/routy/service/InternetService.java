@@ -27,7 +27,7 @@ public class InternetService {
 	 * @return			true if there's an internet connection, false otherwise
 	 */
 	public static boolean deviceHasInternetConnection(Context context) {
-        Log.v(TAG, "Checking for network.");
+//        Log.v(TAG, "Checking for network.");
         ConnectivityManager connMgr = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
         
@@ -49,7 +49,7 @@ public class InternetService {
 		try {
 			inputStream = getStreamResponse(url);
 		} catch (IOException e) {
-			Log.e(TAG, "Could not establish a connection to URL: " + url);
+//			Log.e(TAG, "Could not establish a connection to URL: " + url);
 			throw new IOException("Could not establish a connection to URL: " + url);
 		}
 		
@@ -68,7 +68,7 @@ public class InternetService {
 				in.close();
 			}
 		} catch (IOException e) {
-			Log.e(TAG, e.getMessage() + "\nCould not read from URL: " + url);
+//			Log.e(TAG, e.getMessage() + "\nCould not read from URL: " + url);
 			throw new IOException("Could not read from URL: " + url);
 		}
 	}
@@ -88,7 +88,7 @@ public class InternetService {
 		try {
 			u = new URL(url);
 		} catch (MalformedURLException e) {
-			Log.e(TAG, "Distance Matrix URL [" + url + "] is malformed.");
+//			Log.e(TAG, "Distance Matrix URL [" + url + "] is malformed.");
 			throw new RoutyException();
 		}
 		

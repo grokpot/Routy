@@ -48,6 +48,23 @@
                 <!-- <requestFocus /> -->
             </EditText>
 
+            <ImageButton
+                android:id="@+id/find_user_button"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/orange_button"
+                android:gravity="center"
+                android:baselineAlignBottom="true"
+                android:scaleType="fitCenter"
+                android:contentDescription="@string/routeitdesc"
+                android:onClick="findUserLocation"
+                android:src="@drawable/findme" />
+            
+            <!-- 
             <Button
                 android:id="@+id/find_user_button"
                 style="?android:attr/borderlessButtonStyle"
@@ -61,11 +78,12 @@
                 android:onClick="findUserLocation"
                 android:paddingBottom="8dp"
                 android:paddingRight="5dp"
+                android:paddingLeft="50dp"
                 android:paddingTop="8dp"
                 android:text="@string/find_user_prompt"
                 android:textColor="@color/White"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold" /> -->
         </LinearLayout>
 
         <LinearLayout
