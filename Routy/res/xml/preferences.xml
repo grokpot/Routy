@@ -20,9 +20,12 @@
 	</PreferenceCategory>
  
 	<PreferenceCategory
-		android:title="@string/pref_about_header" >
+		android:title="@string/pref_more_header" >
 		<Preference
 		    android:key="pref_about"
 		    android:title="@string/pref_about_title"/>
+		<Preference
+		    android:key="pref_eula"
+		    android:title="@string/pref_eula_title"/>
 	</PreferenceCategory>
 </PreferenceScreen>

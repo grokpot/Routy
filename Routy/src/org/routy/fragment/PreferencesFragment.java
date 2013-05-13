@@ -57,6 +57,20 @@ public class PreferencesFragment extends PreferenceFragment {
 			}
 	    });
 	    
+	    Preference eula = (Preference) findPreference("pref_eula");
+	    eula.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+			public boolean onPreferenceClick(Preference preference) {
+				OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.eula), getResources().getString(R.string.eula_text)) {
+					@Override
+					public void onButtonClicked(DialogInterface dialog, int which) {
+						dialog.dismiss();
+					}
+				};
+				dialog.show(fragmentManager, TAG);
+				return true;
+			}
+	    });
+	    
 	    Preference reset_instructions = (Preference) findPreference("pref_reset_instruction_text");
 	    reset_instructions.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
