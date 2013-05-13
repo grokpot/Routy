@@ -38,7 +38,7 @@ public class PreferencesFragment extends PreferenceFragment {
 				
 				//Detect and add version number
 				try {
-					aboutText += " " + getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+					aboutText += " " + getVersionNumber();
 				} catch (NameNotFoundException e) {
 					Log.e(TAG, "problem getting the version number from the package");
 					//Do Nothing...it just won't show a version number
@@ -54,10 +54,18 @@ public class PreferencesFragment extends PreferenceFragment {
 					public void onLeftButtonClicked(DialogInterface dialog, int which) {
 						// Send feedback
 						try {
-							Intent intent = Intent.parseUri("mailto:GoRouty@gmail.com?subject=Routy%20App%20Feedback", Intent.URI_INTENT_SCHEME);
+							String version = null;
+							try {
+								version = "(v" + getVersionNumber() + ")%20";
+							} catch (NameNotFoundException e) {
+								Log.e(TAG, "problem getting the version number from the package");
+								//Do Nothing...it just won't show a version number
+							}
+							
+							Intent intent = Intent.parseUri("mailto:GoRouty@gmail.com?subject=Routy%20" + (version != null ? version : "") + "App%20Feedback", Intent.URI_INTENT_SCHEME);
 							getActivity().startActivity(intent);
 						} catch (URISyntaxException e) {
-//							Log.e(TAG, "couldn't start mail activity to send feedback");
+							Log.e(TAG, "couldn't start mail activity to send feedback");
 							e.printStackTrace();
 						}
 						    
@@ -142,6 +150,10 @@ public class PreferencesFragment extends PreferenceFragment {
 			}
 		});
 	    
+	}
+	
+	private String getVersionNumber() throws NameNotFoundException {
+		return getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
 	}
 	
 	public void onToggleClicked(boolean on) {
