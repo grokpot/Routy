@@ -54,6 +54,7 @@ public class MainActivity extends Activity {
 		startDeviceLocationTask();
 		
 		defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		loadPreferencesModel();
 
 		new Handler().postDelayed(new Runnable() {
@@ -68,11 +69,15 @@ public class MainActivity extends Activity {
 	
 	
 	private void loadPreferencesModel() {
+		//Restore route optimization preference
 		if (!defaultSharedPrefs.getBoolean("route_mode", false)) {
 			PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DURATION);
 		} else {
 			PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DISTANCE);
 		}
+		
+		//Restore in-app sounds preference
+		PreferencesModel.getSingleton().setSoundsOn(defaultSharedPrefs.getBoolean("sounds_mode", true));
 		
 		PreferencesModel.getSingleton().setRoutyNoob(defaultSharedPrefs.getBoolean("routy_noob", true));
 		defaultSharedPrefs.edit().putBoolean("routy_noob", false).commit();

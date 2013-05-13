@@ -61,7 +61,7 @@
                 android:baselineAlignBottom="true"
                 android:scaleType="fitCenter"
                 android:contentDescription="@string/routeitdesc"
-                android:onClick="findUserLocation"
+                android:onClick="onFindMeClicked"
                 android:src="@drawable/findme" />
             
             <!-- 

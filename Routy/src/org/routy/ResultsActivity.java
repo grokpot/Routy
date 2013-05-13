@@ -261,9 +261,11 @@ public class ResultsActivity extends Activity {
 	
 	private void showSegmentInGoogleMaps(int id, boolean isLastAddress) {
 		if (!isLastAddress){
-			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			sounds.play(click, volume, volume, 1, 0, 1);
+			if (PreferencesModel.getSingleton().isSoundsOn()) {
+				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+				sounds.play(click, volume, volume, 1, 0, 1);
+			}
 				
 			// Get start and end Addresses from route[] - the index is the id in ResultsSegmentView
 			Address startAddress	= route.getAddresses().get(id);

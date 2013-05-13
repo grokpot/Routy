@@ -51,14 +51,17 @@
     <string name="goto_destinations">Next</string>
     <string name="title_activity_destination">DestinationActivity</string>
     <string name="title_activity_results">Routy</string>
+    <string name="title_activity_preferences">Settings</string>
     <string name="destination_prompt">eg. 403 6th St. or Torchy\'s Tacos</string>
     <string name="destination_remove">Remove</string>
     <string name="route_it">Route it!</string>
     <string name="origin_modify">Go back and choose a new origin</string>
     <string name="destination_add">Add a destination</string>
     <string name="destination_toggle_instructions">Shorter route or faster time?</string>
-    <string name="by_dur">time</string>
-    <string name="by_dist">distance</string>
+    <string name="by_dur">TIME</string>
+    <string name="by_dist">DISTANCE</string>
+    <string name="sounds_off">OFF</string>
+    <string name="sounds_on">ON</string>
     
     <!-- Route Screen Stuff -->
     <string name="view_segment">Get Directions</string>
@@ -89,11 +92,11 @@
     <string name="title_activity_preferenes">PreferencesActivity</string>
     <string name="about_title">About Routy</string>
     <string name="pref_route_calculation">Calculate route by:</string>
-    <string name="pref_route_calculation_shortest">shortest</string>
+    <string name="pref_route_calculation_shortest">Shortest</string>
     <string name="pref_about_title">About Routy</string>
     <string name="pref_more_header">Comments / Complaints / Love / Law:</string>
     <string name="pref_reset_instruction_title">Reset instruction text for Routy</string>
-    <string name="pref_reset_instruction_header">Lost? Press the button below.</string>
+    <string name="pref_reset_instruction_header">Lost? Press the button below</string>
     <string name="pref_instructions_reset">Instructions Reset</string>
     <string name="pref_instructions_reset_text">Cool, now if you exit and restart Routy, you can get another walkthrough!</string>
     <string name="pref_eula_title">View EULA</string>

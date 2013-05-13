@@ -3,6 +3,7 @@ package org.routy.fragment;
 import java.net.URISyntaxException;
 
 import org.routy.R;
+import org.routy.log.Log;
 import org.routy.model.PreferencesModel;
 import org.routy.model.RouteOptimizePreference;
 
@@ -18,7 +19,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
-import android.util.Log;
 
 public class PreferencesFragment extends PreferenceFragment {
 	private static final String TAG = "PreferenceFragment";
@@ -94,6 +94,7 @@ public class PreferencesFragment extends PreferenceFragment {
 			}
 	    });
 	    
+	    //Switch route optimization between shortest time/distance
 	    SwitchPreference routeModeSwitch = (SwitchPreference) findPreference("route_mode");
 	    routeModeSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			
@@ -101,7 +102,7 @@ public class PreferencesFragment extends PreferenceFragment {
 			public boolean onPreferenceChange(Preference preference, Object newValue) {
 				if (preference.getKey().equals("route_mode")) {
 					boolean mode = (Boolean) newValue;		// False = distance; True = time
-//					Log.v(TAG, "route mode changed to " + mode);
+					Log.v(TAG, "route mode changed to " + mode);
 					
 					if (!mode) {
 						PreferencesModel.getSingleton().setRouteOptimizeMode(RouteOptimizePreference.PREFER_DURATION);
@@ -112,6 +113,24 @@ public class PreferencesFragment extends PreferenceFragment {
 				return true;
 			}
 		});
+	    
+	    //Switch in-app sounds between on/off
+	    SwitchPreference soundsModeSwitch = (SwitchPreference) findPreference("sounds_mode");
+	    soundsModeSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("sounds_mode", true));
+	    soundsModeSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				if (preference.getKey().equals("sounds_mode")) {
+					boolean mode = (Boolean) newValue;		// False = off; True = on
+					Log.v(TAG, "sounds mode changed to " + mode);
+					
+					PreferencesModel.getSingleton().setSoundsOn(mode);
+				}
+				return true;
+			}
+		});
+	    
 	}
 	
 	public void onToggleClicked(boolean on) {

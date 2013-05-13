@@ -49,7 +49,6 @@ import android.view.View.OnFocusChangeListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -80,6 +79,8 @@ public class OriginActivity extends Activity {
 
 		Log.v(TAG, "onCreate()");
 		setContentView(R.layout.activity_origin);
+		
+		Log.v(TAG,  "soundsOn=" + PreferencesModel.getSingleton().isSoundsOn());
 		
 		// Audio stuff
 		initializeAudio();
@@ -114,7 +115,7 @@ public class OriginActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()){
 		case R.id.item_settings:
-			startActivity(new Intent(this, PreferencesActivity.class));
+			startActivity(new Intent(this, PreferencesActivity.class));		//This opens the settings activity when "Settings" is selected from the menu
 			return true;
 		}
 		return false;
@@ -344,9 +345,11 @@ public class OriginActivity extends Activity {
 			@Override
 			public void onLoadComplete(SoundPool soundPool, int sampleId, int status) {
 			  if (sampleId == speak) {
-			    volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			    soundPool.play(sampleId, volume, volume, 1, 0, 1);
+			    if (PreferencesModel.getSingleton().isSoundsOn()) {
+			    	volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+				    volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+				    soundPool.play(sampleId, volume, volume, 1, 0, 1);
+			    }
 			  }
 			}
 		});
@@ -404,9 +407,11 @@ public class OriginActivity extends Activity {
 	 */
 	public void validateAddress(final String locationQuery, Double centerLat, Double centerLng, final ValidateAddressCallback c) {
 		if (locationQuery != null && locationQuery.length() > 0) {
-			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			sounds.play(click, volume, volume, 1, 0, 1);  
+			if (PreferencesModel.getSingleton().isSoundsOn()) {
+				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+				sounds.play(click, volume, volume, 1, 0, 1);  
+			}
 
 			Double lat = centerLat;
 			Double lng = centerLng;
@@ -458,10 +463,12 @@ public class OriginActivity extends Activity {
 	 * 
 	 * @param view
 	 */
-	public void findUserLocation(View view) {
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(click, volume, volume, 1, 0, 1);  
+	public void onFindMeClicked(View view) {
+		if (PreferencesModel.getSingleton().isSoundsOn()) {
+			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+			sounds.play(click, volume, volume, 1, 0, 1);
+		}
 
 		Location deviceLocation = getGoodDeviceLocation();
 		if (deviceLocation != null) {
@@ -606,9 +613,11 @@ public class OriginActivity extends Activity {
 
 	private void prepareDestinations() {
 		if (addressModel.hasDestinations()) {
-			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			sounds.play(click, volume, volume, 1, 0, 1);
+			if (PreferencesModel.getSingleton().isSoundsOn()) {
+				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+				sounds.play(click, volume, volume, 1, 0, 1);
+			}
 			
 			for (int i = 0; i < addressModel.getDestinations().size(); i++) {
 				RoutyAddress dest = addressModel.getDestinations().get(i);
@@ -636,9 +645,11 @@ public class OriginActivity extends Activity {
 			generateRouteAndGo();
 		} else {
 			// No destinations entered
-			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			sounds.play(bad, volume, volume, 1, 0, 1);
+			if (PreferencesModel.getSingleton().isSoundsOn()) {
+				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+				sounds.play(bad, volume, volume, 1, 0, 1);
+			}
 			showErrorDialog("Please enter at least one destination to continue.");
 		}
 	}
@@ -666,9 +677,12 @@ public class OriginActivity extends Activity {
 	 * @param message
 	 */
 	private void showErrorDialog(String message) {
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-		volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-		sounds.play(bad, volume, volume, 1, 0, 1);
+		if (PreferencesModel.getSingleton().isSoundsOn()) {
+			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+			sounds.play(bad, volume, volume, 1, 0, 1);
+		}
+		
 		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {
 			@Override
 			public void onButtonClicked(DialogInterface dialog, int which) {

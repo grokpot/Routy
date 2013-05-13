@@ -32,7 +32,7 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo"
-        android:allowBackup="true" android:debuggable="false">
+        android:allowBackup="true" >
         
         <!-- For MapFragment (Google Maps API v2) -->
         <meta-data 
@@ -79,7 +79,7 @@
         </activity>
         <activity
             android:name=".PreferencesActivity"
-            android:label="@string/title_activity_results" 
+            android:label="@string/title_activity_preferences" 
             android:screenOrientation="portrait" >
         </activity>
         
