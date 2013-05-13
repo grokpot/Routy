@@ -67,12 +67,6 @@ public class OriginActivity extends Activity {
 	private DestinationEntryRow destEntryRow;
 	private LinearLayout destLayout;
 	private SharedPreferences originActivityPrefs;
-//	private SoundPool sounds;
-//	private int bad;
-//	private int speak;
-//	private int click;
-//	private AudioManager audioManager;
-//	private float volume;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -81,10 +75,6 @@ public class OriginActivity extends Activity {
 		Log.v(TAG, "onCreate()");
 		setContentView(R.layout.activity_origin);
 		
-		// Audio stuff
-//		initializeAudio();
-		SoundPlayer.playSpeak(this);
-
 		//Initializations
 		context 			= this;
 		addressModel = AddressModel.getSingleton();
@@ -731,26 +721,15 @@ public class OriginActivity extends Activity {
 	}
 	
 	
-	@Override
+	/*@Override
 	protected void onResume() {   
 		super.onResume(); 
-
-		/*audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
-		speak = sounds.load(this, R.raw.routyspeak, 1);  
-		bad = sounds.load(this, R.raw.routybad, 1);
-		click = sounds.load(this, R.raw.routyclick, 1);*/
-	}
+	}*/
 	
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-
-		/*if(sounds != null) { 
-			sounds.release(); 
-			sounds = null; 
-		}*/
 		
 		SoundPlayer.done();
 	}

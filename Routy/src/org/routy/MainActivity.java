@@ -57,6 +57,8 @@ public class MainActivity extends Activity {
 		defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
 		PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
 		loadPreferencesModel();
+		
+		SoundPlayer.playSpeak(this);
 
 		new Handler().postDelayed(new Runnable() {
 
