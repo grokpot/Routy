@@ -37,7 +37,8 @@
         <!-- For MapFragment (Google Maps API v2) -->
         <meta-data 
             android:name="com.google.android.maps.v2.API_KEY" 
-            android:value="@string/google_maps_v2_api_key_active"/>
+            android:value="@string/google_maps_android_v2" />
+            <!-- android:value="@string/google_maps_v2_api_key_active" /> -->
 
         <!-- For MapView and Geocoder -->
         <uses-library android:name="com.google.android.maps"/>
