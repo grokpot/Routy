@@ -7,6 +7,7 @@ import java.util.List;
 import org.routy.model.PreferencesModel;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
+import org.routy.sound.SoundPlayer;
 import org.routy.view.ResultsSegmentView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -59,11 +60,11 @@ public class ResultsActivity extends Activity {
 
 	private final String TAG = "ResultsActivity";
 
-	private SoundPool sounds;
-	private int click;
+//	private SoundPool sounds;
+//	private int click;
 	private RouteOptimizePreference routeOptimizePreference;
-	AudioManager audioManager;
-	float volume;
+//	AudioManager audioManager;
+//	float volume;
 
 	@SuppressWarnings({ "unchecked" })
   @Override
@@ -73,12 +74,12 @@ public class ResultsActivity extends Activity {
 		
 		mContext = this;
 
-		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-		volume = audioManager
-				.getStreamVolume(AudioManager.STREAM_SYSTEM);
-
-		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
-		click = sounds.load(this, R.raw.routyclick, 1);
+//		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+//		volume = audioManager
+//				.getStreamVolume(AudioManager.STREAM_SYSTEM);
+//
+//		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
+//		click = sounds.load(this, R.raw.routyclick, 1);
 		
 
 		// Get the layout containing the list of destination
@@ -216,6 +217,7 @@ public class ResultsActivity extends Activity {
 
 				@Override
 				public void onSegmentClicked(int id, boolean isLastAddress) {
+					SoundPlayer.playClick(ResultsActivity.this);
 					showSegmentInGoogleMaps(id, isLastAddress);
 				}
 
@@ -261,12 +263,12 @@ public class ResultsActivity extends Activity {
 	
 	private void showSegmentInGoogleMaps(int id, boolean isLastAddress) {
 		if (!isLastAddress){
-			if (PreferencesModel.getSingleton().isSoundsOn()) {
+			/*if (PreferencesModel.getSingleton().isSoundsOn()) {
 				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 				sounds.play(click, volume, volume, 1, 0, 1);
-			}
-				
+			}*/
+			
 			// Get start and end Addresses from route[] - the index is the id in ResultsSegmentView
 			Address startAddress	= route.getAddresses().get(id);
 			Address endAddress 		= route.getAddresses().get(id + 1);
@@ -312,17 +314,19 @@ public class ResultsActivity extends Activity {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
-		click = sounds.load(this, R.raw.routyclick, 1);
+//		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
+//		click = sounds.load(this, R.raw.routyclick, 1);
 	}
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (sounds != null) {
+		/*if (sounds != null) {
 			sounds.release();
 			sounds = null;
-		}
+		}*/
+		
+		SoundPlayer.done();
 	}
 
 

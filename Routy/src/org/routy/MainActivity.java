@@ -8,6 +8,7 @@ import org.routy.model.DeviceLocationModel;
 import org.routy.model.PreferencesModel;
 import org.routy.model.RouteOptimizePreference;
 import org.routy.service.InternetService;
+import org.routy.sound.SoundPlayer;
 import org.routy.task.FindDeviceLocationTask;
 
 import android.app.Activity;
@@ -30,27 +31,27 @@ public class MainActivity extends Activity {
 	private TwoButtonDialog noInternetErrorDialog;
 	private SharedPreferences defaultSharedPrefs;
 	
-	private SoundPool sounds;
-	private int bad;
+	/*private SoundPool sounds;
+	private int bad;*/
 	
-  AudioManager audioManager;
-  float volume;
+//  AudioManager audioManager;
+//  float volume;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+//		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+//		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 
 		getActionBar().hide();
 		setContentView(R.layout.activity_main);
 
 		mContext = this;
 		
-		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
-		bad = sounds.load(this, R.raw.routybad, 1);
-    
+//		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
+//		bad = sounds.load(this, R.raw.routybad, 1);
+
 		startDeviceLocationTask();
 		
 		defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
@@ -90,9 +91,13 @@ public class MainActivity extends Activity {
 		Log.v(TAG, "Checking for internet connection...");
 		if (!InternetService.deviceHasInternetConnection(mContext)) {
 			Log.v(TAG, "No internet connection.");
-			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			sounds.play(bad, volume, volume, 1, 0, 1);
+			/*if (PreferencesModel.getSingleton().isSoundsOn()) {
+				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+				sounds.play(bad, volume, volume, 1, 0, 1);
+			}*/
+			
+			SoundPlayer.playBad(this);
 			initErrorDialog(getResources().getString(R.string.no_internet_error));
 			noInternetErrorDialog.show(MainActivity.this.getFragmentManager(), TAG);
 		} else {
@@ -103,13 +108,20 @@ public class MainActivity extends Activity {
 
 
 	private void gotoOriginScreen() {
-	   if(sounds != null) { 
+	   /*if(sounds != null) { 
 	      sounds.release(); 
 	      sounds = null; 
-	    }
+	    }*/
 		// Start an intent to bring up the origin screen
 		Intent originIntent = new Intent(MainActivity.this, OriginActivity.class);
 		startActivity(originIntent);
+	}
+	
+	
+	@Override
+	public void onPause() {
+		super.onPause();
+		SoundPlayer.done();
 	}
 	
 	

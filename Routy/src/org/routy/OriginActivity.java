@@ -21,6 +21,7 @@ import org.routy.model.PreferencesModel;
 import org.routy.model.Route;
 import org.routy.model.RouteRequest;
 import org.routy.model.RoutyAddress;
+import org.routy.sound.SoundPlayer;
 import org.routy.task.CalculateRouteTask;
 import org.routy.task.FindUserLocationTask;
 import org.routy.task.GooglePlacesQueryTask;
@@ -66,12 +67,12 @@ public class OriginActivity extends Activity {
 	private DestinationEntryRow destEntryRow;
 	private LinearLayout destLayout;
 	private SharedPreferences originActivityPrefs;
-	private SoundPool sounds;
-	private int bad;
-	private int speak;
-	private int click;
-	private AudioManager audioManager;
-	private float volume;
+//	private SoundPool sounds;
+//	private int bad;
+//	private int speak;
+//	private int click;
+//	private AudioManager audioManager;
+//	private float volume;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -80,10 +81,9 @@ public class OriginActivity extends Activity {
 		Log.v(TAG, "onCreate()");
 		setContentView(R.layout.activity_origin);
 		
-		Log.v(TAG,  "soundsOn=" + PreferencesModel.getSingleton().isSoundsOn());
-		
 		// Audio stuff
-		initializeAudio();
+//		initializeAudio();
+		SoundPlayer.playSpeak(this);
 
 		//Initializations
 		context 			= this;
@@ -333,7 +333,7 @@ public class OriginActivity extends Activity {
 		}
 	}
 
-	private void initializeAudio() {
+	/*private void initializeAudio() {
 		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
@@ -353,7 +353,7 @@ public class OriginActivity extends Activity {
 			  }
 			}
 		});
-	}
+	}*/
 
 
 	/**
@@ -407,11 +407,13 @@ public class OriginActivity extends Activity {
 	 */
 	public void validateAddress(final String locationQuery, Double centerLat, Double centerLng, final ValidateAddressCallback c) {
 		if (locationQuery != null && locationQuery.length() > 0) {
-			if (PreferencesModel.getSingleton().isSoundsOn()) {
+			/*if (PreferencesModel.getSingleton().isSoundsOn()) {
 				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 				sounds.play(click, volume, volume, 1, 0, 1);  
-			}
+			}*/
+			
+			SoundPlayer.playClick(this);
 
 			Double lat = centerLat;
 			Double lng = centerLng;
@@ -464,11 +466,13 @@ public class OriginActivity extends Activity {
 	 * @param view
 	 */
 	public void onFindMeClicked(View view) {
-		if (PreferencesModel.getSingleton().isSoundsOn()) {
+		/*if (PreferencesModel.getSingleton().isSoundsOn()) {
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(click, volume, volume, 1, 0, 1);
-		}
+		}*/
+		
+		SoundPlayer.playClick(this);
 
 		Location deviceLocation = getGoodDeviceLocation();
 		if (deviceLocation != null) {
@@ -613,11 +617,13 @@ public class OriginActivity extends Activity {
 
 	private void prepareDestinations() {
 		if (addressModel.hasDestinations()) {
-			if (PreferencesModel.getSingleton().isSoundsOn()) {
+			/*if (PreferencesModel.getSingleton().isSoundsOn()) {
 				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 				sounds.play(click, volume, volume, 1, 0, 1);
-			}
+			}*/
+			
+			SoundPlayer.playClick(this);
 			
 			for (int i = 0; i < addressModel.getDestinations().size(); i++) {
 				RoutyAddress dest = addressModel.getDestinations().get(i);
@@ -645,11 +651,13 @@ public class OriginActivity extends Activity {
 			generateRouteAndGo();
 		} else {
 			// No destinations entered
-			if (PreferencesModel.getSingleton().isSoundsOn()) {
+			/*if (PreferencesModel.getSingleton().isSoundsOn()) {
 				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 				sounds.play(bad, volume, volume, 1, 0, 1);
-			}
+			}*/
+			
+			SoundPlayer.playBad(this);
 			showErrorDialog("Please enter at least one destination to continue.");
 		}
 	}
@@ -677,11 +685,13 @@ public class OriginActivity extends Activity {
 	 * @param message
 	 */
 	private void showErrorDialog(String message) {
-		if (PreferencesModel.getSingleton().isSoundsOn()) {
+		/*if (PreferencesModel.getSingleton().isSoundsOn()) {
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, volume, volume, 1, 0, 1);
-		}
+		}*/
+		
+		SoundPlayer.playBad(this);
 		
 		OneButtonDialog dialog = new OneButtonDialog(getResources().getString(R.string.error_message_title), message) {
 			@Override
@@ -725,11 +735,11 @@ public class OriginActivity extends Activity {
 	protected void onResume() {   
 		super.onResume(); 
 
-		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+		/*audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0); 
 		speak = sounds.load(this, R.raw.routyspeak, 1);  
 		bad = sounds.load(this, R.raw.routybad, 1);
-		click = sounds.load(this, R.raw.routyclick, 1);
+		click = sounds.load(this, R.raw.routyclick, 1);*/
 	}
 	
 	
@@ -737,10 +747,12 @@ public class OriginActivity extends Activity {
 	public void onPause() {
 		super.onPause();
 
-		if(sounds != null) { 
+		/*if(sounds != null) { 
 			sounds.release(); 
 			sounds = null; 
-		} 
+		}*/
+		
+		SoundPlayer.done();
 	}
 
 
