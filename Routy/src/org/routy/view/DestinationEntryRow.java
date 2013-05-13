@@ -8,10 +8,14 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 
 public abstract class DestinationEntryRow extends LinearLayout {
 
@@ -64,7 +68,7 @@ public abstract class DestinationEntryRow extends LinearLayout {
 			public void onFocusChange(View v, boolean hasFocus) {
 				EditText e = (EditText) v;
 				if (!hasFocus) {
-					onEntryConfirmed(e.getEditableText());
+//					onEntryConfirmed(e.getEditableText());
 				} else {
 					onFocusGained();
 				}
@@ -91,10 +95,30 @@ public abstract class DestinationEntryRow extends LinearLayout {
 				}
 			}
 		});
+		primary.setOnEditorActionListener(new OnEditorActionListener() {
+			
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if (actionId == EditorInfo.IME_ACTION_DONE) {
+					onEntryConfirmed(primary.getEditableText());
+				}
+				return true;
+			}
+		});
 		
 		//LinearLayout destEntryRowView = (LinearLayout) findViewById(R.id.destination_entry_row);
 		
 		secondary = (EditText) findViewById(R.id.secondary_entry_field);
+		secondary.setOnFocusChangeListener(new OnFocusChangeListener() {
+			
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				// TODO Auto-generated method stub
+				if (hasFocus) {
+					onEntryConfirmed(primary.getEditableText());
+				}
+			}
+		});
 		hideSecondaryDestField();
 	}
 	
@@ -110,5 +134,9 @@ public abstract class DestinationEntryRow extends LinearLayout {
 	
 	public void focusOnEntryField() {
 		primary.requestFocus();
+	}
+	
+	public Editable getEntryFieldEditable() {
+		return primary.getEditableText();
 	}
 }

@@ -18,7 +18,6 @@ import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.model.PreferencesModel;
 import org.routy.model.Route;
-import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
 import org.routy.model.RoutyAddress;
 import org.routy.task.CalculateRouteTask;
@@ -47,9 +46,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
-import android.view.inputmethod.EditorInfo;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
@@ -73,8 +73,6 @@ public class OriginActivity extends Activity {
 	private int click;
 	private AudioManager audioManager;
 	private float volume;
-//	private RouteOptimizePreference routeOptimized;
-//	private boolean userIsNoob;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -93,7 +91,6 @@ public class OriginActivity extends Activity {
 		
 		originAddressField 	= (EditText) findViewById(R.id.origin_address_field);
 		originActivityPrefs = getSharedPreferences("origin_prefs", MODE_PRIVATE);
-//		routeOptimized = RouteOptimizePreference.PREFER_DURATION;
 		
 		loadSavedData();
 		bindInputFields();
@@ -131,6 +128,7 @@ public class OriginActivity extends Activity {
 	 * Takes the destination list in the model and displays it appropriately in the OriginActivity
 	 */
 	private void refreshDestinationLayout() {
+		Log.v(TAG, "refreshing dest layout with " + addressModel.getDestinations().size() + " dests");
 		assert destLayout != null;
 		destLayout.removeAllViews();
 		
@@ -143,6 +141,8 @@ public class OriginActivity extends Activity {
 		//If we can still take another destination, we'll display the entry row.
 		if (destLayout.getChildCount() < AppProperties.NUM_MAX_DESTINATIONS) {
 			displayDestinationEntryRow();
+		} else {
+			destEntryRow = null;
 		}
 	}
 	
@@ -159,6 +159,7 @@ public class OriginActivity extends Activity {
 			@Override
 			public void onFocusLost(final int indexInLayout, UUID id, Editable s) {
 				if (indexInLayout < addressModel.getDestinations().size() && !addressModel.getDestinations().get(indexInLayout).isValid()) {
+					Log.v(TAG, "validating address addDestinationRow().onFocusLost()");
 					validateAddress(s.toString(), null, null, new ValidateAddressCallback() {
 						@Override
 						public void onAddressValidated(RoutyAddress validatedAddress) {
@@ -193,6 +194,7 @@ public class OriginActivity extends Activity {
 				}
 				
 				if (s != null && s.length() > 0) {
+					Log.v(TAG, "validating address displayDestinationEntryRow().onEntryConfirmed()");
 					validateAddress(s.toString(), lat, lng, new ValidateAddressCallback() {
 						
 						@Override
@@ -502,7 +504,9 @@ public class OriginActivity extends Activity {
 				public void onResult(RoutyAddress address) {
 					loadReverseGeocodedOrigin(address);
 					showDestinationsNoobMessage();
-					destEntryRow.focusOnEntryField();
+					if (destEntryRow != null) {
+						destEntryRow.focusOnEntryField();
+					}
 				}
 			}).execute(deviceLocation);
 		} else {
@@ -603,24 +607,53 @@ public class OriginActivity extends Activity {
 			Log.v(TAG, "no origin");
 			showErrorDialog("Please tell Routy where your trip begins.");
 		} else if (!addressModel.getOrigin().isValid()) {
+			Log.v(TAG, "validating origin routeIt()");
 			//Validate the origin before continuing
 			validateAddress(addressModel.getOrigin().getAddressString(), null, null, new ValidateAddressCallback() {
 				@Override
 				public void onAddressValidated(RoutyAddress validatedAddress) {
 					addressModel.setOrigin(validatedAddress);
 					refreshOriginLayout();
-					
+					prepareEntryRow();
+				}
+			});
+		} else {
+			prepareEntryRow();
+		}
+	}
+	
+	
+	private void prepareEntryRow() {
+		Log.v(TAG, "preparing entry row");
+		//Validate the last entered destination
+		if (destEntryRow != null && destEntryRow.getEntryFieldEditable() != null && destEntryRow.getEntryFieldEditable().length() > 0) {
+			Log.v(TAG, "validating address prepareEntryRow()");
+			final int idx = destLayout.indexOfChild(destEntryRow);
+			Double lat = null;
+			Double lng = null;
+			if (addressModel.getOrigin() != null) {
+				lat = addressModel.getOrigin().getLatitude();
+				lng = addressModel.getOrigin().getLongitude();
+			}
+			validateAddress(destEntryRow.getEntryFieldEditable().toString(), lat, lng, new ValidateAddressCallback() {
+				
+				@Override
+				public void onAddressValidated(RoutyAddress validatedAddress) {
+					Log.v(TAG, "validated entry row was at " + idx);
+					addressModel.addDestination(validatedAddress);
+					refreshDestinationLayout();
 					prepareDestinations();
 				}
 			});
 		} else {
+			Log.v(TAG, "no entry row to validate");
 			prepareDestinations();
 		}
 	}
 
 
 	private void prepareDestinations() {
-		//IT NEEDS TO WAIT UNTIL THERE'S A VALID ORIGIN TO DO THIS.
+		Log.v(TAG, "preparing destinations");
 		if (addressModel.hasDestinations()) {
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
@@ -629,9 +662,16 @@ public class OriginActivity extends Activity {
 			for (int i = 0; i < addressModel.getDestinations().size(); i++) {
 				RoutyAddress dest = addressModel.getDestinations().get(i);
 				if (!dest.isValid()) {
+					Log.v(TAG, "validating address prepareDestinations()");
 					//Validate the destination
 					final int idx = i;
-					validateAddress(dest.getAddressString(), addressModel.getOrigin().getLatitude(), addressModel.getOrigin().getLongitude(), new ValidateAddressCallback() {
+					Double lat = null;
+					Double lng = null;
+					if (addressModel.getOrigin() != null) {
+						lat = addressModel.getOrigin().getLatitude();
+						lng = addressModel.getOrigin().getLongitude();
+					}
+					validateAddress(dest.getAddressString(), lat, lng, new ValidateAddressCallback() {
 						
 						@Override
 						public void onAddressValidated(RoutyAddress validatedAddress) {

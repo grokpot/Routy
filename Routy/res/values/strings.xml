@@ -14,7 +14,8 @@
     <string name="google_maps_api_key_active">0Cz9qngAOR4AzAhg2r3fen3T5Qu75MABjxiPD6g</string>
     <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG RYAN -->
     <!-- <string name="google_maps_v2_api_key_active">AIzaSyCJAxW49RPtHjdpFPjEQwrasgKilouXDZ0</string> --> <!-- DEBUG JEFF -->
-    <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> <!-- DEBUG ERIC -->
+    <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG ERIC -->
+	<string name="google_maps_v2_api_key_active"></string>
 
     <!-- 
     <string name="google_maps_api_key_debug_jeff">0jK_s6wBtEbASDAwZGnaF3zV7uykgMiIBcI8rzw</string>
@@ -90,9 +91,12 @@
     <string name="pref_route_calculation">Calculate route by:</string>
     <string name="pref_route_calculation_shortest">shortest</string>
     <string name="pref_about_title">About Routy</string>
-    <string name="pref_about_header">Comments / Complaints / Love:</string>
+    <string name="pref_more_header">Comments / Complaints / Love / Law:</string>
     <string name="pref_reset_instruction_title">Reset instruction text for Routy</string>
     <string name="pref_reset_instruction_header">Lost? Press the button below.</string>
     <string name="pref_instructions_reset">Instructions Reset</string>
     <string name="pref_instructions_reset_text">Cool, now if you exit and restart Routy, you can get another walkthrough!</string>
+    <string name="pref_eula_title">View EULA</string>
+    <string name="eula">End User License Agreement</string>
+    <string name="eula_text">Routy and the creators of Routy are not to be held liable for this app in any way.  Any driving accidents, bad directions, annoying sounds, bugs, poor development, or anything relating to Routy can not be held against us. On the other hand, any and all praise is welcome. For any serious licensing matters, please contact us at gorouty@gmail.com. \nHave a great day.\n\nNo, seriously, we want you to have a terrific day.</string>
 </resources>
