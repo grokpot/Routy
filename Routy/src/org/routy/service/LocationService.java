@@ -2,14 +2,16 @@ package org.routy.service;
 
 import java.util.Date;
 import java.util.List;
+
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.NoLocationProviderException;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 
 /**
  * A service class that gives access to location obtaining tasks.  Instances of this 
@@ -27,17 +29,13 @@ public abstract class LocationService {
 	private final String TAG = "LocationService";
 	private final double accuracy;
 	private final LocationManager manager;
-//	private final Context context;
-//	private boolean sensor;
 	
 	private long startTimeMs;
 	
 	
 	public LocationService(LocationManager locManager, double accuracy) {
-//		this.context = context;
 		this.manager = locManager;
 		this.accuracy = accuracy;
-//		this.sensor = false;
 	}
 	
 	
@@ -61,11 +59,11 @@ public abstract class LocationService {
 	 * @throws	NoInternetConnectionException if there are no location providers (network or GPS) enabled
 	 */
 	public void getCurrentLocation() throws NoLocationProviderException {
-//		Log.v(TAG, "getting current location");
+		Log.v(TAG, "getting current location");
 		
 		Location lastKnownLoc = getLastKnownLocation();
 		if (lastKnownLoc != null) {
-//			Log.v(TAG, "Last known location was good...using it.");
+			Log.v(TAG, "Last known location was good...using it.");
 			onLocationResult(lastKnownLoc);
 		} else {
 			startTimeMs = System.currentTimeMillis();
@@ -82,36 +80,16 @@ public abstract class LocationService {
 		        }
 		        
 		        if (networkEnabled) {
-//		        	Log.v(TAG, "network enabled");
+		        	Log.v(TAG, "network enabled");
 		        	manager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
 		        }
 			} else {
-//				Log.e(TAG, "No network or gps provider.");
+				Log.e(TAG, "No network or gps provider.");
 				throw new NoLocationProviderException("No location providers enabled.");
 			}
 		}
 		
 	}
-	
-	
-	/*private Address reverseGeocode(Location location) {
-		AddressService addressSvc = new AddressService(new Geocoder(context), sensor);
-		Address result = null;
-
-		try {
-			result = addressSvc.getAddressForLocation(location);
-		} catch (AmbiguousAddressException e) {
-			result = e.getFirstAddress();
-		} catch (RoutyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return result;
-	}*/
 	
 	
 	/**
@@ -130,7 +108,7 @@ public abstract class LocationService {
 			
 			if (candidate != null) {
 				// Last loc update is within our expiration time and is newer than any we've found before
-				if (((new Date()).getTime() - candidate.getTime()) <= AppProperties.LOCATION_EXPIRE_TIME_MS && candidate.getTime() > bestTimeMs) {
+				if (((new Date()).getTime() - candidate.getTime()) <= AppConfig.LOCATION_EXPIRE_TIME_MS && candidate.getTime() > bestTimeMs) {
 					
 					// Last loc has an accuracy within our threshold
 					if (candidate.hasAccuracy() && candidate.getAccuracy() <= accuracy) {
@@ -152,39 +130,39 @@ public abstract class LocationService {
 		
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-//			Log.v(TAG, provider + " provider status changed to " + status);
+
 		}
 		
 		@Override
 		public void onProviderEnabled(String provider) {
-//			Log.v(TAG, provider + " just enabled");
+
 		}
 		
 		@Override
 		public void onProviderDisabled(String provider) {
-//			Log.v(TAG, provider + " just disabled");
+
 		}
 		
 		@Override
 		public void onLocationChanged(Location location) {
-			if ((System.currentTimeMillis() - startTimeMs) > AppProperties.LOCATION_FETCH_TIMEOUT_MS) {
-//				Log.v(TAG, "Location fetching timing out.");
+			if ((System.currentTimeMillis() - startTimeMs) > AppConfig.LOCATION_FETCH_TIMEOUT_MS) {
+				Log.v(TAG, "user locating timed out");
 				stop();
 				onLocationSearchTimeout();
 			} else {
-//				Log.v(TAG, "location changed via " + location.getProvider());
+				Log.v(TAG, "location changed via " + location.getProvider());
 				if (location.hasAccuracy()) {
-//					Log.v(TAG, "location has accuracy: " + location.getAccuracy());
+					Log.v(TAG, "location has accuracy: " + location.getAccuracy());
 				} else {
-//					Log.v(TAG, "location has no accuracy.");
+					Log.v(TAG, "location has no accuracy.");
 				}
 				
 				if (location.getAccuracy() <= accuracy) {
-//					Log.v(TAG, "Got a good fix");
+					Log.v(TAG, "Got a good fix");
 					stop();
 					onLocationResult(location);
 				} else {
-//					Log.v(TAG, "Location has a bad accuracy: " + location.getAccuracy());
+					Log.v(TAG, "Location has a bad accuracy: " + location.getAccuracy());
 				}
 			}
 		}
@@ -196,7 +174,7 @@ public abstract class LocationService {
 	 * (ie. un-registers {@link LocationListener} objects from the {@link LocationManager})
 	 */
 	public void stop() {
-//		Log.v(TAG, "Stopping Location Service");
+		Log.v(TAG, "Stopping Location Service");
 		manager.removeUpdates(listener);
 	}
 	

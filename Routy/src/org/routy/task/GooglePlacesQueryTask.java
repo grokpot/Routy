@@ -5,6 +5,7 @@ import java.util.List;
 import org.routy.adapter.PlacesListAdapter;
 import org.routy.exception.RoutyException;
 import org.routy.fragment.ListPickerDialog;
+import org.routy.log.Log;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.service.GooglePlacesService;
@@ -12,7 +13,6 @@ import org.routy.service.GooglePlacesService;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery, Void, List<GooglePlace>> {
 
@@ -49,14 +49,13 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 		// Use the GooglePlacesService to get the result(s)
 		if (params != null && params.length > 0) {
 			GooglePlacesQuery q = params[0];
-//			Log.v(TAG, "Searching..." + q);		// XXX Possible injection point -- this is straight from the EditText the user inputs in some cases (Let Google worry about it?)
-			
 			GooglePlacesService gpSvc = new GooglePlacesService();
 			try {
 				List<GooglePlace> results = gpSvc.getPlacesForKeyword(q.getQuery(), q.getCenterLatitude(), q.getCenterLongitude(), q.getRadius());
 				return results;
 			} catch (RoutyException e) {
-//				Log.e(TAG, "RoutyException trying to get Google Places results");
+				Log.e(TAG, "RoutyException trying to get Google Places results");
+				Log.e(TAG, e.getMessage());
 				onFailure(e);
 				GooglePlacesQueryTask.this.cancel(true);
 			}

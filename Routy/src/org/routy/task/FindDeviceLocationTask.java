@@ -2,14 +2,14 @@ package org.routy.task;
 
 import org.routy.exception.NoLocationProviderException;
 import org.routy.listener.FindDeviceLocationListener;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.service.LocationService;
 
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
@@ -47,7 +47,7 @@ public class FindDeviceLocationTask extends AsyncTask<Void, Void, LatLng> {
 	
 	@Override
 	protected LatLng doInBackground(Void... params) {
-		while (location == null) {
+		while (location == null && !isCancelled()) {
 			//loopidy loop loop
 		}
 		return null;
@@ -59,17 +59,18 @@ public class FindDeviceLocationTask extends AsyncTask<Void, Void, LatLng> {
 	}
 
 	private void initLocationService() {
-		locService = new LocationService(locManager, AppProperties.USER_LOCATION_ACCURACY_THRESHOLD_M) {
+		locService = new LocationService(locManager, AppConfig.USER_LOCATION_ACCURACY_THRESHOLD_M) {
 
 			@Override
 			public void onLocationResult(Location result) {
-//				Log.v(TAG, "got a device location result");
+				Log.v(TAG, "got a device location result");
 				location = result;
 			}
 
 
 			@Override
 			public void onLocationSearchTimeout() {
+				Log.v(TAG, "device locating timed out");
 				//DO NOTHING
 			}
 		};

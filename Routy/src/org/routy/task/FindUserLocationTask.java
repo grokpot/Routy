@@ -3,7 +3,8 @@ package org.routy.task;
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.listener.FindUserLocationListener;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.service.LocationService;
 
 import android.app.ProgressDialog;
@@ -12,7 +13,6 @@ import android.content.DialogInterface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.util.Log;
 
 /**
  * Use this AsyncTask subclass to do all WIFI/LOCATION getting off the main UI.  This 
@@ -64,8 +64,6 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					progressDialog.cancel();
-					
-//					Log.v(TAG, "progress dialog cancelled");
 					FindUserLocationTask.this.cancel(true);
 				}
 			});
@@ -85,21 +83,15 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 
 	@Override
 	protected Location doInBackground(Integer... params) {
-//		Log.v(TAG, "doInBackground()");
-		
 		while (location == null && !isCancelled()) {
 //			loop
 		}
-		
-//		Log.v(TAG, "out of the loop");
 		return location;
 	}
 	
 	
 	@Override
 	protected void onCancelled(Location location) {
-//		Log.v(TAG, "onCancelled called");
-		
 		if (showDialogs) {
 			progressDialog.cancel();
 		}
@@ -108,7 +100,6 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	
 	@Override
 	protected void onPostExecute(Location location) {
-//		Log.v(TAG, "postExecute() -- got user location");
 		if (showDialogs && progressDialog.isShowing()) {
 			progressDialog.cancel();
 		}
@@ -116,22 +107,22 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	}
 	
 	private void initLocationService() {
-		locService = new LocationService(locManager, AppProperties.USER_LOCATION_ACCURACY_THRESHOLD_M) {
+		locService = new LocationService(locManager, AppConfig.USER_LOCATION_ACCURACY_THRESHOLD_M) {
 
 			@Override
 			public void onLocationResult(Location result) {
-//				Log.v(TAG, "got a location result");
+				Log.v(TAG, "got a location result");
 				location = result;
 			}
 
 
 			@Override
 			public void onLocationSearchTimeout() {
-//				Log.v(TAG, "onLocationSearchTimeout");
+				Log.v(TAG, "user location timed out");
 				GpsNotEnabledException e = null;
 				
 				if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-//					Log.i(TAG, "GPS was not enabled");
+					Log.i(TAG, "GPS was not enabled");
 					e = new GpsNotEnabledException("GPS is not enabled.");
 				}
 				

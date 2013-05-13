@@ -13,7 +13,7 @@ public class GooglePlacesQuery {
 	private int radius;
 	
 	public GooglePlacesQuery(String query, Double centerLat, Double centerLng) {
-		this(query, centerLat, centerLng, AppProperties.G_PLACES_SEARCH_RADIUS_M);
+		this(query, centerLat, centerLng, AppConfig.G_PLACES_SEARCH_RADIUS_M);
 	}
 	
 	public GooglePlacesQuery(String query, Double centerLat, Double centerLng, int radius) {

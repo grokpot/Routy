@@ -4,10 +4,10 @@ package org.routy.model;
  * Global properties used all over the app.  Centralized to make propagating  
  * updated data easy.
  * 
- * @author jtran
- *
  */
-public class AppProperties {
+public final class AppConfig {
+	
+	public static final boolean DEBUG = true;
 
 	/** The minimum accuracy required to achieve a "good" location fix in meters when searching for the user. */
 	public static final double USER_LOCATION_ACCURACY_THRESHOLD_M = 50;

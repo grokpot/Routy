@@ -2,7 +2,8 @@ package org.routy;
 
 import org.routy.fragment.TwoButtonDialog;
 import org.routy.listener.FindDeviceLocationListener;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.model.DeviceLocationModel;
 import org.routy.model.PreferencesModel;
 import org.routy.model.RouteOptimizePreference;
@@ -20,8 +21,6 @@ import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Menu;
 
 public class MainActivity extends Activity {
 
@@ -64,7 +63,7 @@ public class MainActivity extends Activity {
 				checkForInternetAndContinue();
 			}
 			
-		}, AppProperties.SPLASH_SCREEN_DELAY_MS);
+		}, AppConfig.SPLASH_SCREEN_DELAY_MS);
 	}
 	
 	
@@ -83,18 +82,16 @@ public class MainActivity extends Activity {
 
 
 	private void checkForInternetAndContinue() {
-//		Log.v(TAG, "Checking for internet connection...");
-		
+		Log.v(TAG, "Checking for internet connection...");
 		if (!InternetService.deviceHasInternetConnection(mContext)) {
-//			Log.v(TAG, "No internet connection.");
+			Log.v(TAG, "No internet connection.");
 			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
 			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
 			sounds.play(bad, volume, volume, 1, 0, 1);
 			initErrorDialog(getResources().getString(R.string.no_internet_error));
 			noInternetErrorDialog.show(MainActivity.this.getFragmentManager(), TAG);
 		} else {
-//			Log.v(TAG, "Found an internet connection.");
-
+			Log.v(TAG, "Found an internet connection.");
 			gotoOriginScreen();
 		}
 	}
@@ -130,22 +127,14 @@ public class MainActivity extends Activity {
 	
 	
 	private void startDeviceLocationTask() {
-//		Log.v(TAG, "starting device location");
+		Log.v(TAG, "starting device location");
 		new FindDeviceLocationTask(this, new FindDeviceLocationListener() {
 
 			@Override
 			public void onDeviceFound(Location deviceLocation) {
-				// TODO Store the device's location in DeviceLocationModel
+				//Store the device's location in DeviceLocationModel
 				DeviceLocationModel.getSingleton().setDeviceLocation(deviceLocation);
 			}
 		}).execute();
-	}
-	
-	
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		super.onCreateOptionsMenu(menu);
-//		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return false;
 	}
 }

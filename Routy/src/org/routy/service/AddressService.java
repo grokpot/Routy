@@ -20,7 +20,8 @@ import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.GeocoderAPIException;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.model.RoutyAddress;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,7 +31,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
-import android.util.Log;
 
 /**
  * Uses the device's Geocoder backend (or Google Geocoding API -- Use Google Geocoding API: https://developers.google.com/maps/documentation/geocoding/ 
@@ -49,12 +49,6 @@ public class AddressService {
 	public AddressService(Geocoder geocoder, boolean sensor) {
 		this.geocoder = geocoder;
 		this.sensor = sensor;
-		
-		if (!Geocoder.isPresent()) {
-//			Log.i(TAG, "Geocoder is not present...fall back on Google Maps Web API");
-		} else {
-//			Log.i(TAG, "Geocoder is present.");
-		}
 	}
 	
 	
@@ -94,7 +88,7 @@ public class AddressService {
 	 * @throws RoutyException 
 	 */
 	public RoutyAddress getAddressForLocation(Location location) throws RoutyException, IOException, AmbiguousAddressException {
-//		Log.v(TAG, "getting address for a location");
+		Log.v(TAG, "getting address for a location");
 		return getAddressForCoordinates(location.getLatitude(), location.getLongitude());
 	}
 	
@@ -113,7 +107,7 @@ public class AddressService {
 	 */
 	public RoutyAddress getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, RoutyException, IOException {
 		if (!Geocoder.isPresent()) {
-//			Log.v(TAG, String.format("using web API to get address for location: %f, %f", latitude, longitude));
+			Log.v(TAG, String.format("using web API to get address for location: %f, %f", latitude, longitude));
 			return getAddressViaWeb(latitude, longitude);
 		} else {
 			return getAddressViaGeocoder(latitude, longitude);
@@ -131,7 +125,7 @@ public class AddressService {
 	 * @throws AmbiguousAddressException
 	 */
 	Address getAddressViaGeocoder(String locationName) throws IOException, AmbiguousAddressException {
-//		Log.v(TAG, "Getting Address for locationName=" + locationName + " via Geocoder");
+		Log.v(TAG, "Getting Address via Geocoder");
 		List<Address> results = geocoder.getFromLocationName(locationName, 2);
 		
 		if (results != null && results.size() > 0) {
@@ -149,12 +143,11 @@ public class AddressService {
 				result.setExtras(extras);
 				
 				return result;
-//				return results.get(0);
 			} else {
 				for (int j = 0; j < results.size(); j++) {
-//					Log.v(TAG, "Resulting Address " + j);
+					Log.v(TAG, "Resulting Address " + j);
 					for (int i = 0; i < results.get(j).getMaxAddressLineIndex(); i++) {
-//						Log.v(TAG, results.get(j).getAddressLine(i));
+						Log.v(TAG, results.get(j).getAddressLine(i));
 					}
 				}
 				throw new AmbiguousAddressException(results);
@@ -175,28 +168,27 @@ public class AddressService {
 	 * @throws AmbiguousAddressException
 	 */
 	RoutyAddress getAddressViaGeocoder(double latitude, double longitude) throws AmbiguousAddressException {
-//		Log.v(TAG, String.format("using geocoder to get address for location: %f, %f", latitude, longitude));
+		Log.v(TAG, String.format("using geocoder to get address for location: %f, %f", latitude, longitude));
 		int tries = 0;
 		
-		// JUST A TEST
+		/*// JUST A TEST
 		for (int i = 0; i < 5; i++) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 		
 		// Since this process actually involves the Google server, there can be issues on their end out of our control.  We'll try 10 times if something goes wrong.
 		while (tries < 10) {
-//			Log.v(TAG, String.format("Reverse geocoding: try %d", tries));
 			try {
 				List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
 				if (results != null && results.size() > 0) {
 					if (results.size() == 1) {
 						RoutyAddress result = new RoutyAddress(results.get(0));
 						Util.formatAddress(result);
-//						Log.v(TAG, "got an address for the location using geocoder");
+						Log.v(TAG, "got an address for the location using geocoder");
 						return result;
 					} else {
 						List<RoutyAddress> routyAddrs = new ArrayList<RoutyAddress>();
@@ -205,17 +197,16 @@ public class AddressService {
 							Util.formatAddress(r);
 							routyAddrs.add(r);
 						}
-//						Log.v(TAG, "ambiguous address returned from geocoder");
 						throw new AmbiguousAddressException(routyAddrs);
 					}
 				}
 			} catch (IOException e) {
-//				Log.e(TAG, "IOException calling getFromLocation -- trying again");
+				Log.e(TAG, "IOException calling getFromLocation -- trying again");
 				tries++;
 			}
 		}
 		
-//		Log.e(TAG, "couldn't get address using geocoder");
+		Log.e(TAG, "couldn't get address using geocoder");
 		return null;
 	}
 
@@ -229,9 +220,9 @@ public class AddressService {
 	 * @throws IOException 
 	 */
 	Address getAddressViaWeb(String locationName) throws IOException, RoutyException {		// TODO make this throw an exception if it gets more than 1 address
-//		Log.v(TAG, "Getting Address for locationName=" + locationName + " via Web API");
+		Log.v(TAG, "Getting Address via Web API");
 		if (locationName != null && locationName.length() > 0) {
-			StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
+			StringBuilder geoUrl = new StringBuilder(AppConfig.G_GEOCODING_API_URL);
 			geoUrl.append("address=");
 			geoUrl.append(locationName.replaceAll(" ", "+"));
 			geoUrl.append("&sensor=");
@@ -255,7 +246,7 @@ public class AddressService {
 	 * @throws IOException 
 	 */
 	RoutyAddress getAddressViaWeb(double latitude, double longitude) throws IOException, RoutyException {	// TODO make this throw an exception if it gets more than 1 address
-		StringBuilder geoUrl = new StringBuilder(AppProperties.G_GEOCODING_API_URL);
+		StringBuilder geoUrl = new StringBuilder(AppConfig.G_GEOCODING_API_URL);
 		geoUrl.append("latlng=");
 		geoUrl.append(latitude);
 		geoUrl.append(",");
@@ -280,8 +271,6 @@ public class AddressService {
 		if (url != null && url.length() > 0) {
 			try {
 				// Get the JSON response from the Geocoding API
-//				Log.v(TAG, "Geocoding API URL: " + url);
-				
 				String xmlResponse = InternetService.getStringResponse(url);
 				if (xmlResponse != null && xmlResponse.length() > 0) {
 					RoutyAddress result = parseXMLResponse(xmlResponse);
@@ -290,9 +279,9 @@ public class AddressService {
 				}
 				
 			} catch (GeocoderAPIException e) {
-//				Log.e(TAG, e.getMessage());
+				Log.e(TAG, e.getMessage());
 			} catch (IOException e) {
-//				Log.e(TAG, e.getMessage());
+				Log.e(TAG, e.getMessage());
 			}
 			
 			return null;
@@ -318,7 +307,6 @@ public class AddressService {
 		if (status.equalsIgnoreCase("ok")) {
 			JSONArray results = response.getJSONArray("results");
 
-			// TODO Handle ambiguous addresses that get multiple results
 			Address address = new Address(Locale.getDefault());
 			
 			JSONObject result = results.getJSONObject(0);
@@ -351,17 +339,16 @@ public class AddressService {
 			
 			// GET THE RESPONSE STATUS
 			expr = "/GeocodeResponse/status";
-//			String status = (String) xpath.evaluate(expr, inputSource, XPathConstants.STRING);
 			String status = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
-//			Log.v(TAG, "status=" + status);
+			Log.v(TAG, String.format("geocoder response status = %s", status));
 			if (status == null || status.length() == 0) {
-//				Log.e(TAG, "Failed parsing Geocoder API response status.");
+				Log.e(TAG, "Failed parsing Geocoder API response status.");
 				throw new RoutyException("There was a problem understanding an address.");
 			} else if (!status.equalsIgnoreCase("ok")) {
-//				Log.e(TAG, "Geocoder API response status not ok -- status=" + status);
+				Log.e(TAG, String.format("Geocoder API response status not ok -- status = %s", status));
 				throw new RoutyException("There was a problem understanding an address.");
 			} else { 
-				// TODO status is ok - parse the XML into an Address object
+				//status is ok - parse the XML into an Address object
 				int lineNumber = 0;
 				RoutyAddress result = new RoutyAddress(Locale.getDefault());
 				
@@ -375,16 +362,13 @@ public class AddressService {
 				expr = "/GeocodeResponse/result[1]/address_component[type=\"establishment\"]/long_name";
 				String establishment = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
 				result.setFeatureName(establishment);
-//				Log.v(TAG, "establishment=" + establishment);
 				
 				// GET THE STREET NUMBER AND NAME
 				expr = "/GeocodeResponse/result[1]/address_component[type=\"street_number\"]/long_name";
 				String streetNumber = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
-//				Log.v(TAG, "street number=" + streetNumber);
 				
 				expr = "/GeocodeResponse/result[1]/address_component[type=\"route\"]/long_name";
 				String streetName = (String) xpath.evaluate(expr, root, XPathConstants.STRING);
-//				Log.v(TAG, "street name=" + streetName);
 				
 				result.setAddressLine(lineNumber, (streetNumber==null?"":streetNumber) + (streetName==null?"":(" " + streetName)));
 				lineNumber++;
@@ -450,7 +434,6 @@ public class AddressService {
 				extras.putString("formatted_address", formattedAddress);
 				result.setExtras(extras);
 				
-//				Log.v(TAG, "Done parsing XML.");
 				return result;
 			}
 			
