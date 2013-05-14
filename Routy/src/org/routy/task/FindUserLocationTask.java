@@ -2,14 +2,14 @@ package org.routy.task;
 
 import java.util.Timer;
 
-import org.routy.Timeout;
-import org.routy.TimeoutCallback;
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.listener.FindUserLocationListener;
 import org.routy.log.Log;
 import org.routy.model.AppConfig;
 import org.routy.service.LocationService;
+import org.routy.timer.Timeout;
+import org.routy.timer.TimeoutCallback;
 
 import android.app.ProgressDialog;
 import android.content.Context;

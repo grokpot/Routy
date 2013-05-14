@@ -1,4 +1,4 @@
-package org.routy;
+package org.routy.timer;
 
 import java.util.TimerTask;
 
