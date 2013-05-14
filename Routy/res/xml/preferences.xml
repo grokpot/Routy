@@ -39,7 +39,8 @@
 		android:title="@string/pref_more_header" >
 		<Preference
 		    android:key="pref_about"
-		    android:title="@string/pref_about_title"/>
+		    android:title="@string/pref_about_title" 
+		    android:summary="Version 1" />
 		<Preference
 		    android:key="pref_eula"
 		    android:title="@string/pref_eula_title"/>

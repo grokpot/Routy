@@ -32,6 +32,12 @@ public class PreferencesFragment extends PreferenceFragment {
 	    addPreferencesFromResource(R.xml.preferences);
 	    
 	    Preference myPref = (Preference) findPreference("pref_about");
+	    try {
+	    	myPref.setSummary("Version " + getVersionNumber());
+	    } catch (NameNotFoundException e) {
+	    	Log.e(TAG, "problem getting the version number from the package");
+			//Do Nothing...it just won't show a version number
+	    }
 	    myPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
 				String aboutText = getResources().getString(R.string.about_title);
