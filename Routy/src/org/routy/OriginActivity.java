@@ -3,6 +3,9 @@ package org.routy;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.routy.callback.ValidateAddressCallback;
 import org.routy.exception.GpsNotEnabledException;
@@ -37,6 +40,8 @@ import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -455,12 +460,6 @@ public class OriginActivity extends Activity {
 	 * @param view
 	 */
 	public void onFindMeClicked(View view) {
-		/*if (PreferencesModel.getSingleton().isSoundsOn()) {
-			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			sounds.play(click, volume, volume, 1, 0, 1);
-		}*/
-		
 		SoundPlayer.playClick(this);
 
 		Location deviceLocation = getGoodDeviceLocation();
@@ -515,7 +514,7 @@ public class OriginActivity extends Activity {
 	 * Kicks off a {@link FindUserLocationTask} to try and obtain the user's location.
 	 */
 	void locate() {
-		new FindUserLocationTask(this, true, new FindUserLocationListener() {
+		new FindUserLocationTask(OriginActivity.this, true, new FindUserLocationListener() {
 			
 			@Override
 			public void onUserLocationFound(Location userLocation) {
@@ -531,7 +530,7 @@ public class OriginActivity extends Activity {
 			
 			@Override
 			public void onTimeout(GpsNotEnabledException e) {
-				showErrorDialog(getResources().getString(R.string.locating_fail_error));
+				showErrorDialog(getResources().getString(R.string.locating_timeout_error));
 			}
 			
 			@Override
@@ -545,6 +544,7 @@ public class OriginActivity extends Activity {
 				}
 			}
 		}).execute(0);
+		
 	}
 	
 

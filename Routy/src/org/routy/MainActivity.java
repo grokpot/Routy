@@ -41,17 +41,11 @@ public class MainActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-//		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-//		volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-
 		getActionBar().hide();
 		setContentView(R.layout.activity_main);
 
 		mContext = this;
 		
-//		sounds = new SoundPool(2, AudioManager.STREAM_MUSIC, 0);
-//		bad = sounds.load(this, R.raw.routybad, 1);
-
 		startDeviceLocationTask();
 		
 		defaultSharedPrefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());

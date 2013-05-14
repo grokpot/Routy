@@ -1,5 +1,9 @@
 package org.routy.task;
 
+import java.util.Timer;
+
+import org.routy.Timeout;
+import org.routy.TimeoutCallback;
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.listener.FindUserLocationListener;
@@ -83,9 +87,19 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 
 	@Override
 	protected Location doInBackground(Integer... params) {
+		//This timer runs in a separate thread.  It'll call the Timeout (inner class)'s run method which calls callback.onTimeout() in 10 seconds.
+		Timer timer = new Timer();
+		timer.schedule(new Timeout(this, new TimeoutCallback() {
+			@Override
+			public void onTimeout() {
+				listener.onTimeout(new GpsNotEnabledException());
+			}
+		}), AppConfig.LOCATION_FETCH_TIMEOUT_MS);
 		while (location == null && !isCancelled()) {
 //			loop
 		}
+		
+		timer.cancel();
 		return location;
 	}
 	
