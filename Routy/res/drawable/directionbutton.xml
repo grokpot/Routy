@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<layer-list
-    xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item android:drawable="@drawable/result_arrow_bw_short" android:left="0px" />
-    <item android:drawable="@drawable/getdirections" 
-        android:left="26px" android:right="26px" />
-    <item android:drawable="@drawable/result_map" android:right="0px" />
-</layer-list>
