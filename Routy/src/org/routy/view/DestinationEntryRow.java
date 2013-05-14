@@ -99,7 +99,7 @@ public abstract class DestinationEntryRow extends LinearLayout {
 			
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
 					onEntryConfirmed(primary.getEditableText());
 				}
 				return true;
