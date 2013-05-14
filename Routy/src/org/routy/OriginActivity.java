@@ -36,9 +36,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Location;
-import android.media.AudioManager;
-import android.media.SoundPool;
-import android.media.SoundPool.OnLoadCompleteListener;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -53,6 +50,8 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
+
+import com.google.analytics.tracking.android.EasyTracker;
 
 public class OriginActivity extends Activity {
 
@@ -583,7 +582,6 @@ public class OriginActivity extends Activity {
 	private void prepareEntryRow() {
 		//Validate the last entered destination
 		if (destEntryRow != null && destEntryRow.getEntryFieldEditable() != null && destEntryRow.getEntryFieldEditable().length() > 0) {
-			final int idx = destLayout.indexOfChild(destEntryRow);
 			Double lat = null;
 			Double lng = null;
 			if (addressModel.getOrigin() != null) {
@@ -759,6 +757,20 @@ public class OriginActivity extends Activity {
 			ed.putString(SAVED_DESTS_JSON_KEY, json);
 			ed.commit();
 		}
+	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		// Analytics
+		EasyTracker.getInstance().activityStart(this);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		// Analytics
+		EasyTracker.getInstance().activityStop(this);
 	}
 	
 	@Override

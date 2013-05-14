@@ -11,14 +11,14 @@ import org.routy.service.InternetService;
 import org.routy.sound.SoundPlayer;
 import org.routy.task.FindDeviceLocationTask;
 
+import com.google.analytics.tracking.android.EasyTracker;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
-import android.media.AudioManager;
-import android.media.SoundPool;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -119,6 +119,19 @@ public class MainActivity extends Activity {
 		startActivity(originIntent);
 	}
 	
+	@Override
+	public void onStart() {
+		super.onStart();
+		// Analytics
+		EasyTracker.getInstance().activityStart(this);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		// Analytics
+		EasyTracker.getInstance().activityStop(this);
+	}
 	
 	@Override
 	public void onPause() {
