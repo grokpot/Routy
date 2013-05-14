@@ -47,7 +47,7 @@ public class LoadingDialog extends DialogFragment {
 	
 	@Override
 	public Dialog onCreateDialog(Bundle savedInstanceState) {
-		Log.v(TAG, "creating loading dialog");
+//		Log.v(TAG, "creating loading dialog");
 		
 		ProgressDialog dialog = new ProgressDialog(getActivity());
 		dialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);

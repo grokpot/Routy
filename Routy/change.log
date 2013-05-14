@@ -1,0 +1,13 @@
+1.0.2 (or 1.1?)
+
+[NEW]
+* ADDED Setting (ON/OFF) for in-app sounds.  We love 'em, but we understand if you don't!
+* ADDED Version number to the "About" dialog.  Now you'll know which version you have!
+
+[FIXES]
+* FIXED Reorganized the settings screen to make everything less cluttered.
+* FIXED Made in-app sounds more stable.
+* FIXED Squished some small bugs.
+
+Plus other little things that'll make developing Routy easier, so we can keep making it better!
+

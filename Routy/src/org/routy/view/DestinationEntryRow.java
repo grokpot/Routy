@@ -2,7 +2,7 @@ package org.routy.view;
 
 import org.routy.R;
 import org.routy.model.AddressModel;
-import org.routy.model.AppProperties;
+import org.routy.model.AppConfig;
 
 import android.content.Context;
 import android.text.Editable;
@@ -19,7 +19,7 @@ import android.widget.TextView.OnEditorActionListener;
 
 public abstract class DestinationEntryRow extends LinearLayout {
 
-	//private final String TAG = "DestinationEntryRow";
+	private final String TAG = "DestinationEntryRow";
 	
 	/**
 	 * Invoked when user changes focus from the primary entry row to 
@@ -99,21 +99,18 @@ public abstract class DestinationEntryRow extends LinearLayout {
 			
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_DONE) {
+				if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_ACTION_NEXT) {
 					onEntryConfirmed(primary.getEditableText());
 				}
 				return true;
 			}
 		});
 		
-		//LinearLayout destEntryRowView = (LinearLayout) findViewById(R.id.destination_entry_row);
-		
 		secondary = (EditText) findViewById(R.id.secondary_entry_field);
 		secondary.setOnFocusChangeListener(new OnFocusChangeListener() {
 			
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				// TODO Auto-generated method stub
 				if (hasFocus) {
 					onEntryConfirmed(primary.getEditableText());
 				}
@@ -127,7 +124,7 @@ public abstract class DestinationEntryRow extends LinearLayout {
 	}
 	
 	private void showSecondaryDestField() {
-		if (AddressModel.getSingleton().getDestinations().size() < AppProperties.NUM_MAX_DESTINATIONS - 1) {
+		if (AddressModel.getSingleton().getDestinations().size() < AppConfig.NUM_MAX_DESTINATIONS - 1) {
 			secondary.setVisibility(View.VISIBLE);
 		}
 	}

@@ -61,7 +61,7 @@
                 android:baselineAlignBottom="true"
                 android:scaleType="fitCenter"
                 android:contentDescription="@string/routeitdesc"
-                android:onClick="findUserLocation"
+                android:onClick="onFindMeClicked"
                 android:src="@drawable/findme" />
             
             <!-- 
@@ -78,6 +78,7 @@
                 android:onClick="findUserLocation"
                 android:paddingBottom="8dp"
                 android:paddingRight="5dp"
+                android:paddingLeft="50dp"
                 android:paddingTop="8dp"
                 android:text="@string/find_user_prompt"
                 android:textColor="@color/White"

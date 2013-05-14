@@ -4,10 +4,10 @@ package org.routy.model;
  * Global properties used all over the app.  Centralized to make propagating  
  * updated data easy.
  * 
- * @author jtran
- *
  */
-public class AppProperties {
+public final class AppConfig {
+	
+	public static final boolean DEBUG = true;
 
 	/** The minimum accuracy required to achieve a "good" location fix in meters when searching for the user. */
 	public static final double USER_LOCATION_ACCURACY_THRESHOLD_M = 50;
@@ -20,6 +20,13 @@ public class AppProperties {
 	
 	/** The amount of time Routy should spend searching for the user's location in milliseconds */
 	public static final long LOCATION_FETCH_TIMEOUT_MS = 10000;
+	
+	public static final long CALCULATE_ROUTE_TIMEOUT_MS = 10000;
+	
+	/** The amount of time Routy should spend getting results from the Google Places API */
+	public static final long G_PLACES_TIMEOUT_MS = 10000;
+	
+	public static final long REVERSE_GEOCODE_TIMEOUT_MS = 10000;
 	
 	/** The base URL for accessing the Google Distance Matrix Web API */
 	public static final String G_DISTANCE_MATRIX_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?";

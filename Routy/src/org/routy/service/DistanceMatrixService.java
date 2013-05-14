@@ -10,12 +10,12 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.model.Distance;
 import org.routy.model.RoutyAddress;
 
 import android.location.Address;
-import android.util.Log;
 
 public class DistanceMatrixService {
 
@@ -59,12 +59,9 @@ public class DistanceMatrixService {
 		
 		if (distances != null) {
 			for (int i = 0; i < distances.size(); i++) {
-				Log.d(TAG, "current distance: " + distances.get(i).getDistance());
 				if (preference == PREFER_DISTANCE && (best == -1 || distances.get(i).getDistance() < best)) {
 					best = distances.get(i).getDistance();
 					idx = i;
-					Log.d(TAG, "new best distance: " + distances.get(i).getDistance());
-					Log.d(TAG, "idx=" + idx);
 				} else if (preference == PREFER_DURATION && (best == -1 || distances.get(i).getDuration() < best)) {
 					best = distances.get(i).getDuration();
 					idx = i;
@@ -93,11 +90,11 @@ public class DistanceMatrixService {
 	public List<Distance> getDistanceMatrix(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
 		// Get the JSON string response from the webservice
 		String jsonResp = getJSONResponse(origin, destinations, sensor);
-		Log.v(TAG, "jsonResp: " + jsonResp);
 		
 		try {
 			return parseJSONResponse(jsonResp);
 		} catch (JSONException e) {
+			Log.e(TAG, "JSONException parsing distance matrix response");
 			Log.e(TAG, e.getMessage());
 			throw new RoutyException();
 		}
@@ -111,7 +108,7 @@ public class DistanceMatrixService {
 		
 		String status = response.getString("status");
 		if (status == null || !status.equalsIgnoreCase("ok")) {
-			Log.e(TAG, "got status=" + status + " from Google Distance Matrix API");
+			Log.e(TAG, "Google Distance Matrix API status=" + status);
 			throw new RoutyException("Got a bad response from Google Distance Matrix API: status=" + status);
 		}
 
@@ -148,7 +145,7 @@ public class DistanceMatrixService {
 	 */
 	private String getJSONResponse(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
 		// Add origin
-		StringBuilder url = new StringBuilder(AppProperties.G_DISTANCE_MATRIX_URL);
+		StringBuilder url = new StringBuilder(AppConfig.G_DISTANCE_MATRIX_URL);
 		url.append("origins=");
 		url.append(origin.getLatitude());
 		url.append(",");

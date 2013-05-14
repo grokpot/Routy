@@ -52,13 +52,13 @@ public class RouteService {
 	// TODO distance might be calculated incorrectly
 	public Route getBestRoute() {
 		computeAllPossibleRoutes(destinations.size());
-		Log.v(TAG, possibleRoutes.size() + " possible routes");
+//		Log.v(TAG, possibleRoutes.size() + " possible routes");
 		int bestDistance = -1;
 		List<Integer> bestRoute = null;
 		
 		for (int r = 0; r < possibleRoutes.size(); r++) {
 			List<Integer> route = possibleRoutes.get(r);
-			Log.v(TAG, "Calculating route: " + route.toArray());
+//			Log.v(TAG, "Calculating route: " + route.toArray());
 			int idx = 0;
 			int distance = distances[0][route.get(idx) - 1];
 			
@@ -140,26 +140,26 @@ public class RouteService {
 		distances = new int[rows][cols];
 		
 		// Origin to each destination
-		Log.v(TAG, "Getting distance from origin to destinations");
+//		Log.v(TAG, "Getting distance from origin to destinations");
 		List<Distance> distsFromOrigin = distanceService.getDistanceMatrix(origin, destinations, sensor);
 		for (int i = 0; i < distsFromOrigin.size(); i++) {
-			Log.v(TAG, "distance from origin: duration=" + distsFromOrigin.get(i).getDuration() + " distance=" + distsFromOrigin.get(i).getDistance());
+//			Log.v(TAG, "distance from origin: duration=" + distsFromOrigin.get(i).getDuration() + " distance=" + distsFromOrigin.get(i).getDistance());
 			if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
-				Log.v(TAG, "preferring duration -- duration=" + distsFromOrigin.get(i).getDuration());
+//				Log.v(TAG, "preferring duration -- duration=" + distsFromOrigin.get(i).getDuration());
 				distances[0][i] = distsFromOrigin.get(i).getDuration();
 			} else {
-				Log.v(TAG, "preferring distance -- distance=" + distsFromOrigin.get(i).getDistance());
+//				Log.v(TAG, "preferring distance -- distance=" + distsFromOrigin.get(i).getDistance());
 				distances[0][i] = distsFromOrigin.get(i).getDistance();
 			}
 		}
 		
 		// Each destination to others
-		Log.v(TAG, "Getting distance from each destination to the others");
+//		Log.v(TAG, "Getting distance from each destination to the others");
 		List<Distance> distsFromDest = null;
 		for (int i = 0; i < destinations.size(); i++) {
 			List<RoutyAddress> otherDests = new ArrayList<RoutyAddress>(destinations);
 			otherDests.remove(i);
-			Log.v(TAG, "otherDests size=" + otherDests.size());
+//			Log.v(TAG, "otherDests size=" + otherDests.size());
 			
 			if (otherDests.size() > 0) {
 				distsFromDest = distanceService.getDistanceMatrix(destinations.get(i), otherDests, sensor);
@@ -169,7 +169,7 @@ public class RouteService {
 				
 				while (entered < distsFromDest.size()) {
 					if (i != idx) {
-						Log.v(TAG, "distance matrix entry: duration=" + distsFromOrigin.get(i).getDuration() + " distance=" + distsFromOrigin.get(i).getDistance());
+//						Log.v(TAG, "distance matrix entry: duration=" + distsFromOrigin.get(i).getDuration() + " distance=" + distsFromOrigin.get(i).getDistance());
 						if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
 							distances[i+1][idx] = distsFromDest.get(entered).getDuration();
 						} else {

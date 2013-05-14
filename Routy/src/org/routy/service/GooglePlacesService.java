@@ -13,13 +13,13 @@ import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.routy.exception.RoutyException;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.model.GooglePlace;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import android.util.Log;
 
 /**
  * This class provides methods to interface with the Google Places API.
@@ -63,9 +63,9 @@ public class GooglePlacesService {
 		}
 		
 		// Assemble the URL to get the Google Places result(s)
-		StringBuffer placesUrl = new StringBuffer(AppProperties.G_PLACES_API_URL);
+		StringBuffer placesUrl = new StringBuffer(AppConfig.G_PLACES_API_URL);
 		placesUrl.append("key=");
-		placesUrl.append(AppProperties.G_API_KEY);
+		placesUrl.append(AppConfig.G_API_KEY);
 		placesUrl.append("&query=");
 		placesUrl.append(query.replaceAll(" ", "+"));
 		
@@ -94,8 +94,9 @@ public class GooglePlacesService {
 			return results;
 		}
 		
-		// TODO Parse the Google Places xml response
+		// Parse the Google Places xml response
 		try {
+			Log.v(TAG, "parsing Google Places response xml");
 			XPath xpath = XPathFactory.newInstance().newXPath();
 			String expr = "/";
 			
@@ -111,9 +112,8 @@ public class GooglePlacesService {
 				expr = "//PlaceSearchResponse/result";
 				NodeList xmlResults = (NodeList) xpath.evaluate(expr, root, XPathConstants.NODESET);
 				
-				Log.v(TAG, "Number of places results = " + xmlResults.getLength());
 				// Number of places results is capped
-				for (int i = 0; i < Math.min(xmlResults.getLength(), AppProperties.G_PLACES_MAX_RESULTS); i++) {
+				for (int i = 0; i < Math.min(xmlResults.getLength(), AppConfig.G_PLACES_MAX_RESULTS); i++) {
 					results.add(parseSingleResult(xmlResults.item(i)));
 				}
 				
@@ -129,10 +129,6 @@ public class GooglePlacesService {
 		
 		Log.v(TAG, results.size() + " results");
 		
-		for (GooglePlace p : results) {
-			Log.v(TAG, p.getName() + " - " + p.getFormattedAddress());
-		}
-		
 		return results;
 	}
 	
@@ -145,8 +141,6 @@ public class GooglePlacesService {
 	 * @throws XPathExpressionException
 	 */
 	private GooglePlace parseSingleResult(Node resultNode) throws XPathExpressionException {
-		Log.v(TAG, "Parsing a place result.");
-		
 		XPath xpath = XPathFactory.newInstance().newXPath();
 		String expr;
 		GooglePlace place = new GooglePlace();
@@ -183,10 +177,10 @@ public class GooglePlacesService {
 			String xmlResp = InternetService.getStringResponse(u.toExternalForm());
 			return xmlResp;
 		} catch (MalformedURLException e) {
-			Log.e(TAG, "Google Places URL [" + url + "] is malformed");
+			Log.e(TAG, "Google Places URL is malformed");
 			throw new RoutyException("There was an internal problem looking up place names.");
 		} catch (IOException e) {
-			Log.e(TAG, "IOException getting Google Places result: " + e.getMessage());
+			Log.e(TAG, "IOException getting Google Places result");
 			throw new RoutyException("There was an internal problem looking up place names.");
 		}
 	}

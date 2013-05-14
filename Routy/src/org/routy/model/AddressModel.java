@@ -32,8 +32,8 @@ public class AddressModel {
 
 	public void setOrigin(RoutyAddress origin) {
 		if (origin != null) {
-			Log.v(TAG, "setting origin to " + origin.getAddressString());
-			Log.v(TAG, "origin status is " + origin.getStatus().toString());
+//			Log.v(TAG, "setting origin to " + origin.getAddressString());
+//			Log.v(TAG, "origin status is " + origin.getStatus().toString());
 		}
 		this.origin = origin;
 	}
@@ -80,32 +80,32 @@ public class AddressModel {
 		//Parse the JSON string to load an Address into origin
 		if (json != null && json.length() > 0) {
 			setOrigin(Util.readAddressFromJson(json));
-			Log.v(TAG, "origin loaded into AddressModel.");
+//			Log.v(TAG, "origin loaded into AddressModel.");
 		} else {
-			Log.v(TAG, "no saved origin JSON");
+//			Log.v(TAG, "no saved origin JSON");
 		}
 	}
 	
 	private void loadDestinationsJSON(String json) {
 		if (json != null && json.length() > 0) {
 			setDestinations(Util.jsonToAddressList(json));
-			Log.v(TAG, "destinations loaded into AddressModel.");
+//			Log.v(TAG, "destinations loaded into AddressModel.");
 		} else {
-			Log.v(TAG, "no saved destinations JSON");
+//			Log.v(TAG, "no saved destinations JSON");
 			destinations = new ArrayList<RoutyAddress>();
 		}
 	}
 
 	public void removeDestination(int indexInLayout) {
 		if (indexInLayout >= 0 && indexInLayout < destinations.size()) {
-			Log.v(TAG, "removing destination #" + indexInLayout);
+//			Log.v(TAG, "removing destination #" + indexInLayout);
 			destinations.remove(indexInLayout);
-			Log.v(TAG, "model has " + destinations.size() + " destinations");
+//			Log.v(TAG, "model has " + destinations.size() + " destinations");
 		}
 	}
 
 	public void setDestinationAt(int indexInLayout, RoutyAddress validatedAddress) {
-		Log.v(TAG, "setting destination at index " + indexInLayout);
+//		Log.v(TAG, "setting destination at index " + indexInLayout);
 		if (indexInLayout == 0 && destinations.size() == 0) {
 			destinations.add(validatedAddress);
 		} else if (indexInLayout > 0 && indexInLayout < destinations.size() && validatedAddress != null) {

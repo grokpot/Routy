@@ -5,9 +5,11 @@ public class PreferencesModel {
 	private static PreferencesModel singleton = new PreferencesModel();
 	
 	private RouteOptimizePreference routeOptimizeMode;
+	
 	private boolean routyNoob;
-//	private boolean entryNoob;
 	private boolean resultsNoob;
+	
+	private boolean soundsOn;
 	
 	private PreferencesModel() {
 		super();
@@ -33,19 +35,19 @@ public class PreferencesModel {
 		this.routyNoob = routyNoob;
 	}
 
-	/*public boolean isEntryNoob() {
-		return entryNoob;
-	}
-
-	public void setEntryNoob(boolean entryNoob) {
-		this.entryNoob = entryNoob;
-	}*/
-
 	public boolean isResultsNoob() {
 		return resultsNoob;
 	}
 
 	public void setResultsNoob(boolean resultsNoob) {
 		this.resultsNoob = resultsNoob;
+	}
+
+	public boolean isSoundsOn() {
+		return soundsOn;
+	}
+
+	public void setSoundsOn(boolean soundsOn) {
+		this.soundsOn = soundsOn;
 	}
 }

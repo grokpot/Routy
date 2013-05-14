@@ -1,21 +1,29 @@
 package org.routy.task;
 
+import java.util.Timer;
+
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.model.Route;
-import org.routy.model.RouteOptimizePreference;
 import org.routy.model.RouteRequest;
 import org.routy.service.RouteService;
+import org.routy.timer.Timeout;
+import org.routy.timer.TimeoutCallback;
 
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, Route> {
 
 	private final String TAG = "CalculateRouteTask";
+	
+	public abstract void onRouteCalculated(Route route);
+	public abstract void onRouteCalculateTimeout();
 
 	private Context context;
 	private ProgressDialog progressDialog;
+	private Timer timer;
 
 	public CalculateRouteTask(Context context) {
 		super();
@@ -26,7 +34,6 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 	
 	@Override
 	protected void onPreExecute() {
-		// TODO make this cancelable -- just stop generating!
 		progressDialog = new ProgressDialog(context);
 		progressDialog.setTitle("Hang Tight!");
 		progressDialog.setMessage("Generating your route...");
@@ -40,14 +47,21 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 	
 	@Override
 	protected Route doInBackground(RouteRequest...requests) {
+		timer = new Timer();
 		try {
 			if (requests.length == 0) {
-				Log.e(TAG, "CalculateRouteTask has no RouteRequest to process");
 				CalculateRouteTask.this.cancel(true);
 			} else {
-				RouteRequest request = requests[0];
+				//Timer to timeout this task
+				timer.schedule(new Timeout(this, new TimeoutCallback() {
+					
+					@Override
+					public void onTimeout() {
+						onRouteCalculateTimeout();
+					}
+				}), AppConfig.CALCULATE_ROUTE_TIMEOUT_MS);
 				
-				Log.v(TAG, "user prefers: " + (request.getPreference().equals(RouteOptimizePreference.PREFER_DISTANCE)?"distance":"") + (request.getPreference().equals(RouteOptimizePreference.PREFER_DURATION)?"duration":""));
+				RouteRequest request = requests[0];
 				RouteService routeService = new RouteService(request.getOrigin(), request.getDestinations(), request.getPreference(), false);
 				Route bestRoute = routeService.getBestRoute();
 				
@@ -56,8 +70,12 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 			
 			
 		} catch (Exception e) {
-			Log.e(TAG, "could not generate route");
 			CalculateRouteTask.this.cancel(true);
+		} finally {
+			Log.v(TAG, "route calculate timer cancelled");
+			if (timer != null) {
+				timer.cancel();
+			}
 		}
 		return null;
 	}
@@ -70,7 +88,6 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 		}
 		
 		if (result != null) {
-			Log.d(TAG, "Best route calculated.");
 			onRouteCalculated(result);
 		} else {
 			Log.e(TAG, "Best route returned was null.");
@@ -83,9 +100,9 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 		if (progressDialog.isShowing()) {
 			progressDialog.cancel();
 		}
+		
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
-	
-	
-	public abstract void onRouteCalculated(Route route);
-
 }
