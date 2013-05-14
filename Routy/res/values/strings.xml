@@ -12,9 +12,6 @@
     <string name="destination_noob_instructions">Now enter addresses, places, or intersections in any order. You can also choose between a shorter route or a faster time.\n\nWhen you\'re ready, click \"Route it!\" to see the results! If you change your mind, just press back.</string>
     <string name="results_noob_instructions">Here\'s your trip with a detailed description below. If you want to change any part of your trip, just press back.\n\nHappy routing!</string>
     <string name="google_maps_api_key_active">0Cz9qngAOR4AzAhg2r3fen3T5Qu75MABjxiPD6g</string>
-    <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG RYAN -->
-    <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG ERIC -->
-    <string name="google_maps_v2_api_key_active">AIzaSyAiqDxNVMr7zIcn9uYIWhitDJ0TvLvEM80</string> <!-- DEBUG PRODUCTION -->
 
     <!-- 
     <string name="google_maps_api_key_debug_jeff">0jK_s6wBtEbASDAwZGnaF3zV7uykgMiIBcI8rzw</string>
@@ -93,7 +90,7 @@
     <string name="pref_route_calculation">Calculate route by:</string>
     <string name="pref_route_calculation_shortest">Shortest</string>
     <string name="pref_about_title">About Routy</string>
-    <string name="pref_more_header">Comments / Complaints / Love / Law:</string>
+    <string name="pref_more_header">Info</string>
     <string name="pref_reset_instruction_title">Reset instruction text for Routy</string>
     <string name="pref_reset_instruction_header">Lost? Press the button below</string>
     <string name="pref_instructions_reset">Instructions Reset</string>
