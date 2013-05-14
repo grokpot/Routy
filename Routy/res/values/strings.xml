@@ -96,6 +96,8 @@
     <string name="pref_instructions_reset">Instructions Reset</string>
     <string name="pref_instructions_reset_text">Cool, now if you exit and restart Routy, you can get another walkthrough!</string>
     <string name="pref_eula_title">View EULA</string>
+    <string name="pref_summary_general">Sounds | Reset</string>
+    <string name="pref_summary_info">About | Version | EULA</string>
     <string name="eula">End User License Agreement</string>
     <string name="eula_text">Routy and the creators of Routy are not to be held liable for this app in any way.  Any driving accidents, bad directions, annoying sounds, bugs, poor development, or anything relating to Routy can not be held against us. On the other hand, any and all praise is welcome. For any serious licensing matters, please contact us at gorouty@gmail.com. \nHave a great day.\n\nNo, seriously, we want you to have a terrific day.</string>
 </resources>

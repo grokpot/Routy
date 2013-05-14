@@ -4,7 +4,8 @@
     android:layout_height="wrap_content" >
     
     <PreferenceScreen 
-        android:title="General">
+        android:title="General"
+        android:summary="@string/pref_summary_general">
         <PreferenceCategory 
             android:title="Audio">
             <SwitchPreference 
@@ -36,7 +37,8 @@
 	</PreferenceScreen>
 	
 	<PreferenceScreen 
-		android:title="@string/pref_more_header" >
+		android:title="@string/pref_more_header" 
+		android:summary="@string/pref_summary_info" >
 		<Preference
 		    android:key="pref_about"
 		    android:title="@string/pref_about_title" 

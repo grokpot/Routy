@@ -323,21 +323,16 @@ public class ResultsActivity extends Activity {
 		EasyTracker.getInstance().activityStop(this);
 	}
 
-	@Override
+	/*@Override
 	protected void onResume() {
 		super.onResume();
 //		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
 //		click = sounds.load(this, R.raw.routyclick, 1);
-	}
+	}*/
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		/*if (sounds != null) {
-			sounds.release();
-			sounds = null;
-		}*/
-		
 		SoundPlayer.done();
 	}
 
