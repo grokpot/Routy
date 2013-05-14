@@ -15,7 +15,7 @@
     <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG RYAN -->
     <!-- <string name="google_maps_v2_api_key_active">AIzaSyCJAxW49RPtHjdpFPjEQwrasgKilouXDZ0</string> --> <!-- DEBUG JEFF -->
     <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG ERIC -->
-	<string name="google_maps_v2_api_key_active"></string>
+	<string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string>
 
     <!-- 
     <string name="google_maps_api_key_debug_jeff">0jK_s6wBtEbASDAwZGnaF3zV7uykgMiIBcI8rzw</string>

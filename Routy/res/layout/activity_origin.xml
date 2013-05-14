@@ -27,7 +27,7 @@
                 android:gravity="center_horizontal|center_vertical"
                 android:text="@string/origin_welcome"
                 android:textColor="@color/ShitGold"
-                android:textSize="26dp"
+                android:textSize="26sp"
                 android:textStyle="bold|italic"
                 android:typeface="normal" />
 
@@ -102,7 +102,7 @@
                 android:gravity="center_vertical|center_horizontal"
                 android:text="@string/destination_question"
                 android:textColor="@color/ShitGold"
-                android:textSize="26dp"
+                android:textSize="26sp"
                 android:textStyle="bold|italic"
                 android:typeface="normal" />
 
@@ -118,7 +118,6 @@
                 android:id="@+id/LinearLayout_destinations_buttons"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="35dp"
                 android:orientation="vertical" >
             </LinearLayout>
 
@@ -128,7 +127,8 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
                 android:background="@drawable/green_button"
                 android:baselineAlignBottom="true"
                 android:scaleType="fitCenter"
