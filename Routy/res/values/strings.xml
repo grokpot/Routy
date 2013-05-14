@@ -28,6 +28,7 @@
     <string name="no_location_provider_error">Routy needs WI-FI or GPS to locate you.  Please try again when you have one of these turned on.</string>
     <string name="locating_fail_error">Well that\'s no good&#8230; Routy couldn\'t find your location. Try typing it in!</string>
     <string name="locating_timeout_error">Hmm&#8230;that was taking a while.  Give Routy a second and try again.</string>
+    <string name="generic_timeout_error">Looks like that was taking longer than expected.  Don\'t worry, it\'s not your fault, just try it again!</string>
     <string name="enable_gps_prompt">Routy noticed your GPS is not enabled, would you like to enable it so he can try locating you again?</string>
     <string name="default_loading_message">Hang tight!</string>
     <string name="default_listpicker_title">Please select one&#8230;</string>

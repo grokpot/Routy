@@ -1,14 +1,18 @@
 package org.routy.task;
 
 import java.util.List;
+import java.util.Timer;
 
 import org.routy.adapter.PlacesListAdapter;
 import org.routy.exception.RoutyException;
 import org.routy.fragment.ListPickerDialog;
 import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.model.GooglePlace;
 import org.routy.model.GooglePlacesQuery;
 import org.routy.service.GooglePlacesService;
+import org.routy.timer.Timeout;
+import org.routy.timer.TimeoutCallback;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -19,11 +23,13 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 	private final String TAG = "GooglePlacesQueryTask";
 	
 	private Activity activity;
+	private Timer timer;
 	private ProgressDialog progressDialog;
 	
 	public abstract void onResult(GooglePlace place);
 	public abstract void onFailure(Throwable t);
 	public abstract void onNoSelection();
+	public abstract void onGooglePlacesQueryTimeout();
 	
 	public GooglePlacesQueryTask(Activity context) {
 		super();
@@ -50,7 +56,15 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 		if (params != null && params.length > 0) {
 			GooglePlacesQuery q = params[0];
 			GooglePlacesService gpSvc = new GooglePlacesService();
+			timer = new Timer();
 			try {
+				timer.schedule(new Timeout(this, new TimeoutCallback() {
+					
+					@Override
+					public void onTimeout() {
+						onGooglePlacesQueryTimeout();
+					}
+				}), AppConfig.G_PLACES_TIMEOUT_MS);
 				List<GooglePlace> results = gpSvc.getPlacesForKeyword(q.getQuery(), q.getCenterLatitude(), q.getCenterLongitude(), q.getRadius());
 				return results;
 			} catch (RoutyException e) {
@@ -58,6 +72,10 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 				Log.e(TAG, e.getMessage());
 				onFailure(e);
 				GooglePlacesQueryTask.this.cancel(true);
+			} finally {
+				if (timer != null) {
+					timer.cancel();
+				}
 			}
 			
 		}
@@ -87,6 +105,10 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 		this.cancel(true);
 		if (progressDialog.isShowing()) {
 			progressDialog.cancel();
+		}
+		
+		if (timer != null) {
+			timer.cancel();
 		}
 	}
 	

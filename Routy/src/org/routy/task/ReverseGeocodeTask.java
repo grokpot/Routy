@@ -1,12 +1,16 @@
 package org.routy.task;
 
 import java.io.IOException;
+import java.util.Timer;
 
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.RoutyException;
 import org.routy.listener.ReverseGeocodeListener;
+import org.routy.model.AppConfig;
 import org.routy.model.RoutyAddress;
 import org.routy.service.AddressService;
+import org.routy.timer.Timeout;
+import org.routy.timer.TimeoutCallback;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -14,13 +18,13 @@ import android.content.DialogInterface;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.AsyncTask;
-import android.util.Log;
 
 public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> {
 
 	private final String TAG = "ReverseGeocodeTask";
 	
 	private final Context context;
+	private Timer timer;
 	private boolean showDialogs;
 	private final AddressService service;
 	private final ReverseGeocodeListener listener;
@@ -60,7 +64,15 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 	@Override
 	protected RoutyAddress doInBackground(Location... params) {
 		if (params.length > 0) {
+			timer = new Timer();
 			try {
+				timer.schedule(new Timeout(this, new TimeoutCallback() {
+					
+					@Override
+					public void onTimeout() {
+						listener.onReverseGeocodeTimeout();
+					}
+				}), AppConfig.REVERSE_GEOCODE_TIMEOUT_MS);
 				return service.getAddressForLocation(params[0]);
 			} catch (AmbiguousAddressException e) {
 				return e.getFirstAddress();
@@ -68,6 +80,10 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} finally {
+				if (timer != null) {
+					timer.cancel();
+				}
 			}
 		}
 		return null;
@@ -75,7 +91,6 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 	
 	@Override
 	protected void onPostExecute(RoutyAddress address) {
-//		Log.v(TAG, "postExecute() -- got user location");
 		if (showDialogs && progressDialog.isShowing()) {
 			progressDialog.cancel();
 		}
@@ -85,9 +100,12 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 	
 	@Override
 	protected void onCancelled(RoutyAddress address) {
-//		Log.v(TAG, "reverse geocoding cancelled");
 		if (showDialogs) {
 			progressDialog.cancel();
+		}
+		
+		if (timer != null) {
+			timer.cancel();
 		}
 	}
 

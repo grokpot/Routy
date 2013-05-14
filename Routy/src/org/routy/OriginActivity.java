@@ -449,6 +449,11 @@ public class OriginActivity extends Activity {
 				public void onNoSelection() {
 					//Do nothing
 				}
+
+				@Override
+				public void onGooglePlacesQueryTimeout() {
+					showErrorDialog(getResources().getString(R.string.generic_timeout_error));
+				}
 			}.execute(new GooglePlacesQuery(locationQuery, lat, lng));
 		}
 	}
@@ -473,6 +478,11 @@ public class OriginActivity extends Activity {
 					if (destEntryRow != null) {
 						destEntryRow.focusOnEntryField();
 					}
+				}
+
+				@Override
+				public void onReverseGeocodeTimeout() {
+					showErrorDialog(getResources().getString(R.string.generic_timeout_error));
 				}
 			}).execute(deviceLocation);
 		} else {
@@ -524,6 +534,11 @@ public class OriginActivity extends Activity {
 					public void onResult(RoutyAddress address) {
 						loadReverseGeocodedOrigin(address);
 						showDestinationsNoobMessage();
+					}
+
+					@Override
+					public void onReverseGeocodeTimeout() {
+						showErrorDialog(getResources().getString(R.string.generic_timeout_error));
 					}
 				}).execute(userLocation);
 			}
@@ -661,6 +676,11 @@ public class OriginActivity extends Activity {
 				resultsIntent.putExtra("distance", route.getTotalDistance());
 				resultsIntent.putExtra("optimize_for", PreferencesModel.getSingleton().getRouteOptimizeMode());
 				startActivity(resultsIntent);
+			}
+			
+			@Override
+			public void onRouteCalculateTimeout() {
+				showErrorDialog(getResources().getString(R.string.generic_timeout_error));
 			}
 		}.execute(new RouteRequest(addressModel.getOrigin(), addressModel.getDestinations(), false, PreferencesModel.getSingleton().getRouteOptimizeMode()));
 	}

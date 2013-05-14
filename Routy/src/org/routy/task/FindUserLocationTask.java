@@ -32,6 +32,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	private final String TAG = "FindUserLocationTask";
 	
 	private Context context;
+	private Timer timer;
 	private boolean showDialogs;
 	private FindUserLocationListener listener;
 	private LocationManager locManager;
@@ -88,13 +89,14 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	@Override
 	protected Location doInBackground(Integer... params) {
 		//This timer runs in a separate thread.  It'll call the Timeout (inner class)'s run method which calls callback.onTimeout() in 10 seconds.
-		Timer timer = new Timer();
+		timer = new Timer();
 		timer.schedule(new Timeout(this, new TimeoutCallback() {
 			@Override
 			public void onTimeout() {
 				listener.onTimeout(new GpsNotEnabledException());
 			}
 		}), AppConfig.LOCATION_FETCH_TIMEOUT_MS);
+		
 		while (location == null && !isCancelled()) {
 //			loop
 		}
@@ -109,7 +111,12 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 		if (showDialogs) {
 			progressDialog.cancel();
 		}
+		
 		locService.stop();
+		
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
 	
 	@Override

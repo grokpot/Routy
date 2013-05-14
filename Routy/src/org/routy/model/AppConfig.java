@@ -21,6 +21,13 @@ public final class AppConfig {
 	/** The amount of time Routy should spend searching for the user's location in milliseconds */
 	public static final long LOCATION_FETCH_TIMEOUT_MS = 10000;
 	
+	public static final long CALCULATE_ROUTE_TIMEOUT_MS = 10000;
+	
+	/** The amount of time Routy should spend getting results from the Google Places API */
+	public static final long G_PLACES_TIMEOUT_MS = 10000;
+	
+	public static final long REVERSE_GEOCODE_TIMEOUT_MS = 10000;
+	
 	/** The base URL for accessing the Google Distance Matrix Web API */
 	public static final String G_DISTANCE_MATRIX_URL = "https://maps.googleapis.com/maps/api/distancematrix/json?";
 	
