@@ -70,7 +70,7 @@ public class AddressService {
 	 * @throws RoutyException 
 	 * @throws IOException 
 	 */
-	public Address getAddressForLocationString(String locationName) throws AmbiguousAddressException, RoutyException, IOException {
+	public Address getAddressForLocationString(String locationName) throws AmbiguousAddressException, RoutyException, IOException, NoInternetConnectionException {
 		if (locationName != null) {
 			if (!Geocoder.isPresent()) {
 				return getAddressViaWeb(locationName);
@@ -94,7 +94,7 @@ public class AddressService {
 	 * @throws IOException 
 	 * @throws RoutyException 
 	 */
-	public RoutyAddress getAddressForLocation(Location location) throws RoutyException, IOException, AmbiguousAddressException {
+	public RoutyAddress getAddressForLocation(Location location) throws RoutyException, IOException, AmbiguousAddressException, NoInternetConnectionException {
 		Log.v(TAG, "getting address for a location");
 		return getAddressForCoordinates(location.getLatitude(), location.getLongitude());
 	}
@@ -112,7 +112,7 @@ public class AddressService {
 	 * @throws RoutyException 
 	 * @throws IOException 
 	 */
-	public RoutyAddress getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, RoutyException, IOException {
+	public RoutyAddress getAddressForCoordinates(double latitude, double longitude) throws AmbiguousAddressException, RoutyException, IOException, NoInternetConnectionException {
 		if (!Geocoder.isPresent()) {
 			Log.v(TAG, String.format("using web API to get address for location: %f, %f", latitude, longitude));
 			return getAddressViaWeb(latitude, longitude);
@@ -219,7 +219,7 @@ public class AddressService {
 	 * @throws RoutyException 
 	 * @throws IOException 
 	 */
-	Address getAddressViaWeb(String locationName) throws IOException, RoutyException {		// TODO make this throw an exception if it gets more than 1 address
+	Address getAddressViaWeb(String locationName) throws IOException, RoutyException, NoInternetConnectionException {		// TODO make this throw an exception if it gets more than 1 address
 		Log.v(TAG, "Getting Address via Web API");
 		if (locationName != null && locationName.length() > 0) {
 			StringBuilder geoUrl = new StringBuilder(AppConfig.G_GEOCODING_API_URL);
@@ -245,7 +245,7 @@ public class AddressService {
 	 * @throws RoutyException 
 	 * @throws IOException 
 	 */
-	RoutyAddress getAddressViaWeb(double latitude, double longitude) throws IOException, RoutyException {	// TODO make this throw an exception if it gets more than 1 address
+	RoutyAddress getAddressViaWeb(double latitude, double longitude) throws IOException, RoutyException, NoInternetConnectionException {	// TODO make this throw an exception if it gets more than 1 address
 		StringBuilder geoUrl = new StringBuilder(AppConfig.G_GEOCODING_API_URL);
 		geoUrl.append("latlng=");
 		geoUrl.append(latitude);
@@ -267,7 +267,7 @@ public class AddressService {
 	 * @throws IllegalArgumentException		if url is null or empty
 	 * @throws RoutyException 
 	 */
-	RoutyAddress getAddressForURL(String url) throws IOException, RoutyException {
+	RoutyAddress getAddressForURL(String url) throws IOException, RoutyException, NoInternetConnectionException {
 		if (url != null && url.length() > 0) {
 			try {
 				// Get the JSON response from the Geocoding API

@@ -10,6 +10,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.log.Log;
 import org.routy.model.AppConfig;
@@ -38,7 +39,7 @@ public class GoogleDirectionsService {
 		super();
 	}
 	
-	public GoogleDirections getDirections(GeoPoint start, GeoPoint end, boolean sensor) throws IOException, RoutyException {
+	public GoogleDirections getDirections(GeoPoint start, GeoPoint end, boolean sensor) throws IOException, RoutyException, NoInternetConnectionException {
 		// build Directions URL...
 		String url = buildDirectionsURL(start, end, sensor);
 		

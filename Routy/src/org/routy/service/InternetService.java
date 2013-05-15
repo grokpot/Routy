@@ -8,12 +8,17 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.util.Log;
+import android.net.http.AndroidHttpClient;
 
 public class InternetService {
 
@@ -44,13 +49,21 @@ public class InternetService {
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
 	 * 							read from the URL
 	 */
-	public static String getStringResponse(String url) throws RoutyException, IOException {
+	public static String getStringResponse(String url) throws RoutyException, IOException, NoInternetConnectionException {
 		InputStream inputStream;
+		AndroidHttpClient client;
 		try {
-			inputStream = getStreamResponse(url);
+//			inputStream = getStreamResponse(url);
+			client = AndroidHttpClient.newInstance(System.getProperty("http.agent"));
+			HttpUriRequest request = new HttpGet(url);
+			HttpResponse response = client.execute(request);
+			HttpEntity entity = response.getEntity();
+			inputStream = entity.getContent();
+//			client.close();
 		} catch (IOException e) {
 //			Log.e(TAG, "Could not establish a connection to URL: " + url);
-			throw new IOException("Could not establish a connection to URL: " + url);
+			throw new NoInternetConnectionException("Could not establish a connection to URL: " + url);
+//			throw new IOException("Could not establish a connection to URL: " + url);
 		}
 		
 		try {
@@ -70,6 +83,10 @@ public class InternetService {
 		} catch (IOException e) {
 //			Log.e(TAG, e.getMessage() + "\nCould not read from URL: " + url);
 			throw new IOException("Could not read from URL: " + url);
+		} finally {
+			if (client != null) {
+				client.close();
+			}
 		}
 	}
 	

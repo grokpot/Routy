@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Timer;
 
 import org.routy.adapter.PlacesListAdapter;
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.fragment.ListPickerDialog;
 import org.routy.log.Log;
@@ -30,6 +31,7 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 	public abstract void onFailure(Throwable t);
 	public abstract void onNoSelection();
 	public abstract void onGooglePlacesQueryTimeout();
+	public abstract void onNoInternetConnectionException();
 	
 	public GooglePlacesQueryTask(Activity context) {
 		super();
@@ -71,6 +73,11 @@ public abstract class GooglePlacesQueryTask extends AsyncTask<GooglePlacesQuery,
 				Log.e(TAG, "RoutyException trying to get Google Places results");
 				Log.e(TAG, e.getMessage());
 				onFailure(e);
+				GooglePlacesQueryTask.this.cancel(true);
+			} catch (NoInternetConnectionException e) {
+				Log.e(TAG, "No Internet Connection when trying to get Google Places results");
+				Log.e(TAG, e.getMessage());
+				onNoInternetConnectionException();
 				GooglePlacesQueryTask.this.cancel(true);
 			} finally {
 				if (timer != null) {

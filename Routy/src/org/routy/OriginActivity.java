@@ -3,9 +3,6 @@ package org.routy;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.UUID;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 import org.routy.callback.ValidateAddressCallback;
 import org.routy.exception.GpsNotEnabledException;
@@ -40,8 +37,6 @@ import android.content.SharedPreferences;
 import android.location.Address;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
@@ -454,6 +449,11 @@ public class OriginActivity extends Activity {
 				public void onGooglePlacesQueryTimeout() {
 					showErrorDialog(getResources().getString(R.string.generic_timeout_error));
 				}
+
+				@Override
+				public void onNoInternetConnectionException() {
+					showErrorDialog(getResources().getString(R.string.no_internet_error));
+				}
 			}.execute(new GooglePlacesQuery(locationQuery, lat, lng));
 		}
 	}
@@ -467,7 +467,7 @@ public class OriginActivity extends Activity {
 	public void onFindMeClicked(View view) {
 		SoundPlayer.playClick(this);
 
-		/*Location deviceLocation = getGoodDeviceLocation();
+		Location deviceLocation = getGoodDeviceLocation();
 		if (deviceLocation != null) {
 			// Reverse geocode the lat/lng in DeviceLocationModel
 			new ReverseGeocodeTask(context, true, true, new ReverseGeocodeListener() {
@@ -484,12 +484,15 @@ public class OriginActivity extends Activity {
 				public void onReverseGeocodeTimeout() {
 					showErrorDialog(getResources().getString(R.string.generic_timeout_error));
 				}
+
+				@Override
+				public void onNoInternetConnectionException() {
+					showErrorDialog(getResources().getString(R.string.no_internet_error));
+				}
 			}).execute(deviceLocation);
 		} else {
 			locate();
-		}*/
-		
-		locate();
+		}
 	}
 	
 	
@@ -541,6 +544,11 @@ public class OriginActivity extends Activity {
 					@Override
 					public void onReverseGeocodeTimeout() {
 						showErrorDialog(getResources().getString(R.string.generic_timeout_error));
+					}
+
+					@Override
+					public void onNoInternetConnectionException() {
+						showErrorDialog(getResources().getString(R.string.no_internet_error));
 					}
 				}).execute(userLocation);
 			}
@@ -683,6 +691,18 @@ public class OriginActivity extends Activity {
 			@Override
 			public void onRouteCalculateTimeout() {
 				showErrorDialog(getResources().getString(R.string.generic_timeout_error));
+			}
+
+			@Override
+			public void onNoInternetConnectionException() {
+				showErrorDialog(getResources().getString(R.string.no_internet_error));
+			}
+
+			@Override
+			public void onRouteCalculateFailed(Throwable t) {
+				EasyTracker.getTracker().sendException("Route calculation failed: " + t.getMessage(), false);
+				showErrorDialog(getResources().getString(R.string.generic_error_reported));
+				//TODO Error Dialog: something went wrong, not your fault, I've notified my makers so they can fix it.
 			}
 		}.execute(new RouteRequest(addressModel.getOrigin(), addressModel.getDestinations(), false, PreferencesModel.getSingleton().getRouteOptimizeMode()));
 	}

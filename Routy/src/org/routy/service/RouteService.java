@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.model.Distance;
 import org.routy.model.Route;
@@ -34,7 +35,7 @@ public class RouteService {
 	List<List<Integer>> possibleRoutes;
 	
 	
-	public RouteService(RoutyAddress origin, List<RoutyAddress> destinations, RouteOptimizePreference preference, boolean sensor) throws RoutyException, IOException {
+	public RouteService(RoutyAddress origin, List<RoutyAddress> destinations, RouteOptimizePreference preference, boolean sensor) throws RoutyException, IOException, NoInternetConnectionException {
 		this.distanceService = new DistanceMatrixService();
 		this.origin = origin;
 		this.destinations = destinations;
@@ -132,34 +133,29 @@ public class RouteService {
 	 * @throws RoutyException	if there was a problem with the Distance Matrix API URL or parsing the JSON response
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
 	 * 							read from the URL
+	 * @throws NoInternetConnectionException 
 	 */
-	private void loadDistancesMatrix() throws RoutyException, IOException {
+	private void loadDistancesMatrix() throws RoutyException, IOException, NoInternetConnectionException {
 		int rows = destinations.size() + 1;
 		int cols = destinations.size();
 		
 		distances = new int[rows][cols];
 		
 		// Origin to each destination
-//		Log.v(TAG, "Getting distance from origin to destinations");
 		List<Distance> distsFromOrigin = distanceService.getDistanceMatrix(origin, destinations, sensor);
 		for (int i = 0; i < distsFromOrigin.size(); i++) {
-//			Log.v(TAG, "distance from origin: duration=" + distsFromOrigin.get(i).getDuration() + " distance=" + distsFromOrigin.get(i).getDistance());
 			if (preference.equals(RouteOptimizePreference.PREFER_DURATION)) {
-//				Log.v(TAG, "preferring duration -- duration=" + distsFromOrigin.get(i).getDuration());
 				distances[0][i] = distsFromOrigin.get(i).getDuration();
 			} else {
-//				Log.v(TAG, "preferring distance -- distance=" + distsFromOrigin.get(i).getDistance());
 				distances[0][i] = distsFromOrigin.get(i).getDistance();
 			}
 		}
 		
 		// Each destination to others
-//		Log.v(TAG, "Getting distance from each destination to the others");
 		List<Distance> distsFromDest = null;
 		for (int i = 0; i < destinations.size(); i++) {
 			List<RoutyAddress> otherDests = new ArrayList<RoutyAddress>(destinations);
 			otherDests.remove(i);
-//			Log.v(TAG, "otherDests size=" + otherDests.size());
 			
 			if (otherDests.size() > 0) {
 				distsFromDest = distanceService.getDistanceMatrix(destinations.get(i), otherDests, sensor);

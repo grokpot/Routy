@@ -12,6 +12,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.log.Log;
 import org.routy.model.AppConfig;
@@ -47,7 +48,7 @@ public class GooglePlacesService {
 	 * @return
 	 * @throws RoutyException
 	 */
-	public List<GooglePlace> getPlacesForKeyword(String query, Double centerLat, Double centerLng, int radius) throws RoutyException {
+	public List<GooglePlace> getPlacesForKeyword(String query, Double centerLat, Double centerLng, int radius) throws RoutyException, NoInternetConnectionException {
 		List<GooglePlace> results = new ArrayList<GooglePlace>();
 		
 		// We have to have a query
@@ -169,7 +170,7 @@ public class GooglePlacesService {
 	}
 	
 
-	private String getXMLResponse(String url) throws RoutyException {
+	private String getXMLResponse(String url) throws RoutyException, NoInternetConnectionException {
 		try {
 			// Get response from Google Places API call
 			URL u = new URL(url);
@@ -181,7 +182,11 @@ public class GooglePlacesService {
 			throw new RoutyException("There was an internal problem looking up place names.");
 		} catch (IOException e) {
 			Log.e(TAG, "IOException getting Google Places result");
+			Log.e(TAG, "IOException message: " + e.getMessage());
 			throw new RoutyException("There was an internal problem looking up place names.");
+		} catch (NoInternetConnectionException e) {
+			Log.e(TAG, "no internet connection");
+			throw e;
 		}
 	}
 	

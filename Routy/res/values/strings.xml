@@ -23,12 +23,13 @@
     <!-- Global -->
     <string name="error_message_title">Ruh-Roh!</string>
     <string name="default_error_message">Something went wrong, but don\'t worry, it wasn\'t your fault.</string>
-    <string name="no_internet_error">Routy needs an internet connection to work&#8230;</string>
+    <string name="no_internet_error">Routy needs an internet connection, please check that you have one and try again!</string>
     <string name="bad_origin_address_error">Routy couldn\'t understand the address for your origin.  Could you try again?</string>
     <string name="no_location_provider_error">Routy needs WI-FI or GPS to locate you.  Please try again when you have one of these turned on.</string>
     <string name="locating_fail_error">Well that\'s no good&#8230; Routy couldn\'t find your location. Try typing it in!</string>
     <string name="locating_timeout_error">Hmm&#8230;that was taking a while.  Give Routy a second and try again.</string>
     <string name="generic_timeout_error">Looks like that was taking longer than expected.  Don\'t worry, it\'s not your fault, just try it again!</string>
+    <string name="generic_error_reported">Something went wrong, but don\'t worry, it\'s not your fault.  I\'ll tell my makers so they can fix it.</string>
     <string name="enable_gps_prompt">Routy noticed your GPS is not enabled, would you like to enable it so he can try locating you again?</string>
     <string name="default_loading_message">Hang tight!</string>
     <string name="default_listpicker_title">Please select one&#8230;</string>

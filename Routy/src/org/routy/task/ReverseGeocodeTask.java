@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Timer;
 
 import org.routy.exception.AmbiguousAddressException;
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.listener.ReverseGeocodeListener;
 import org.routy.log.Log;
@@ -83,6 +84,9 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 				e.printStackTrace();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (NoInternetConnectionException e) {
+				listener.onNoInternetConnectionException();
+				ReverseGeocodeTask.this.cancel(true);
 			} finally {
 				if (timer != null) {
 					timer.cancel();

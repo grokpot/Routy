@@ -1,7 +1,10 @@
 package org.routy.task;
 
+import java.io.IOException;
 import java.util.Timer;
 
+import org.routy.exception.NoInternetConnectionException;
+import org.routy.exception.RoutyException;
 import org.routy.log.Log;
 import org.routy.model.AppConfig;
 import org.routy.model.Route;
@@ -20,6 +23,8 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 	
 	public abstract void onRouteCalculated(Route route);
 	public abstract void onRouteCalculateTimeout();
+	public abstract void onNoInternetConnectionException();
+	public abstract void onRouteCalculateFailed(Throwable t);
 
 	private Context context;
 	private ProgressDialog progressDialog;
@@ -69,7 +74,11 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 			}
 			
 			
+		} catch (NoInternetConnectionException e) {
+			onNoInternetConnectionException();
+			CalculateRouteTask.this.cancel(true);
 		} catch (Exception e) {
+			onRouteCalculateFailed(e);
 			CalculateRouteTask.this.cancel(true);
 		} finally {
 			Log.v(TAG, "route calculate timer cancelled");

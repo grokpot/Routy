@@ -36,7 +36,7 @@ public class DistanceMatrixService {
 	 * @throws RoutyException 
 	 * @throws Exception
 	 */
-	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
+	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException, NoInternetConnectionException {
 		return getClosestDestination(origin, destinations, sensor, PREFER_DURATION);
 	}
 	
@@ -50,8 +50,9 @@ public class DistanceMatrixService {
 	 * @return					address from destination list that is closest in travel time or distance to the origin address
 	 * @throws RoutyException
 	 * @throws IOException 
+	 * @throws NoInternetConnectionException 
 	 */
-	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor, int preference) throws RoutyException, IOException {
+	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor, int preference) throws RoutyException, IOException, NoInternetConnectionException {
 		int idx = 0;
 		int best = -1;
 		
@@ -86,8 +87,9 @@ public class DistanceMatrixService {
 	 * @throws RoutyException	if there was a problem with the API URL or parsing the JSON response
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
 	 * 							read from the URL
+	 * @throws NoInternetConnectionException 
 	 */
-	public List<Distance> getDistanceMatrix(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
+	public List<Distance> getDistanceMatrix(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException, NoInternetConnectionException {
 		// Get the JSON string response from the webservice
 		String jsonResp = getJSONResponse(origin, destinations, sensor);
 		
@@ -142,8 +144,9 @@ public class DistanceMatrixService {
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
 	 * 							read from the URL
 	 * @throws RoutyException	if the generated URL was invalid 
+	 * @throws NoInternetConnectionException 
 	 */
-	private String getJSONResponse(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
+	private String getJSONResponse(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException, NoInternetConnectionException {
 		// Add origin
 		StringBuilder url = new StringBuilder(AppConfig.G_DISTANCE_MATRIX_URL);
 		url.append("origins=");
