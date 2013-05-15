@@ -88,6 +88,7 @@
     <string name="destination_subtext">Enter an address or place (Any order)</string>
     <string name="origin_purpose">&#8230;the right route for many places.</string>
     <string name="poweredbygoogledesc">Routy is powered by Google!</string>
+    <string name="rightroutedesc">the right route for many places!</string>
     <string name="title_activity_preferenes">PreferencesActivity</string>
     <string name="about_title">About Routy</string>
     <string name="pref_route_calculation">Calculate route by:</string>
