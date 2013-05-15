@@ -30,6 +30,7 @@ import org.xml.sax.InputSource;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 /**
@@ -44,6 +45,7 @@ public class AddressService {
 	private final String TAG = "AddressService";
 	private final Geocoder geocoder;
 	private boolean sensor;
+	private AsyncTask<?, ?, ?> task;
 	
 	
 	public AddressService(Geocoder geocoder, boolean sensor) {
@@ -51,6 +53,11 @@ public class AddressService {
 		this.sensor = sensor;
 	}
 	
+	public AddressService(AsyncTask<?, ?, ?> task, Geocoder geocoder, boolean sensor) {
+		this(geocoder, sensor);
+		
+		this.task = task;
+	}
 	
 	/**
 	 * Tries to get an {@link Address} from a location string.
@@ -171,17 +178,10 @@ public class AddressService {
 		Log.v(TAG, String.format("using geocoder to get address for location: %f, %f", latitude, longitude));
 		int tries = 0;
 		
-		/*// JUST A TEST
-		for (int i = 0; i < 5; i++) {
-			try {
-				Thread.sleep(1000);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}*/
-		
 		// Since this process actually involves the Google server, there can be issues on their end out of our control.  We'll try 10 times if something goes wrong.
-		while (tries < 10) {
+		// Using a reference to the task here is kind of hacky.  I can't tell if getFromLocation runs in a different thread than the AsyncTask running this method, 
+		// but cancelling the AsyncTask didn't kill this loop from running.
+		while (tries < 10 && ((task != null && !task.isCancelled()) || task == null)) {
 			try {
 				List<Address> results = geocoder.getFromLocation(latitude, longitude, 2);
 				if (results != null && results.size() > 0) {
