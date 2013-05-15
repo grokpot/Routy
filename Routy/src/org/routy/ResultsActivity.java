@@ -237,10 +237,10 @@ public class ResultsActivity extends Activity {
 		
 		if (routeOptimizePreference.equals(RouteOptimizePreference.PREFER_DISTANCE)) {
 			String truncatedDistanceInMiles = convertMetersToMiles(route.getTotalDistance());
-			results_header.setText(results_header.getText() + "\n(" + truncatedDistanceInMiles + " miles):");
+			results_header.setText(results_header.getText() + " distance is:\n" + truncatedDistanceInMiles + " miles:");
 		} else if (routeOptimizePreference.equals(RouteOptimizePreference.PREFER_DURATION)) {
 			String durationInMinutes = convertSecondsToMinutes(route.getTotalDistance());
-			results_header.setText(results_header.getText() + "\n(" + durationInMinutes + " minutes):");
+			results_header.setText(results_header.getText() + " time is:\n" + durationInMinutes + " minutes:");
 		}
 		
 		

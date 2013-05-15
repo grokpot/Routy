@@ -27,7 +27,7 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="20dp"
-        android:contentDescription="@string/routeitdesc"
+        android:contentDescription="@string/getdirect"
         android:src="@drawable/getdirections"/>
     
     <!--  

@@ -74,12 +74,13 @@
     <string name="origin_logo">Routy Origin Logo</string>
     <string name="origin_name">Welcome to Routy -</string>
     <string name="origin_welcome">Where does your trip begin?</string>
-    <string name="results_header">Here\'s the best route for your destinations</string>
+    <string name="results_header">Total</string>
     <string name="destination_question">Where are you going?</string>
     <string name="destination_origin">Starting from:</string>
 
     <!-- Content Descriptions -->
     <string name="routeitdesc">The button to route it!</string>
+    <string name="getdirect">The get directions graphic!</string>
     <string name="biglogodesc">A big routy logo!</string>
     <string name="origin_noob_title">Routy</string>
     <string name="destination_noob_title">Choose your destinations</string>
