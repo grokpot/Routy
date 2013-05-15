@@ -6,6 +6,7 @@ import java.util.Timer;
 import org.routy.exception.AmbiguousAddressException;
 import org.routy.exception.RoutyException;
 import org.routy.listener.ReverseGeocodeListener;
+import org.routy.log.Log;
 import org.routy.model.AppConfig;
 import org.routy.model.RoutyAddress;
 import org.routy.service.AddressService;
@@ -33,7 +34,7 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 	public ReverseGeocodeTask(Context context, boolean sensor, boolean showDialogs, ReverseGeocodeListener listener) {
 		this.context = context;
 		this.showDialogs = showDialogs;
-		this.service = new AddressService(new Geocoder(context), sensor);
+		this.service = new AddressService(this, new Geocoder(context), sensor);
 		this.listener = listener;
 	}
 	
@@ -70,9 +71,11 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 					
 					@Override
 					public void onTimeout() {
+						Log.v(TAG, "reverse geocode task timed out");
 						listener.onReverseGeocodeTimeout();
 					}
 				}), AppConfig.REVERSE_GEOCODE_TIMEOUT_MS);
+				
 				return service.getAddressForLocation(params[0]);
 			} catch (AmbiguousAddressException e) {
 				return e.getFirstAddress();
@@ -100,6 +103,7 @@ public class ReverseGeocodeTask extends AsyncTask<Location, Void, RoutyAddress> 
 	
 	@Override
 	protected void onCancelled(RoutyAddress address) {
+		Log.v(TAG, "reverse geocode task cancelled");
 		if (showDialogs) {
 			progressDialog.cancel();
 		}

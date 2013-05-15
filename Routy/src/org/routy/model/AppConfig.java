@@ -19,7 +19,7 @@ public final class AppConfig {
 	public static final double LOCATION_EXPIRE_TIME_MS = 0;//300000;
 	
 	/** The amount of time Routy should spend searching for the user's location in milliseconds */
-	public static final long LOCATION_FETCH_TIMEOUT_MS = 10000;
+	public static final long LOCATION_FETCH_TIMEOUT_MS = 15000;
 	
 	public static final long CALCULATE_ROUTE_TIMEOUT_MS = 10000;
 	

@@ -121,9 +121,14 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	
 	@Override
 	protected void onPostExecute(Location location) {
-		if (showDialogs && progressDialog.isShowing()) {
+		if (showDialogs) {
 			progressDialog.cancel();
 		}
+		
+		if (timer != null) {
+			timer.cancel();
+		}
+		
 		listener.onUserLocationFound(location);
 	}
 	
