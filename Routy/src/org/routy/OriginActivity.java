@@ -467,7 +467,7 @@ public class OriginActivity extends Activity {
 	public void onFindMeClicked(View view) {
 		SoundPlayer.playClick(this);
 
-		Location deviceLocation = getGoodDeviceLocation();
+		/*Location deviceLocation = getGoodDeviceLocation();
 		if (deviceLocation != null) {
 			// Reverse geocode the lat/lng in DeviceLocationModel
 			new ReverseGeocodeTask(context, true, true, new ReverseGeocodeListener() {
@@ -487,7 +487,9 @@ public class OriginActivity extends Activity {
 			}).execute(deviceLocation);
 		} else {
 			locate();
-		}
+		}*/
+		
+		locate();
 	}
 	
 	

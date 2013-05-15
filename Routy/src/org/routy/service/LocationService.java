@@ -72,7 +72,6 @@ public abstract class LocationService {
 			boolean networkEnabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 			boolean gpsEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 			
-			// TODO figure out error scenarios for this
 			if (networkEnabled || gpsEnabled) {
 				if (gpsEnabled) {
 					Log.v(TAG, "gps enabled");
@@ -130,7 +129,7 @@ public abstract class LocationService {
 		
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-
+			Log.v(TAG, "provider status changed");
 		}
 		
 		@Override
