@@ -70,6 +70,7 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 				RouteService routeService = new RouteService(request.getOrigin(), request.getDestinations(), request.getPreference(), false);
 				Route bestRoute = routeService.getBestRoute();
 				
+				timer.cancel();
 				return bestRoute;
 			}
 			
@@ -80,12 +81,8 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 		} catch (Exception e) {
 			onRouteCalculateFailed(e);
 			CalculateRouteTask.this.cancel(true);
-		} finally {
-			Log.v(TAG, "route calculate timer cancelled");
-			if (timer != null) {
-				timer.cancel();
-			}
 		}
+		
 		return null;
 	}
 	
