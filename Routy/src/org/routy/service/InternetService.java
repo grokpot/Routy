@@ -14,6 +14,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
+import org.routy.log.Log;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -49,18 +50,23 @@ public class InternetService {
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
 	 * 							read from the URL
 	 */
-	public static String getStringResponse(String url) throws RoutyException, IOException, NoInternetConnectionException {
+	public static String getStringResponse(String url) throws IOException, NoInternetConnectionException {
 		InputStream inputStream;
-		AndroidHttpClient client;
+		AndroidHttpClient client = null;
 		try {
 //			inputStream = getStreamResponse(url);
 			client = AndroidHttpClient.newInstance(System.getProperty("http.agent"));
-			HttpUriRequest request = new HttpGet(url);
+			HttpUriRequest request = new HttpGet(url.replace("|", "%7C"));
 			HttpResponse response = client.execute(request);
 			HttpEntity entity = response.getEntity();
 			inputStream = entity.getContent();
+//			entity.consumeContent();
 //			client.close();
 		} catch (IOException e) {
+			if (client != null) {
+				client.close();
+				Log.v(TAG, "httpclient closed");
+			}
 //			Log.e(TAG, "Could not establish a connection to URL: " + url);
 			throw new NoInternetConnectionException("Could not establish a connection to URL: " + url);
 //			throw new IOException("Could not establish a connection to URL: " + url);
@@ -76,6 +82,8 @@ public class InternetService {
 					jsonResp.append(line);
 				}
 				
+				client.close();
+				Log.v(TAG, "httpclient closed");
 				return jsonResp.toString();
 			} finally {
 				in.close();
@@ -86,6 +94,7 @@ public class InternetService {
 		} finally {
 			if (client != null) {
 				client.close();
+				Log.v(TAG, "httpclient closed");
 			}
 		}
 	}
