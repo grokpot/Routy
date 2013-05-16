@@ -572,12 +572,11 @@ public class OriginActivity extends Activity {
 		
 	}
 	
-
-
 	
 	public void acceptDestinations(View v){
 		routeIt();
 	}
+	
 	
 	/**
 	 * Called when "Route It!" is clicked.  Does any final validation and preparations before calculating 

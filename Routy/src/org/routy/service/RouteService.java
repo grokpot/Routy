@@ -59,7 +59,7 @@ public class RouteService {
 		
 		for (int r = 0; r < possibleRoutes.size(); r++) {
 			List<Integer> route = possibleRoutes.get(r);
-//			Log.v(TAG, "Calculating route: " + route.toArray());
+			Log.v(TAG, "Calculating route: " + route.toArray());
 			int idx = 0;
 			int distance = distances[0][route.get(idx) - 1];
 			
