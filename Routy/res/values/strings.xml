@@ -9,13 +9,9 @@
     <!-- Instructions -->
     <string name="origin_noob_instructions">Welcome to Routy - use it for road trips, errands, or just for fun!\n\nEnter a starting address or click \&quot;Find me!\&quot;</string>
     <string name="origin_not_entered_error">Routy needs a starting address - please click Find me! or enter an origin.\n\nYou can always change it later!</string>
-    <string name="destination_noob_instructions">Now enter addresses, places, or interesections in any order. You can also choose between a shorter route or a faster time.\n\nWhen you\'re ready, click \"Route it!\" to see the results! If you change your mind, just press back.</string>
+    <string name="destination_noob_instructions">Now enter addresses, places, or intersections in any order. You can also choose between a shorter route or a faster time.\n\nWhen you\'re ready, click \"Route it!\" to see the results! If you change your mind, just press back.</string>
     <string name="results_noob_instructions">Here\'s your trip with a detailed description below. If you want to change any part of your trip, just press back.\n\nHappy routing!</string>
     <string name="google_maps_api_key_active">0Cz9qngAOR4AzAhg2r3fen3T5Qu75MABjxiPD6g</string>
-    <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG RYAN -->
-    <!-- <string name="google_maps_v2_api_key_active">AIzaSyCJAxW49RPtHjdpFPjEQwrasgKilouXDZ0</string> --> <!-- DEBUG JEFF -->
-    <!-- <string name="google_maps_v2_api_key_active">AIzaSyDu2HXacD6hvWxvFQTr34JJskRknZy8RCY</string> --> <!-- DEBUG ERIC -->
-	<string name="google_maps_v2_api_key_active"></string>
 
     <!-- 
     <string name="google_maps_api_key_debug_jeff">0jK_s6wBtEbASDAwZGnaF3zV7uykgMiIBcI8rzw</string>
@@ -27,10 +23,13 @@
     <!-- Global -->
     <string name="error_message_title">Ruh-Roh!</string>
     <string name="default_error_message">Something went wrong, but don\'t worry, it wasn\'t your fault.</string>
-    <string name="no_internet_error">Routy needs an internet connection to work&#8230;</string>
+    <string name="no_internet_error">Routy needs an internet connection, please check that you have one and try again!</string>
     <string name="bad_origin_address_error">Routy couldn\'t understand the address for your origin.  Could you try again?</string>
     <string name="no_location_provider_error">Routy needs WI-FI or GPS to locate you.  Please try again when you have one of these turned on.</string>
     <string name="locating_fail_error">Well that\'s no good&#8230; Routy couldn\'t find your location. Try typing it in!</string>
+    <string name="locating_timeout_error">Hmm&#8230;that was taking a while.  Give Routy a second and try again.</string>
+    <string name="generic_timeout_error">Looks like that was taking longer than expected.  Don\'t worry, it\'s not your fault, just try it again!</string>
+    <string name="generic_error_reported">Something went wrong, but don\'t worry, it\'s not your fault.  I\'ll tell my makers so they can fix it.</string>
     <string name="enable_gps_prompt">Routy noticed your GPS is not enabled, would you like to enable it so he can try locating you again?</string>
     <string name="default_loading_message">Hang tight!</string>
     <string name="default_listpicker_title">Please select one&#8230;</string>
@@ -44,21 +43,24 @@
     
     <!-- Origin Screen Stuff -->
     <string name="origin_prompt">Origin</string>
-    <string name="find_user_prompt">…or Find Me!</string>
+    <string name="find_user_prompt">Find Me!</string>
     <string name="clear_screen">Clear</string>
     <string name="please_wait">Looking</string>
     <string name="stop_locating">Stop</string>
     <string name="goto_destinations">Next</string>
     <string name="title_activity_destination">DestinationActivity</string>
     <string name="title_activity_results">Routy</string>
+    <string name="title_activity_preferences">Settings</string>
     <string name="destination_prompt">eg. 403 6th St. or Torchy\'s Tacos</string>
     <string name="destination_remove">Remove</string>
     <string name="route_it">Route it!</string>
     <string name="origin_modify">Go back and choose a new origin</string>
     <string name="destination_add">Add a destination</string>
     <string name="destination_toggle_instructions">Shorter route or faster time?</string>
-    <string name="by_dur">time</string>
-    <string name="by_dist">distance</string>
+    <string name="by_dur">TIME</string>
+    <string name="by_dist">DISTANCE</string>
+    <string name="sounds_off">OFF</string>
+    <string name="sounds_on">ON</string>
     
     <!-- Route Screen Stuff -->
     <string name="view_segment">Get Directions</string>
@@ -73,12 +75,13 @@
     <string name="origin_logo">Routy Origin Logo</string>
     <string name="origin_name">Welcome to Routy -</string>
     <string name="origin_welcome">Where does your trip begin?</string>
-    <string name="results_header">Here\'s the best route for your destinations</string>
+    <string name="results_header">Total</string>
     <string name="destination_question">Where are you going?</string>
     <string name="destination_origin">Starting from:</string>
 
     <!-- Content Descriptions -->
     <string name="routeitdesc">The button to route it!</string>
+    <string name="getdirect">The get directions graphic!</string>
     <string name="biglogodesc">A big routy logo!</string>
     <string name="origin_noob_title">Routy</string>
     <string name="destination_noob_title">Choose your destinations</string>
@@ -86,17 +89,20 @@
     <string name="destination_subtext">Enter an address or place (Any order)</string>
     <string name="origin_purpose">&#8230;the right route for many places.</string>
     <string name="poweredbygoogledesc">Routy is powered by Google!</string>
+    <string name="rightroutedesc">the right route for many places!</string>
     <string name="title_activity_preferenes">PreferencesActivity</string>
     <string name="about_title">About Routy</string>
     <string name="pref_route_calculation">Calculate route by:</string>
-    <string name="pref_route_calculation_shortest">shortest</string>
+    <string name="pref_route_calculation_shortest">Shortest</string>
     <string name="pref_about_title">About Routy</string>
-    <string name="pref_more_header">Comments / Complaints / Love / Law:</string>
+    <string name="pref_more_header">Info</string>
     <string name="pref_reset_instruction_title">Reset instruction text for Routy</string>
-    <string name="pref_reset_instruction_header">Lost? Press the button below.</string>
+    <string name="pref_reset_instruction_header">Lost? Press the button below</string>
     <string name="pref_instructions_reset">Instructions Reset</string>
     <string name="pref_instructions_reset_text">Cool, now if you exit and restart Routy, you can get another walkthrough!</string>
     <string name="pref_eula_title">View EULA</string>
+    <string name="pref_summary_general">Sounds | Reset</string>
+    <string name="pref_summary_info">About | Version | EULA</string>
     <string name="eula">End User License Agreement</string>
     <string name="eula_text">Routy and the creators of Routy are not to be held liable for this app in any way.  Any driving accidents, bad directions, annoying sounds, bugs, poor development, or anything relating to Routy can not be held against us. On the other hand, any and all praise is welcome. For any serious licensing matters, please contact us at gorouty@gmail.com. \nHave a great day.\n\nNo, seriously, we want you to have a terrific day.</string>
 </resources>

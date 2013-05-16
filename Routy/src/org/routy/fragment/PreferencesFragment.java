@@ -3,6 +3,7 @@ package org.routy.fragment;
 import java.net.URISyntaxException;
 
 import org.routy.R;
+import org.routy.log.Log;
 import org.routy.model.PreferencesModel;
 import org.routy.model.RouteOptimizePreference;
 
@@ -11,6 +12,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
@@ -18,7 +20,6 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.SwitchPreference;
-import android.util.Log;
 
 public class PreferencesFragment extends PreferenceFragment {
 	private static final String TAG = "PreferenceFragment";
@@ -31,9 +32,25 @@ public class PreferencesFragment extends PreferenceFragment {
 	    addPreferencesFromResource(R.xml.preferences);
 	    
 	    Preference myPref = (Preference) findPreference("pref_about");
+	    try {
+	    	myPref.setSummary("Version " + getVersionNumber());
+	    } catch (NameNotFoundException e) {
+	    	Log.e(TAG, "problem getting the version number from the package");
+			//Do Nothing...it just won't show a version number
+	    }
 	    myPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
 			public boolean onPreferenceClick(Preference preference) {
-				TwoButtonDialog dialog = new TwoButtonDialog(getResources().getString(R.string.about_title), getResources().getString(R.string.about_text), new String[]{"Close", null, "Contact"}) {
+				String aboutText = getResources().getString(R.string.about_title);
+				
+				//Detect and add version number
+				try {
+					aboutText += " " + getVersionNumber();
+				} catch (NameNotFoundException e) {
+					Log.e(TAG, "problem getting the version number from the package");
+					//Do Nothing...it just won't show a version number
+				}
+				
+				TwoButtonDialog dialog = new TwoButtonDialog(aboutText, getResources().getString(R.string.about_text), new String[]{"Close", null, "Contact"}) {
 					@Override
 					public void onRightButtonClicked(DialogInterface dialog, int which) {
 						dialog.dismiss();
@@ -43,7 +60,15 @@ public class PreferencesFragment extends PreferenceFragment {
 					public void onLeftButtonClicked(DialogInterface dialog, int which) {
 						// Send feedback
 						try {
-							Intent intent = Intent.parseUri("mailto:GoRouty@gmail.com?subject=Routy%20App%20Feedback", Intent.URI_INTENT_SCHEME);
+							String version = null;
+							try {
+								version = "(v" + getVersionNumber() + ")%20";
+							} catch (NameNotFoundException e) {
+								Log.e(TAG, "problem getting the version number from the package");
+								//Do Nothing...it just won't show a version number
+							}
+							
+							Intent intent = Intent.parseUri("mailto:GoRouty@gmail.com?subject=Routy%20" + (version != null ? version : "") + "App%20Feedback", Intent.URI_INTENT_SCHEME);
 							getActivity().startActivity(intent);
 						} catch (URISyntaxException e) {
 							Log.e(TAG, "couldn't start mail activity to send feedback");
@@ -94,6 +119,7 @@ public class PreferencesFragment extends PreferenceFragment {
 			}
 	    });
 	    
+	    //Switch route optimization between shortest time/distance
 	    SwitchPreference routeModeSwitch = (SwitchPreference) findPreference("route_mode");
 	    routeModeSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
 			
@@ -112,6 +138,28 @@ public class PreferencesFragment extends PreferenceFragment {
 				return true;
 			}
 		});
+	    
+	    //Switch in-app sounds between on/off
+	    SwitchPreference soundsModeSwitch = (SwitchPreference) findPreference("sounds_mode");
+	    soundsModeSwitch.setChecked(PreferenceManager.getDefaultSharedPreferences(getActivity()).getBoolean("sounds_mode", true));
+	    soundsModeSwitch.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+			
+			@Override
+			public boolean onPreferenceChange(Preference preference, Object newValue) {
+				if (preference.getKey().equals("sounds_mode")) {
+					boolean mode = (Boolean) newValue;		// False = off; True = on
+					Log.v(TAG, "sounds mode changed to " + mode);
+					
+					PreferencesModel.getSingleton().setSoundsOn(mode);
+				}
+				return true;
+			}
+		});
+	    
+	}
+	
+	private String getVersionNumber() throws NameNotFoundException {
+		return getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
 	}
 	
 	public void onToggleClicked(boolean on) {

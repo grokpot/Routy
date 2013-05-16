@@ -10,15 +10,15 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.model.GoogleDirections;
 import org.routy.model.Step;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-
-import android.util.Log;
 
 import com.google.android.maps.GeoPoint;
 
@@ -39,7 +39,7 @@ public class GoogleDirectionsService {
 		super();
 	}
 	
-	public GoogleDirections getDirections(GeoPoint start, GeoPoint end, boolean sensor) throws IOException, RoutyException {
+	public GoogleDirections getDirections(GeoPoint start, GeoPoint end, boolean sensor) throws IOException, RoutyException, NoInternetConnectionException {
 		// build Directions URL...
 		String url = buildDirectionsURL(start, end, sensor);
 		
@@ -53,7 +53,6 @@ public class GoogleDirectionsService {
 	
 	private GoogleDirections parseGoogleDirectionsResponse(String resp) throws IOException {
 		if (resp == null || resp.length() == 0) {
-			Log.e(TAG, "no Google Directions response to parse");
 			return null;
 		}
 		
@@ -92,7 +91,7 @@ public class GoogleDirectionsService {
 				
 				return directions;
 			} else {
-				Log.e(TAG, "google directions error -- status=" + status);
+				Log.e(TAG, String.format("google directions error -- status = ", status));
 			}
 		} catch (XPathExpressionException e) {
 			throw new IOException("Failed parsing the Google Directions XML response.  Got an XPathExpressionException.");
@@ -102,7 +101,7 @@ public class GoogleDirectionsService {
 	}
 
 	public String buildDirectionsURL(GeoPoint start, GeoPoint end, boolean sensor) {
-		StringBuffer url = new StringBuffer(AppProperties.G_DIRECTIONS_API_URL);
+		StringBuffer url = new StringBuffer(AppConfig.G_DIRECTIONS_API_URL);
 		
 		if (start == null || end == null) {
 			return null;

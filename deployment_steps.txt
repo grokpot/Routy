@@ -1,0 +1,9 @@
+1. Go to AndroidManifest.xml and increase the version code by 1
+2. In AndroidManifest.xml, change the version name to the new version using the convention major_release.minor_release.hotfix
+3. Update change.log
+4. Commit these changes and push to develop
+5. Go to models/AppConfig.java and set debug to false
+6. Go to res/values/apikey.xml and switch the google api key to the production key 
+7. Commit these changes and push to master branch
+8. Go to the android developer console, update the description with things from change.log
+9. Upload new apk

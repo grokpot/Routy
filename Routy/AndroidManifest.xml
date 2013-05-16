@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.routy"
-    android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionCode="3"
+    android:versionName="1.1" >
 
     <uses-sdk
         android:minSdkVersion="15"
@@ -18,7 +18,6 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     
     <permission
         android:name="org.routy.permission.MAPS_RECEIVE"
@@ -31,14 +30,16 @@
 
     <application
         android:icon="@drawable/icon"
-        android:label="@string/app_name"
-        android:theme="@android:style/Theme.Holo"
+        android:label="@string/app_name" 
+        android:theme="@style/AppTheme" 
         android:allowBackup="true" >
+        
         
         <!-- For MapFragment (Google Maps API v2) -->
         <meta-data 
             android:name="com.google.android.maps.v2.API_KEY" 
-            android:value="@string/google_maps_v2_api_key_active"/>
+            android:value="@string/google_maps_android_v2" />
+            <!-- android:value="@string/google_maps_v2_api_key_active" /> -->
 
         <!-- For MapView and Geocoder -->
         <uses-library android:name="com.google.android.maps"/>
@@ -80,7 +81,7 @@
         </activity>
         <activity
             android:name=".PreferencesActivity"
-            android:label="@string/title_activity_results" 
+            android:label="@string/title_activity_preferences" 
             android:screenOrientation="portrait" >
         </activity>
         

@@ -1,10 +1,15 @@
 package org.routy.task;
 
+import java.util.Timer;
+
 import org.routy.exception.GpsNotEnabledException;
 import org.routy.exception.NoLocationProviderException;
 import org.routy.listener.FindUserLocationListener;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.service.LocationService;
+import org.routy.timer.Timeout;
+import org.routy.timer.TimeoutCallback;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -12,7 +17,6 @@ import android.content.DialogInterface;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
-import android.util.Log;
 
 /**
  * Use this AsyncTask subclass to do all WIFI/LOCATION getting off the main UI.  This 
@@ -28,6 +32,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 	private final String TAG = "FindUserLocationTask";
 	
 	private Context context;
+	private Timer timer;
 	private boolean showDialogs;
 	private FindUserLocationListener listener;
 	private LocationManager locManager;
@@ -64,8 +69,6 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					progressDialog.cancel();
-					
-					Log.v(TAG, "progress dialog cancelled");
 					FindUserLocationTask.this.cancel(true);
 				}
 			});
@@ -85,38 +88,52 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 
 	@Override
 	protected Location doInBackground(Integer... params) {
-		Log.v(TAG, "doInBackground()");
+		//This timer runs in a separate thread.  It'll call the Timeout (inner class)'s run method which calls callback.onTimeout() in 10 seconds.
+		timer = new Timer();
+		timer.schedule(new Timeout(this, new TimeoutCallback() {
+			@Override
+			public void onTimeout() {
+				listener.onTimeout(new GpsNotEnabledException());
+			}
+		}), AppConfig.LOCATION_FETCH_TIMEOUT_MS);
 		
 		while (location == null && !isCancelled()) {
 //			loop
 		}
 		
-		Log.v(TAG, "out of the loop");
+		timer.cancel();
 		return location;
 	}
 	
 	
 	@Override
 	protected void onCancelled(Location location) {
-		Log.v(TAG, "onCancelled called");
-		
 		if (showDialogs) {
 			progressDialog.cancel();
 		}
+		
 		locService.stop();
+		
+		if (timer != null) {
+			timer.cancel();
+		}
 	}
 	
 	@Override
 	protected void onPostExecute(Location location) {
-		Log.v(TAG, "postExecute() -- got user location");
-		if (showDialogs && progressDialog.isShowing()) {
+		if (showDialogs) {
 			progressDialog.cancel();
 		}
+		
+		if (timer != null) {
+			timer.cancel();
+		}
+		
 		listener.onUserLocationFound(location);
 	}
 	
 	private void initLocationService() {
-		locService = new LocationService(locManager, AppProperties.USER_LOCATION_ACCURACY_THRESHOLD_M) {
+		locService = new LocationService(locManager, AppConfig.USER_LOCATION_ACCURACY_THRESHOLD_M) {
 
 			@Override
 			public void onLocationResult(Location result) {
@@ -127,7 +144,7 @@ public class FindUserLocationTask extends AsyncTask<Integer, Void, Location> {
 
 			@Override
 			public void onLocationSearchTimeout() {
-				Log.v(TAG, "onLocationSearchTimeout");
+				Log.v(TAG, "user location timed out");
 				GpsNotEnabledException e = null;
 				
 				if (!locManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {

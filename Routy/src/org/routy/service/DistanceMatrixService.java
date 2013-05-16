@@ -10,12 +10,12 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
 import org.routy.model.Distance;
 import org.routy.model.RoutyAddress;
 
 import android.location.Address;
-import android.util.Log;
 
 public class DistanceMatrixService {
 
@@ -36,7 +36,7 @@ public class DistanceMatrixService {
 	 * @throws RoutyException 
 	 * @throws Exception
 	 */
-	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
+	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException, NoInternetConnectionException {
 		return getClosestDestination(origin, destinations, sensor, PREFER_DURATION);
 	}
 	
@@ -50,8 +50,9 @@ public class DistanceMatrixService {
 	 * @return					address from destination list that is closest in travel time or distance to the origin address
 	 * @throws RoutyException
 	 * @throws IOException 
+	 * @throws NoInternetConnectionException 
 	 */
-	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor, int preference) throws RoutyException, IOException {
+	public Address getClosestDestination(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor, int preference) throws RoutyException, IOException, NoInternetConnectionException {
 		int idx = 0;
 		int best = -1;
 		
@@ -59,12 +60,9 @@ public class DistanceMatrixService {
 		
 		if (distances != null) {
 			for (int i = 0; i < distances.size(); i++) {
-				Log.d(TAG, "current distance: " + distances.get(i).getDistance());
 				if (preference == PREFER_DISTANCE && (best == -1 || distances.get(i).getDistance() < best)) {
 					best = distances.get(i).getDistance();
 					idx = i;
-					Log.d(TAG, "new best distance: " + distances.get(i).getDistance());
-					Log.d(TAG, "idx=" + idx);
 				} else if (preference == PREFER_DURATION && (best == -1 || distances.get(i).getDuration() < best)) {
 					best = distances.get(i).getDuration();
 					idx = i;
@@ -89,15 +87,16 @@ public class DistanceMatrixService {
 	 * @throws RoutyException	if there was a problem with the API URL or parsing the JSON response
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
 	 * 							read from the URL
+	 * @throws NoInternetConnectionException 
 	 */
-	public List<Distance> getDistanceMatrix(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
+	public List<Distance> getDistanceMatrix(final RoutyAddress origin, final List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException, NoInternetConnectionException {
 		// Get the JSON string response from the webservice
 		String jsonResp = getJSONResponse(origin, destinations, sensor);
-		Log.v(TAG, "jsonResp: " + jsonResp);
 		
 		try {
 			return parseJSONResponse(jsonResp);
 		} catch (JSONException e) {
+			Log.e(TAG, "JSONException parsing distance matrix response");
 			Log.e(TAG, e.getMessage());
 			throw new RoutyException();
 		}
@@ -111,7 +110,7 @@ public class DistanceMatrixService {
 		
 		String status = response.getString("status");
 		if (status == null || !status.equalsIgnoreCase("ok")) {
-			Log.e(TAG, "got status=" + status + " from Google Distance Matrix API");
+			Log.e(TAG, "Google Distance Matrix API status=" + status);
 			throw new RoutyException("Got a bad response from Google Distance Matrix API: status=" + status);
 		}
 
@@ -145,10 +144,11 @@ public class DistanceMatrixService {
 	 * @throws IOException		if a connection to the URL could not be made, or if data could not be 
 	 * 							read from the URL
 	 * @throws RoutyException	if the generated URL was invalid 
+	 * @throws NoInternetConnectionException 
 	 */
-	private String getJSONResponse(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException {
+	private String getJSONResponse(RoutyAddress origin, List<RoutyAddress> destinations, boolean sensor) throws RoutyException, IOException, NoInternetConnectionException {
 		// Add origin
-		StringBuilder url = new StringBuilder(AppProperties.G_DISTANCE_MATRIX_URL);
+		StringBuilder url = new StringBuilder(AppConfig.G_DISTANCE_MATRIX_URL);
 		url.append("origins=");
 		url.append(origin.getLatitude());
 		url.append(",");

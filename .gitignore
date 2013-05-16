@@ -3,7 +3,7 @@ Routy/.classpath
 Routy/.project
 Routy/gen/*
 Routy/.settings
-R.java
+Routy/res/values/apikey.xml
 
 *.class
 

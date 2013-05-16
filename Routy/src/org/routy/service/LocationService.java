@@ -2,14 +2,16 @@ package org.routy.service;
 
 import java.util.Date;
 import java.util.List;
+
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.NoLocationProviderException;
-import org.routy.model.AppProperties;
+import org.routy.log.Log;
+import org.routy.model.AppConfig;
+
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.util.Log;
 
 /**
  * A service class that gives access to location obtaining tasks.  Instances of this 
@@ -27,17 +29,13 @@ public abstract class LocationService {
 	private final String TAG = "LocationService";
 	private final double accuracy;
 	private final LocationManager manager;
-//	private final Context context;
-//	private boolean sensor;
 	
 	private long startTimeMs;
 	
 	
 	public LocationService(LocationManager locManager, double accuracy) {
-//		this.context = context;
 		this.manager = locManager;
 		this.accuracy = accuracy;
-//		this.sensor = false;
 	}
 	
 	
@@ -74,7 +72,6 @@ public abstract class LocationService {
 			boolean networkEnabled = manager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 			boolean gpsEnabled = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 			
-			// TODO figure out error scenarios for this
 			if (networkEnabled || gpsEnabled) {
 				if (gpsEnabled) {
 					Log.v(TAG, "gps enabled");
@@ -94,26 +91,6 @@ public abstract class LocationService {
 	}
 	
 	
-	/*private Address reverseGeocode(Location location) {
-		AddressService addressSvc = new AddressService(new Geocoder(context), sensor);
-		Address result = null;
-
-		try {
-			result = addressSvc.getAddressForLocation(location);
-		} catch (AmbiguousAddressException e) {
-			result = e.getFirstAddress();
-		} catch (RoutyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return result;
-	}*/
-	
-	
 	/**
 	 * Attempts to get the last known location (within the required expiration time and minimum accuracy) from the Android system.
 	 * 
@@ -130,7 +107,7 @@ public abstract class LocationService {
 			
 			if (candidate != null) {
 				// Last loc update is within our expiration time and is newer than any we've found before
-				if (((new Date()).getTime() - candidate.getTime()) <= AppProperties.LOCATION_EXPIRE_TIME_MS && candidate.getTime() > bestTimeMs) {
+				if (((new Date()).getTime() - candidate.getTime()) <= AppConfig.LOCATION_EXPIRE_TIME_MS && candidate.getTime() > bestTimeMs) {
 					
 					// Last loc has an accuracy within our threshold
 					if (candidate.hasAccuracy() && candidate.getAccuracy() <= accuracy) {
@@ -152,23 +129,23 @@ public abstract class LocationService {
 		
 		@Override
 		public void onStatusChanged(String provider, int status, Bundle extras) {
-			Log.v(TAG, provider + " provider status changed to " + status);
+			Log.v(TAG, "provider status changed");
 		}
 		
 		@Override
 		public void onProviderEnabled(String provider) {
-			Log.v(TAG, provider + " just enabled");
+
 		}
 		
 		@Override
 		public void onProviderDisabled(String provider) {
-			Log.v(TAG, provider + " just disabled");
+
 		}
 		
 		@Override
 		public void onLocationChanged(Location location) {
-			if ((System.currentTimeMillis() - startTimeMs) > AppProperties.LOCATION_FETCH_TIMEOUT_MS) {
-				Log.v(TAG, "Location fetching timing out.");
+			if ((System.currentTimeMillis() - startTimeMs) > AppConfig.LOCATION_FETCH_TIMEOUT_MS) {
+				Log.v(TAG, "user locating timed out");
 				stop();
 				onLocationSearchTimeout();
 			} else {

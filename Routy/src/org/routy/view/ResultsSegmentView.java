@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -20,7 +21,7 @@ public abstract class ResultsSegmentView extends LinearLayout{
 	private Address 	startAddress;
 	private boolean	isLastAddress;
 	private TextView 	segmentText;
-	private Button		segmentButton;
+	private ImageButton		segmentButton;
 	private int		id;
 	
 	
@@ -71,7 +72,7 @@ public abstract class ResultsSegmentView extends LinearLayout{
 			
 		});
 		
-		segmentButton	= (Button) findViewById(R.id.button_results_segment);
+		segmentButton	= (ImageButton) findViewById(R.id.button_results_segment);
 		if (isLastAddress){
 			segmentButton.setVisibility(GONE);
 		}
@@ -79,7 +80,7 @@ public abstract class ResultsSegmentView extends LinearLayout{
 			
 			@Override
 			public void onClick(View v) {
-				Log.v(TAG, "onSegmentClicked from row with id=" + id);
+//				Log.v(TAG, "onSegmentClicked from row with id=" + id);
 				onSegmentClicked(id, isLastAddress);
 			}
 		});

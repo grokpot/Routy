@@ -4,5 +4,9 @@
         <item name ="android:textStyle">normal</item>
         <item name ="android:textSize">18sp</item>
     </style>
+    
+    <style name="AppTheme" parent="android:Theme.Holo">
+        <item name="android:soundEffectsEnabled">false</item>
+    </style>
 
 </resources>

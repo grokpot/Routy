@@ -2,30 +2,49 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content" >
+    
+    <PreferenceScreen 
+        android:title="General"
+        android:summary="@string/pref_summary_general">
+        <PreferenceCategory 
+            android:title="Audio">
+            <SwitchPreference 
+	            android:key="sounds_mode" 
+	            android:title="Sounds" 
+	            android:switchTextOff="@string/sounds_off" 
+	            android:switchTextOn="@string/sounds_on"
+	            android:defaultValue="true" />
+        </PreferenceCategory>
+        
+        <PreferenceCategory
+			android:title="@string/pref_reset_instruction_header" >
+			<Preference
+				android:key="pref_reset_instruction_text"
+				android:title="@string/pref_reset_instruction_title" />
+		</PreferenceCategory>
+    </PreferenceScreen>
 
-	<PreferenceCategory
-		android:title="@string/pref_route_calculation" >
-		<SwitchPreference
-			android:key="route_mode"
-	      	android:title="@string/pref_route_calculation_shortest"
-	      	android:switchTextOff="@string/by_dur"
-	      	android:switchTextOn="@string/by_dist" />
-	</PreferenceCategory>
+	<PreferenceScreen 
+	    android:title="Route">
+	    <PreferenceCategory
+			android:title="@string/pref_route_calculation" >
+			<SwitchPreference
+				android:key="route_mode"
+		      	android:title="@string/pref_route_calculation_shortest"
+		      	android:switchTextOff="@string/by_dur"
+		      	android:switchTextOn="@string/by_dist" />
+		</PreferenceCategory>
+	</PreferenceScreen>
 	
-	<PreferenceCategory
-		android:title="@string/pref_reset_instruction_header" >
-		<Preference
-			android:key="pref_reset_instruction_text"
-			android:title="@string/pref_reset_instruction_title" />
-	</PreferenceCategory>
- 
-	<PreferenceCategory
-		android:title="@string/pref_more_header" >
+	<PreferenceScreen 
+		android:title="@string/pref_more_header" 
+		android:summary="@string/pref_summary_info" >
 		<Preference
 		    android:key="pref_about"
-		    android:title="@string/pref_about_title"/>
+		    android:title="@string/pref_about_title" 
+		    android:summary="Version 1" />
 		<Preference
 		    android:key="pref_eula"
 		    android:title="@string/pref_eula_title"/>
-	</PreferenceCategory>
+	</PreferenceScreen>
 </PreferenceScreen>

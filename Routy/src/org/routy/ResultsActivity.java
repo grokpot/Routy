@@ -7,8 +7,26 @@ import java.util.List;
 import org.routy.model.PreferencesModel;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
+import org.routy.sound.SoundPlayer;
 import org.routy.view.ResultsSegmentView;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.location.Address;
+import android.net.Uri;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.view.Menu;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.google.analytics.tracking.android.EasyTracker;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -19,25 +37,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
-
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.location.Address;
-import android.media.AudioManager;
-import android.media.SoundPool;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.util.Log;
-import android.view.Menu;
-import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 
 public class ResultsActivity extends Activity {
 	
@@ -59,11 +58,11 @@ public class ResultsActivity extends Activity {
 
 	private final String TAG = "ResultsActivity";
 
-	private SoundPool sounds;
-	private int click;
+//	private SoundPool sounds;
+//	private int click;
 	private RouteOptimizePreference routeOptimizePreference;
-	AudioManager audioManager;
-	float volume;
+//	AudioManager audioManager;
+//	float volume;
 
 	@SuppressWarnings({ "unchecked" })
   @Override
@@ -73,12 +72,12 @@ public class ResultsActivity extends Activity {
 		
 		mContext = this;
 
-		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-		volume = audioManager
-				.getStreamVolume(AudioManager.STREAM_SYSTEM);
-
-		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
-		click = sounds.load(this, R.raw.routyclick, 1);
+//		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+//		volume = audioManager
+//				.getStreamVolume(AudioManager.STREAM_SYSTEM);
+//
+//		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
+//		click = sounds.load(this, R.raw.routyclick, 1);
 		
 
 		// Get the layout containing the list of destination
@@ -88,7 +87,7 @@ public class ResultsActivity extends Activity {
 		if (extras != null) {
 			int distance = (Integer) extras.get("distance");
 			addresses = (ArrayList<Address>) extras.get("addresses");
-			Log.v(TAG, "Results: " + addresses.size() + " addresses");
+//			Log.v(TAG, "Results: " + addresses.size() + " addresses");
 			route = new Route(addresses, distance);
 			routeOptimizePreference = (RouteOptimizePreference) extras.get("optimize_for");
 		}
@@ -154,13 +153,13 @@ public class ResultsActivity extends Activity {
 		points = new ArrayList<LatLng>();
 		
 		if (mMap == null) {
-			Log.e(TAG, "map service is not available");
+//			Log.e(TAG, "map service is not available");
 		} else {
 			try {
 				MapsInitializer.initialize(this);
 				buildResultsView();
 			} catch (Exception e) {
-				Log.e(TAG, "Error initializing Map -- " + e.getMessage());
+//				Log.e(TAG, "Error initializing Map -- " + e.getMessage());
 			}
 		}
 		
@@ -216,6 +215,7 @@ public class ResultsActivity extends Activity {
 
 				@Override
 				public void onSegmentClicked(int id, boolean isLastAddress) {
+					SoundPlayer.playClick(ResultsActivity.this);
 					showSegmentInGoogleMaps(id, isLastAddress);
 				}
 
@@ -237,10 +237,10 @@ public class ResultsActivity extends Activity {
 		
 		if (routeOptimizePreference.equals(RouteOptimizePreference.PREFER_DISTANCE)) {
 			String truncatedDistanceInMiles = convertMetersToMiles(route.getTotalDistance());
-			results_header.setText(results_header.getText() + "\n(" + truncatedDistanceInMiles + " miles):");
+			results_header.setText(results_header.getText() + " distance is:\n" + truncatedDistanceInMiles + " miles");
 		} else if (routeOptimizePreference.equals(RouteOptimizePreference.PREFER_DURATION)) {
 			String durationInMinutes = convertSecondsToMinutes(route.getTotalDistance());
-			results_header.setText(results_header.getText() + "\n(" + durationInMinutes + " minutes):");
+			results_header.setText(results_header.getText() + " time is:\n" + durationInMinutes + " minutes");
 		}
 		
 		
@@ -250,10 +250,10 @@ public class ResultsActivity extends Activity {
 	private void animateToAddress(int id) {
 		try {
 			LatLng target = points.get(id);
-			Log.v(TAG, "max zoom level is: " + mMap.getMaxZoomLevel());
+//			Log.v(TAG, "max zoom level is: " + mMap.getMaxZoomLevel());
 			mMap.animateCamera(CameraUpdateFactory.newCameraPosition(CameraPosition.builder().target(target).tilt(30).zoom(mMap.getMaxZoomLevel() - 3).build()));
 		} catch (IndexOutOfBoundsException e) {
-			Log.e(TAG, "Trying to animate to address with id=" + id + " but that's out of bounds.");
+//			Log.e(TAG, "Trying to animate to address with id=" + id + " but that's out of bounds.");
 		}
 		
 	}
@@ -261,10 +261,12 @@ public class ResultsActivity extends Activity {
 	
 	private void showSegmentInGoogleMaps(int id, boolean isLastAddress) {
 		if (!isLastAddress){
-			volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-			volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-			sounds.play(click, volume, volume, 1, 0, 1);
-				
+			/*if (PreferencesModel.getSingleton().isSoundsOn()) {
+				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
+				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
+				sounds.play(click, volume, volume, 1, 0, 1);
+			}*/
+			
 			// Get start and end Addresses from route[] - the index is the id in ResultsSegmentView
 			Address startAddress	= route.getAddresses().get(id);
 			Address endAddress 		= route.getAddresses().get(id + 1);
@@ -280,7 +282,7 @@ public class ResultsActivity extends Activity {
 					+ startAddressLat + "," + startAddressLong
 					+ "&daddr=" + endAddressLat + ","
 					+ endAddressLong;
-			Log.d(TAG, "maps segment call URI: " + mapsCall);
+//			Log.d(TAG, "maps segment call URI: " + mapsCall);
 
 			// Open Google Maps App on the device
 			Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(mapsCall));
@@ -306,21 +308,32 @@ public class ResultsActivity extends Activity {
 		getMenuInflater().inflate(R.menu.activity_results, menu);
 		return true;
 	}
-
+	
 	@Override
+	public void onStart() {
+		super.onStart();
+		// Analytics
+		EasyTracker.getInstance().activityStart(this);
+	}
+	
+	@Override
+	public void onStop() {
+		super.onStop();
+		// Analytics
+		EasyTracker.getInstance().activityStop(this);
+	}
+
+	/*@Override
 	protected void onResume() {
 		super.onResume();
-		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
-		click = sounds.load(this, R.raw.routyclick, 1);
-	}
+//		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
+//		click = sounds.load(this, R.raw.routyclick, 1);
+	}*/
 
 	@Override
 	public void onPause() {
 		super.onPause();
-		if (sounds != null) {
-			sounds.release();
-			sounds = null;
-		}
+		SoundPlayer.done();
 	}
 
 

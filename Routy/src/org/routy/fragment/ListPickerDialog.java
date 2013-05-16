@@ -78,7 +78,7 @@ public abstract class ListPickerDialog extends DialogFragment {
 	@Override
 	public void onCancel(DialogInterface dialog) {
 		super.onCancel(dialog);
-		Log.v(TAG, "Place picker dialog cancelled.");
+//		Log.v(TAG, "Place picker dialog cancelled.");
 		onCancelled();
 	}
 	
@@ -86,7 +86,7 @@ public abstract class ListPickerDialog extends DialogFragment {
 	@Override
 	public void onDismiss(DialogInterface dialog) {
 		super.onDismiss(dialog);
-		Log.v(TAG, "Place picker dialog dismissed.");
+//		Log.v(TAG, "Place picker dialog dismissed.");
 //		onCancelled();
 	}
 	
@@ -95,7 +95,7 @@ public abstract class ListPickerDialog extends DialogFragment {
 		
 		@Override
 		public void onClick(DialogInterface dialog, int which) {
-			Log.v(TAG, which + " selected");
+//			Log.v(TAG, which + " selected");
 			onSelection(which);
 		}
 	};
