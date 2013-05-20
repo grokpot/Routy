@@ -108,7 +108,7 @@ public class AddressModel {
 //		Log.v(TAG, "setting destination at index " + indexInLayout);
 		if (indexInLayout == 0 && destinations.size() == 0) {
 			destinations.add(validatedAddress);
-		} else if (indexInLayout > 0 && indexInLayout < destinations.size() && validatedAddress != null) {
+		} else if (indexInLayout >= 0 && indexInLayout < destinations.size() && validatedAddress != null) {
 			destinations.set(indexInLayout, validatedAddress);
 		}
 	}

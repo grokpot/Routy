@@ -157,7 +157,16 @@ public class OriginActivity extends Activity {
 			
 			@Override
 			public void destinationTextChanged(int indexInLayout, Editable s) {
-				addressModel.getDestinations().get(indexInLayout).setNotValidated();
+				String addressString = s == null ? "" : s.toString();
+				
+				if (addressModel.getDestinations().get(indexInLayout).isValid()) {
+					RoutyAddress newAddress = new RoutyAddress(Locale.getDefault());
+					addressModel.setDestinationAt(indexInLayout, newAddress);
+//					addressModel.getDestinations().get(indexInLayout).setNotValidated();
+				}
+				
+				addressModel.getDestinations().get(indexInLayout).setAddressString(addressString);
+				
 			}
 		};
 		
@@ -629,17 +638,12 @@ public class OriginActivity extends Activity {
 
 	private void prepareDestinations() {
 		if (addressModel.hasDestinations()) {
-			/*if (PreferencesModel.getSingleton().isSoundsOn()) {
-				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-				sounds.play(click, volume, volume, 1, 0, 1);
-			}*/
-			
 			SoundPlayer.playClick(this);
-			
+			boolean foundInvalid = false;
 			for (int i = 0; i < addressModel.getDestinations().size(); i++) {
 				RoutyAddress dest = addressModel.getDestinations().get(i);
 				if (!dest.isValid()) {
+					foundInvalid = true;
 					//Validate the destination
 					final int idx = i;
 					Double lat = null;
@@ -653,22 +657,18 @@ public class OriginActivity extends Activity {
 						@Override
 						public void onAddressValidated(RoutyAddress validatedAddress) {
 							addressModel.setDestinationAt(idx, validatedAddress);
+							refreshDestinationLayout();
+							generateRouteAndGo();
 						}
 					});
-					
-					assert addressModel.getDestinations().get(i).isValid();
 				}
 			}
 			
-			generateRouteAndGo();
+			if (!foundInvalid) {
+				generateRouteAndGo();
+			}
 		} else {
 			// No destinations entered
-			/*if (PreferencesModel.getSingleton().isSoundsOn()) {
-				volume = audioManager.getStreamVolume(AudioManager.STREAM_SYSTEM);
-				volume = volume / audioManager.getStreamMaxVolume(AudioManager.STREAM_SYSTEM);
-				sounds.play(bad, volume, volume, 1, 0, 1);
-			}*/
-			
 			SoundPlayer.playBad(this);
 			showErrorDialog("Please enter at least one destination to continue.");
 		}

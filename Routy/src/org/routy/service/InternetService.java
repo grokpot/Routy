@@ -61,7 +61,6 @@ public class InternetService {
 			HttpEntity entity = response.getEntity();
 			inputStream = entity.getContent();
 //			entity.consumeContent();
-//			client.close();
 		} catch (IOException e) {
 			if (client != null) {
 				client.close();
@@ -76,18 +75,12 @@ public class InternetService {
 			BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
 			StringBuffer jsonResp = new StringBuffer();
 			
-			try {
-				String line = null;
-				while ((line = in.readLine()) != null) {
-					jsonResp.append(line);
-				}
-				
-				client.close();
-				Log.v(TAG, "httpclient closed");
-				return jsonResp.toString();
-			} finally {
-				in.close();
+			String line = null;
+			while ((line = in.readLine()) != null) {
+				jsonResp.append(line);
 			}
+			
+			return jsonResp.toString();
 		} catch (IOException e) {
 //			Log.e(TAG, e.getMessage() + "\nCould not read from URL: " + url);
 			throw new IOException("Could not read from URL: " + url);

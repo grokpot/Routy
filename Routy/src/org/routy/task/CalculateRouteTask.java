@@ -58,13 +58,13 @@ public abstract class CalculateRouteTask extends AsyncTask<RouteRequest, Void, R
 				CalculateRouteTask.this.cancel(true);
 			} else {
 				//Timer to timeout this task
-				timer.schedule(new Timeout(this, new TimeoutCallback() {
+				/*timer.schedule(new Timeout(this, new TimeoutCallback() {
 					
 					@Override
 					public void onTimeout() {
 						onRouteCalculateTimeout();
 					}
-				}), AppConfig.CALCULATE_ROUTE_TIMEOUT_MS);
+				}), AppConfig.CALCULATE_ROUTE_TIMEOUT_MS);*/
 				
 				RouteRequest request = requests[0];
 				RouteService routeService = new RouteService(request.getOrigin(), request.getDestinations(), request.getPreference(), false);
