@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.routy.log.Log;
 import org.routy.model.PreferencesModel;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
@@ -17,12 +18,16 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.Menu;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -55,14 +60,8 @@ public class ResultsActivity extends Activity {
 	Route route;
 
 	private LinearLayout resultsLayout;
-
 	private final String TAG = "ResultsActivity";
-
-//	private SoundPool sounds;
-//	private int click;
 	private RouteOptimizePreference routeOptimizePreference;
-//	AudioManager audioManager;
-//	float volume;
 
 	@SuppressWarnings({ "unchecked" })
   @Override
@@ -72,14 +71,6 @@ public class ResultsActivity extends Activity {
 		
 		mContext = this;
 
-//		audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
-//		volume = audioManager
-//				.getStreamVolume(AudioManager.STREAM_SYSTEM);
-//
-//		sounds = new SoundPool(3, AudioManager.STREAM_MUSIC, 0);
-//		click = sounds.load(this, R.raw.routyclick, 1);
-		
-
 		// Get the layout containing the list of destination
 		resultsLayout = (LinearLayout) findViewById(R.id.linearlayout_results);
 
@@ -87,7 +78,6 @@ public class ResultsActivity extends Activity {
 		if (extras != null) {
 			int distance = (Integer) extras.get("distance");
 			addresses = (ArrayList<Address>) extras.get("addresses");
-//			Log.v(TAG, "Results: " + addresses.size() + " addresses");
 			route = new Route(addresses, distance);
 			routeOptimizePreference = (RouteOptimizePreference) extras.get("optimize_for");
 		}
@@ -96,7 +86,6 @@ public class ResultsActivity extends Activity {
 		
 		resultsActivityPrefs = getSharedPreferences("results_prefs", MODE_PRIVATE);
 		// First-time user dialog cookie
-//		boolean noobCookie = resultsActivityPrefs.getBoolean("noob_cookie", false);
 		if (PreferencesModel.getSingleton().isResultsNoob()){
 			showNoobDialog();
 			userAintANoobNoMore();
@@ -159,11 +148,10 @@ public class ResultsActivity extends Activity {
 				MapsInitializer.initialize(this);
 				buildResultsView();
 			} catch (Exception e) {
-//				Log.e(TAG, "Error initializing Map -- " + e.getMessage());
+				Log.e(TAG, "Error initializing Map -- " + e.getMessage());
 			}
 		}
 		
-		//Drawable drawable = this.getResources().getDrawable(R.drawable.pin1);
 	}
 	
 	
@@ -176,7 +164,11 @@ public class ResultsActivity extends Activity {
 			builder.include(point);
 		}
 		
-		CameraUpdate update = CameraUpdateFactory.newLatLngBounds(builder.build(), 300, 300, 0);		// TODO Need to figure out how to get the width of the viewing area
+		DisplayMetrics metrics = mContext.getResources().getDisplayMetrics();
+		int width = metrics.widthPixels;
+//		int height = metrics.heightPixels;
+		
+		CameraUpdate update = CameraUpdateFactory.newLatLngBounds(builder.build(), width/2, width/2, 0);		// TODO Need to figure out how to get the width of the viewing area
 		mMap.animateCamera(update);
 	}
 	
