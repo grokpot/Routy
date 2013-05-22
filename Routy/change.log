@@ -1,3 +1,13 @@
+1.1.2
+[NEW]
+* ADDED Now tapping "Done" or "Next" after entering all your destinations will calculate your route.  Just making the workflow better.
+
+[FIXES]
+* FIXED A bug that sometimes caused Routy to crash when "Route It" was tapped.
+* FIXED Map is now dependent on screen size, so it should scale for larger screens.
+
+================
+
 1.0.1
 
 [NEW]
