@@ -197,6 +197,8 @@ public class OriginActivity extends Activity {
 							refreshDestinationLayout();
 						}
 					});
+				} else {
+					routeIt();
 				}
 			}
 
