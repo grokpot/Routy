@@ -7,7 +7,7 @@ package org.routy.model;
  */
 public final class AppConfig {
 	
-	public static final boolean DEBUG = true;
+	public static final boolean DEBUG = false;
 
 	/** The minimum accuracy required to achieve a "good" location fix in meters when searching for the user. */
 	public static final double USER_LOCATION_ACCURACY_THRESHOLD_M = 50;
