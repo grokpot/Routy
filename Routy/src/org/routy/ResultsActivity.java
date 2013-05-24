@@ -4,11 +4,17 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.routy.listener.GoogleDirectionsQueryListener;
 import org.routy.log.Log;
+import org.routy.model.AddressModel;
+import org.routy.model.GoogleDirections;
+import org.routy.model.GoogleDirectionsQuery;
 import org.routy.model.PreferencesModel;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
+import org.routy.model.RoutyAddress;
 import org.routy.sound.SoundPlayer;
+import org.routy.task.GoogleDirectionsQueryTask;
 import org.routy.view.ResultsSegmentView;
 
 import android.app.Activity;
@@ -18,16 +24,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.location.Address;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.Menu;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -42,6 +45,7 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class ResultsActivity extends Activity {
 	
@@ -52,7 +56,7 @@ public class ResultsActivity extends Activity {
 	private MapFragment mapFragment;
 	private GoogleMap mMap;
 	private List<LatLng> points;
-	private List<Address> addresses;
+//	private List<RoutyAddress> addresses;
 	
 	private SharedPreferences resultsActivityPrefs;
 	
@@ -74,11 +78,13 @@ public class ResultsActivity extends Activity {
 		// Get the layout containing the list of destination
 		resultsLayout = (LinearLayout) findViewById(R.id.linearlayout_results);
 
+		route = AddressModel.getSingleton().getRoute();
+
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			int distance = (Integer) extras.get("distance");
-			addresses = (ArrayList<Address>) extras.get("addresses");
-			route = new Route(addresses, distance);
+//			addresses = (ArrayList<RoutyAddress>) extras.get("addresses");
+//			route = new Route(addresses, distance);
 			routeOptimizePreference = (RouteOptimizePreference) extras.get("optimize_for");
 		}
 		
@@ -90,8 +96,29 @@ public class ResultsActivity extends Activity {
 			showNoobDialog();
 			userAintANoobNoMore();
 		}
+		
+		fetchPolylineStrings();
+		
 	}
 	
+
+	private void fetchPolylineStrings() {
+		Log.v("map polyline", "starting task");
+		new GoogleDirectionsQueryTask(this, new GoogleDirectionsQueryListener() {
+			
+			@Override
+			public void onGotDirections(GoogleDirections directions) {
+				Log.v("map polyline", "draw!");
+				mMap.addPolyline(new PolylineOptions().addAll(directions.getPolypoints()).width(5.5f).color(getResources().getColor(R.color.Teal)).zIndex(100f).visible(true));
+			}
+			
+			@Override
+			public void onFailure(Throwable t) {
+				//Don't do anything...the user won't know.
+			}
+		}).execute(new GoogleDirectionsQuery(route.getAddresses(), false));
+	}
+
 
 	/**
 	 * Displays an {@link AlertDialog} with one button that dismisses the dialog. Dialog displays helpful first-time info.

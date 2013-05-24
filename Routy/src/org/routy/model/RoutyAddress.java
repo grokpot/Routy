@@ -3,8 +3,9 @@ package org.routy.model;
 import java.util.Locale;
 
 import android.location.Address;
+import android.os.Parcelable;
 
-public class RoutyAddress extends Address {
+public class RoutyAddress extends Address implements Parcelable {
 
 	private AddressStatus status;
 	private String addressString;

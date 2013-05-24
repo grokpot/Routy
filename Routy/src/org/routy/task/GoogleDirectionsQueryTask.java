@@ -17,7 +17,7 @@ import android.os.AsyncTask;
  * Doesn't look like this is being used at all (5/13/2013)
  *
  */
-public abstract class GoogleDirectionsQueryTask extends AsyncTask<GoogleDirectionsQuery, Void, GoogleDirections> {
+public class GoogleDirectionsQueryTask extends AsyncTask<GoogleDirectionsQuery, Void, GoogleDirections> {
 	
 	//private final String TAG = "GoogleDirectionsQueryTask";
 	
@@ -37,7 +37,7 @@ public abstract class GoogleDirectionsQueryTask extends AsyncTask<GoogleDirectio
 	protected void onPreExecute() {
 		progressDialog = new ProgressDialog(context);
 		progressDialog.setTitle("Hang Tight!");
-		progressDialog.setMessage("Checking that address or place name...");
+		progressDialog.setMessage("Getting map data...");
 		progressDialog.setCancelable(false);
 		progressDialog.setCanceledOnTouchOutside(false);
 		progressDialog.setIndeterminate(true);
@@ -50,17 +50,18 @@ public abstract class GoogleDirectionsQueryTask extends AsyncTask<GoogleDirectio
 		if (params.length > 0) {
 			timer = new Timer();
 			try {
-				timer.schedule(new Timeout(this, new TimeoutCallback() {
+				/*timer.schedule(new Timeout(this, new TimeoutCallback() {
 					
 					@Override
 					public void onTimeout() {
 						// TODO Auto-generated method stub
 						
 					}
-				}), 10000);
+				}), 10000);*/
+				
 				GoogleDirectionsQuery query = params[0];
 				GoogleDirectionsService service = new GoogleDirectionsService();
-				return service.getDirections(query.getOrigin(), query.getDestination(), query.isSensor());
+				return service.getDirections(query.getAddresses(), query.isSensor());
 			} catch (Exception e) {
 				listener.onFailure(e);
 				cancel(true);

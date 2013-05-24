@@ -15,11 +15,13 @@ import org.routy.exception.RoutyException;
 import org.routy.log.Log;
 import org.routy.model.AppConfig;
 import org.routy.model.GoogleDirections;
+import org.routy.model.RoutyAddress;
 import org.routy.model.Step;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.maps.GeoPoint;
 
 /**
@@ -39,9 +41,9 @@ public class GoogleDirectionsService {
 		super();
 	}
 	
-	public GoogleDirections getDirections(GeoPoint start, GeoPoint end, boolean sensor) throws IOException, RoutyException, NoInternetConnectionException {
+	public GoogleDirections getDirections(List<RoutyAddress> addresses, boolean sensor) throws IOException, RoutyException, NoInternetConnectionException {
 		// build Directions URL...
-		String url = buildDirectionsURL(start, end, sensor);
+		String url = buildDirectionsURL(addresses, sensor);
 		
 		// get the XML response from Google Directions
 		String resp = InternetService.getStringResponse(url);
@@ -64,7 +66,7 @@ public class GoogleDirectionsService {
 			if (status.equalsIgnoreCase("ok")) {
 				GoogleDirections directions = new GoogleDirections();
 				
-				List<Step> steps = new ArrayList<Step>();
+				/*List<Step> steps = new ArrayList<Step>();
 				NodeList stepNodes = (NodeList) xpath.evaluate("route/leg/step", root, XPathConstants.NODESET);
 				for (int i = 0; i < stepNodes.getLength(); i++) {
 					Node stepNode = stepNodes.item(i);
@@ -82,12 +84,17 @@ public class GoogleDirectionsService {
 					step.setEnd(new GeoPoint(endLat, endLng));
 					
 					String polyline = (String) xpath.evaluate("polyline/points", stepNode, XPathConstants.STRING);
-					step.setPolyline(polyline);
+					step.setPolyString(polyline);
 					
 					steps.add(step);
 				}
 				
-				directions.setSteps(steps);
+				directions.setSteps(steps);*/
+				
+				String overviewPolyString = (String) xpath.evaluate("route/overview_polyline/points", root, XPathConstants.STRING);
+				directions.setOverviewPolyString(overviewPolyString);
+				
+				directions.setPolypoints(decodePoly(directions.getOverviewPolyString()));
 				
 				return directions;
 			} else {
@@ -99,32 +106,80 @@ public class GoogleDirectionsService {
 		
 		return null;
 	}
+	
+	/**
+	 * We kindly borrowed this code from here: http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
+	 */
+	private List<LatLng> decodePoly(String encoded) {
 
-	public String buildDirectionsURL(GeoPoint start, GeoPoint end, boolean sensor) {
+		List<LatLng> poly = new ArrayList<LatLng>();
+		int index = 0, len = encoded.length();
+		int lat = 0, lng = 0;
+
+		while (index < len) {
+			int b, shift = 0, result = 0;
+			do {
+				b = encoded.charAt(index++) - 63;
+				result |= (b & 0x1f) << shift;
+				shift += 5;
+			} while (b >= 0x20);
+			int dlat = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+			lat += dlat;
+
+			shift = 0;
+			result = 0;
+			do {
+				b = encoded.charAt(index++) - 63;
+				result |= (b & 0x1f) << shift;
+				shift += 5;
+			} while (b >= 0x20);
+			int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
+			lng += dlng;
+
+//			LatLng p = new LatLng((int) (((double) lat / 1E5) * 1E6), (int) (((double) lng / 1E5) * 1E6));
+			LatLng p = new LatLng(((double) lat / 1E5), ((double) lng / 1E5));
+			poly.add(p);
+		}
+
+		return poly;
+	}
+
+	// ClassCastException coming from this area around here...
+	public String buildDirectionsURL(List<RoutyAddress> addresses, boolean sensor) {
 		StringBuffer url = new StringBuffer(AppConfig.G_DIRECTIONS_API_URL);
 		
-		if (start == null || end == null) {
-			return null;
-		} else {
-			double startLat = start.getLatitudeE6() / E6;
-			double startLng = start.getLongitudeE6() / E6;
+		if (addresses != null && addresses.size() > 0) {
+			//Add the origin
 			url.append("origin=");
-			url.append(startLat);
+			url.append(addresses.get(0).getLatitude());
 			url.append(",");
-			url.append(startLng);
+			url.append(addresses.get(0).getLongitude());
 			
-			double endLat = end.getLatitudeE6() / E6;
-			double endLng = end.getLongitudeE6() / E6;
+			//Add destination (final destination)
 			url.append("&destination=");
-			url.append(endLat);
+			url.append(addresses.get(addresses.size() - 1).getLatitude());
 			url.append(",");
-			url.append(endLng);
+			url.append(addresses.get(addresses.size() - 1).getLongitude());
+			
+			//Add waypoints
+			for (int i = 1; i < addresses.size() - 1; i++) {
+				url.append("&waypoints=");
+//				url.append("optimize:true");		//DO NOT FUCKING UNCOMMENT THIS LINE!!!
+				url.append(addresses.get(i).getLatitude());
+				url.append(",");
+				url.append(addresses.get(i).getLongitude());
+				
+				if (i != addresses.size() - 2) {
+					url.append("|");
+				}
+			}
 			
 			url.append("&sensor=");
-			url.append(sensor ? "true" : "false");
+			url.append(sensor);
 			
-			Log.v(TAG, "directions url: " + url.toString());
 			return url.toString();
 		}
+		
+		return null;
 	}
 }

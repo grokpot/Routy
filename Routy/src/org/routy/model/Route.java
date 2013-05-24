@@ -3,34 +3,32 @@ package org.routy.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.location.Address;
-
 public class Route {
 	
-	private List<Address> addresses;
+	private List<RoutyAddress> addresses;
 	private int distance;
 	
 	public Route() {
-		this.addresses = new ArrayList<Address>();
+		this.addresses = new ArrayList<RoutyAddress>();
 		this.distance = 0;
 	}
 	
-	public Route(List<Address> addresses2, int distance) {
+	public Route(List<RoutyAddress> addresses2, int distance) {
 		this.addresses = addresses2;
 		this.distance = distance;
 	}
 	
-	public List<Address> getAddresses() {
+	public List<RoutyAddress> getAddresses() {
 		return addresses;
 	}
 	
-	public void addAddress(Address address) {
+	public void addAddress(RoutyAddress address) {
 		this.addresses.add(address);
 	}
 	
-	public List<Address> getAddresses(Address address) {
+	/*public List<RoutyAddress> getAddresses(RoutyAddress address) {
 		return this.addresses;
-	}
+	}*/
 	
 	public int getTotalDistance() {
 		return distance;

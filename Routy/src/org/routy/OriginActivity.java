@@ -681,9 +681,10 @@ public class OriginActivity extends Activity {
 		new CalculateRouteTask(this) {
 			@Override
 			public void onRouteCalculated(Route route) {
+				addressModel.setRoute(route);
 				// Call ResultsActivity activity
 				Intent resultsIntent = new Intent(getBaseContext(), ResultsActivity.class);
-				resultsIntent.putExtra("addresses", (ArrayList<Address>) route.getAddresses());
+				resultsIntent.putExtra("addresses", (ArrayList<RoutyAddress>) route.getAddresses());
 				resultsIntent.putExtra("distance", route.getTotalDistance());
 				resultsIntent.putExtra("optimize_for", PreferencesModel.getSingleton().getRouteOptimizeMode());
 				startActivity(resultsIntent);

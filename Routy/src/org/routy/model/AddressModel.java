@@ -17,6 +17,7 @@ public class AddressModel {
 	private RoutyAddress origin;
 	private List<RoutyAddress> destinations;
 	private String unvalidatedDestEntry;
+	private Route route;
 	
 	private AddressModel() {
 		super();
@@ -111,6 +112,14 @@ public class AddressModel {
 		} else if (indexInLayout >= 0 && indexInLayout < destinations.size() && validatedAddress != null) {
 			destinations.set(indexInLayout, validatedAddress);
 		}
+	}
+	
+	public Route getRoute() {
+		return route;
+	}
+
+	public void setRoute(Route route) {
+		this.route = route;
 	}
 
 	public boolean hasDestinations() {

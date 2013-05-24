@@ -50,9 +50,10 @@ public class RouteService {
 	 * 
 	 * @return {@link Route} object
 	 */
-	// TODO distance might be calculated incorrectly
 	public Route getBestRoute() {
+		//Get all possible permutations
 		computeAllPossibleRoutes(destinations.size());
+		
 //		Log.v(TAG, possibleRoutes.size() + " possible routes");
 		int bestDistance = -1;
 		List<Integer> bestRoute = null;

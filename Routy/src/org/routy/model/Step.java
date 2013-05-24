@@ -15,7 +15,7 @@ public class Step {
 	private GeoPoint start;
 	private GeoPoint end;
 	private String mode;
-	private String polyline;
+	private String polyString;
 	
 	public Step() {
 		super();
@@ -53,12 +53,12 @@ public class Step {
 		this.mode = mode;
 	}
 
-	public String getPolyline() {
-		return polyline;
+	public String getPolyString() {
+		return polyString;
 	}
 
-	public void setPolyline(String polyline) {
-		this.polyline = polyline;
+	public void setPolyString(String polyString) {
+		this.polyString = polyString;
 	}
 	
 	

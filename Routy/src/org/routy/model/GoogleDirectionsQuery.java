@@ -1,25 +1,37 @@
 package org.routy.model;
 
-import com.google.android.maps.GeoPoint;
+import java.util.List;
 
 public class GoogleDirectionsQuery {
 
 	//private final String TAG = "GoogleDirectionsQuery";
 	
-	private GeoPoint origin;
-	private GeoPoint destination;
+	private List<RoutyAddress> addresses;
+//	private GeoPoint origin;
+//	private GeoPoint destination;
 	private boolean sensor;
 	
 	
-	public GoogleDirectionsQuery(GeoPoint origin, GeoPoint destination, boolean sensor) {
+	public GoogleDirectionsQuery(List<RoutyAddress> addresses, boolean sensor) {
 		super();
-		this.origin = origin;
-		this.destination = destination;
+		this.addresses = addresses;
+//		this.origin = origin;
+//		this.destination = destination;
 		this.sensor = sensor;
 	}
 
 
-	public GeoPoint getOrigin() {
+	public List<RoutyAddress> getAddresses() {
+		return addresses;
+	}
+
+
+	public void setAddresses(List<RoutyAddress> addresses) {
+		this.addresses = addresses;
+	}
+
+
+/*	public GeoPoint getOrigin() {
 		return origin;
 	}
 
@@ -36,7 +48,7 @@ public class GoogleDirectionsQuery {
 
 	public void setDestination(GeoPoint destination) {
 		this.destination = destination;
-	}
+	}*/
 
 
 	public boolean isSensor() {
