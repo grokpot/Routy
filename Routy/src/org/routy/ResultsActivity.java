@@ -109,7 +109,7 @@ public class ResultsActivity extends Activity {
 			@Override
 			public void onGotDirections(GoogleDirections directions) {
 				Log.v("map polyline", "draw!");
-				mMap.addPolyline(new PolylineOptions().addAll(directions.getPolypoints()).width(5.5f).color(getResources().getColor(R.color.Teal)).zIndex(100f).visible(true));
+				mMap.addPolyline(new PolylineOptions().addAll(directions.getPolypoints()).width(8f).color(0xff449def).zIndex(100f).visible(true));
 			}
 			
 			@Override
