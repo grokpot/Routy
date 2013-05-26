@@ -7,12 +7,14 @@ import java.util.List;
 import org.routy.listener.GoogleDirectionsQueryListener;
 import org.routy.log.Log;
 import org.routy.model.AddressModel;
+import org.routy.model.AppConfig;
 import org.routy.model.GoogleDirections;
 import org.routy.model.GoogleDirectionsQuery;
+import org.routy.model.Leg;
 import org.routy.model.PreferencesModel;
 import org.routy.model.Route;
 import org.routy.model.RouteOptimizePreference;
-import org.routy.model.RoutyAddress;
+import org.routy.model.Step;
 import org.routy.sound.SoundPlayer;
 import org.routy.task.GoogleDirectionsQueryTask;
 import org.routy.view.ResultsSegmentView;
@@ -83,8 +85,6 @@ public class ResultsActivity extends Activity {
 		Bundle extras = getIntent().getExtras();
 		if (extras != null) {
 			int distance = (Integer) extras.get("distance");
-//			addresses = (ArrayList<RoutyAddress>) extras.get("addresses");
-//			route = new Route(addresses, distance);
 			routeOptimizePreference = (RouteOptimizePreference) extras.get("optimize_for");
 		}
 		
@@ -109,7 +109,19 @@ public class ResultsActivity extends Activity {
 			@Override
 			public void onGotDirections(GoogleDirections directions) {
 				Log.v("map polyline", "draw!");
-				mMap.addPolyline(new PolylineOptions().addAll(directions.getPolypoints()).width(8f).color(0xff449def).zIndex(100f).visible(true));
+				
+				for (int i = 0; i < directions.getLegs().size(); i++) {
+					PolylineOptions options = new PolylineOptions();
+					
+					for (Step step : directions.getLegs().get(i).getSteps()) {
+						options.addAll(Util.decodePoly(step.getPolyString()));
+					}
+					
+					options.width(8f).color(getResources().getColor(AppConfig.LEG_COLORS[i])).zIndex(100f).visible(true);
+					mMap.addPolyline(options);
+				}
+				
+//				mMap.addPolyline(new PolylineOptions().addAll(directions.getOverviewPolypoints()).width(8f).color(0xff449def).zIndex(100f).visible(true));
 			}
 			
 			@Override

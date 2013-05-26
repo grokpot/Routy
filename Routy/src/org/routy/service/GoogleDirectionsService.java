@@ -10,18 +10,19 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.routy.Util;
 import org.routy.exception.NoInternetConnectionException;
 import org.routy.exception.RoutyException;
 import org.routy.log.Log;
 import org.routy.model.AppConfig;
 import org.routy.model.GoogleDirections;
+import org.routy.model.Leg;
 import org.routy.model.RoutyAddress;
 import org.routy.model.Step;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.maps.GeoPoint;
 
 /**
@@ -45,8 +46,12 @@ public class GoogleDirectionsService {
 		// build Directions URL...
 		String url = buildDirectionsURL(addresses, sensor);
 		
+		Log.v(TAG, "DIRECTIONS API url: " + url);
+		
 		// get the XML response from Google Directions
 		String resp = InternetService.getStringResponse(url);
+		
+		Log.v(TAG, "DIRECTIOS API resp: " + resp);
 		
 		// parse the response into a GoogleDirections object
 		return parseGoogleDirectionsResponse(resp);
@@ -66,35 +71,45 @@ public class GoogleDirectionsService {
 			if (status.equalsIgnoreCase("ok")) {
 				GoogleDirections directions = new GoogleDirections();
 				
-				/*List<Step> steps = new ArrayList<Step>();
-				NodeList stepNodes = (NodeList) xpath.evaluate("route/leg/step", root, XPathConstants.NODESET);
-				for (int i = 0; i < stepNodes.getLength(); i++) {
-					Node stepNode = stepNodes.item(i);
-					
-					Step step = new Step();
-					String mode = (String) xpath.evaluate("travel_mode", stepNode, XPathConstants.STRING);
-					step.setMode(mode);
-					
-					int startLat = (int) Double.parseDouble((String) xpath.evaluate("start_location/lat", stepNode, XPathConstants.STRING)) * 1000000;
-					int startLng = (int) Double.parseDouble((String) xpath.evaluate("start_location/lng", stepNode, XPathConstants.STRING)) * 1000000;
-					step.setStart(new GeoPoint(startLat, startLng));
-					
-					int endLat = (int) Double.parseDouble((String) xpath.evaluate("end_location/lat", stepNode, XPathConstants.STRING)) * 1000000;
-					int endLng = (int) Double.parseDouble((String) xpath.evaluate("end_location/lng", stepNode, XPathConstants.STRING)) * 1000000;
-					step.setEnd(new GeoPoint(endLat, endLng));
-					
-					String polyline = (String) xpath.evaluate("polyline/points", stepNode, XPathConstants.STRING);
-					step.setPolyString(polyline);
-					
-					steps.add(step);
-				}
+				List<Step> steps = new ArrayList<Step>();
 				
-				directions.setSteps(steps);*/
+				NodeList legNodes = (NodeList) xpath.evaluate("route/leg", root, XPathConstants.NODESET);
+				NodeList stepNodes = null;
+				Node leg = null;
+				for (int l = 0; l < legNodes.getLength(); l++) {
+					leg = legNodes.item(l);
+					
+					stepNodes = (NodeList) xpath.evaluate("step", leg, XPathConstants.NODESET);
+					Leg _leg = new Leg();
+					
+					for (int i = 0; i < stepNodes.getLength(); i++) {
+						Node stepNode = stepNodes.item(i);
+						
+						Step step = new Step();
+						String mode = (String) xpath.evaluate("travel_mode", stepNode, XPathConstants.STRING);
+						step.setMode(mode);
+						
+						int startLat = (int) Double.parseDouble((String) xpath.evaluate("start_location/lat", stepNode, XPathConstants.STRING)) * 1000000;
+						int startLng = (int) Double.parseDouble((String) xpath.evaluate("start_location/lng", stepNode, XPathConstants.STRING)) * 1000000;
+						step.setStart(new GeoPoint(startLat, startLng));
+						
+						int endLat = (int) Double.parseDouble((String) xpath.evaluate("end_location/lat", stepNode, XPathConstants.STRING)) * 1000000;
+						int endLng = (int) Double.parseDouble((String) xpath.evaluate("end_location/lng", stepNode, XPathConstants.STRING)) * 1000000;
+						step.setEnd(new GeoPoint(endLat, endLng));
+						
+						String polyline = (String) xpath.evaluate("polyline/points", stepNode, XPathConstants.STRING);
+						step.setPolyString(polyline);
+						
+						_leg.add(step);
+					}
+					
+					directions.addLeg(_leg);
+				}
 				
 				String overviewPolyString = (String) xpath.evaluate("route/overview_polyline/points", root, XPathConstants.STRING);
 				directions.setOverviewPolyString(overviewPolyString);
 				
-				directions.setPolypoints(decodePoly(directions.getOverviewPolyString()));
+				directions.setOverviewPolypoints(Util.decodePoly(directions.getOverviewPolyString()));
 				
 				return directions;
 			} else {
@@ -109,7 +124,7 @@ public class GoogleDirectionsService {
 	
 	/**
 	 * We kindly borrowed this code from here: http://jeffreysambells.com/2010/05/27/decoding-polylines-from-google-maps-direction-api-with-java
-	 */
+	 *//*
 	private List<LatLng> decodePoly(String encoded) {
 
 		List<LatLng> poly = new ArrayList<LatLng>();
@@ -136,13 +151,12 @@ public class GoogleDirectionsService {
 			int dlng = ((result & 1) != 0 ? ~(result >> 1) : (result >> 1));
 			lng += dlng;
 
-//			LatLng p = new LatLng((int) (((double) lat / 1E5) * 1E6), (int) (((double) lng / 1E5) * 1E6));
 			LatLng p = new LatLng(((double) lat / 1E5), ((double) lng / 1E5));
 			poly.add(p);
 		}
 
 		return poly;
-	}
+	}*/
 
 	// ClassCastException coming from this area around here...
 	public String buildDirectionsURL(List<RoutyAddress> addresses, boolean sensor) {
@@ -161,16 +175,19 @@ public class GoogleDirectionsService {
 			url.append(",");
 			url.append(addresses.get(addresses.size() - 1).getLongitude());
 			
-			//Add waypoints
-			for (int i = 1; i < addresses.size() - 1; i++) {
+			if (addresses.size() > 2) {
 				url.append("&waypoints=");
-//				url.append("optimize:true");		//DO NOT FUCKING UNCOMMENT THIS LINE!!!
-				url.append(addresses.get(i).getLatitude());
-				url.append(",");
-				url.append(addresses.get(i).getLongitude());
 				
-				if (i != addresses.size() - 2) {
-					url.append("|");
+				//Add waypoints
+				for (int i = 1; i < addresses.size() - 1; i++) {
+//					url.append("optimize:true");		//DO NOT FUCKING UNCOMMENT THIS LINE!!!
+					url.append(addresses.get(i).getLatitude());
+					url.append(",");
+					url.append(addresses.get(i).getLongitude());
+					
+					if (i != addresses.size() - 2) {
+						url.append("|");
+					}
 				}
 			}
 			

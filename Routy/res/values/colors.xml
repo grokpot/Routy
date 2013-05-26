@@ -143,4 +143,10 @@
 	<color name="Navy">#000080</color>
 	<color name="Black">#000000</color>
 	<color name="ShitGold">#FFAE00</color>
+	
+	<color name="Leg1">#0E51A7</color>
+	<color name="Leg2">#FF9E00</color>
+	<color name="Leg3">#00a67c</color>
+	<color name="Leg4">#150873</color>
+	<color name="Leg5">#7D71D8</color>
 </resources>

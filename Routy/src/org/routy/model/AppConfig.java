@@ -1,5 +1,7 @@
 package org.routy.model;
 
+import org.routy.R;
+
 /**
  * Global properties used all over the app.  Centralized to make propagating  
  * updated data easy.
@@ -50,5 +52,5 @@ public final class AppConfig {
 
 	public static final String G_API_KEY = "AIzaSyAsBYyw8a9WUt60WvRLf2ibSe8UfRSnV9g";
 	
-	
+	public static int[] LEG_COLORS = {R.color.Leg1, R.color.Leg2, R.color.Leg3, R.color.Leg4, R.color.Leg5};
 }
